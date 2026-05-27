@@ -78,8 +78,17 @@ public class CitaService {
         return citaRepository.findByFechaHoraBetween(inicioDelDia, finDelDia);
     }
 
+    //VER TODAS LAS CITAS
+    public List<Cita> obtenerTodas() {
+        return citaRepository.findAll();
+    }
+
     // MÉTODO PRIVADO AYUDANTE (Reutilizable)
     private void validarDisponibilidad(Cita cita) {
+
+        /* ======================================================================
+           TEMPORALMENTE DESACTIVADO: Validación estricta de Turnos del Doctor
+           ======================================================================
         LocalDate fechaSolicitada = cita.getFechaHora().toLocalDate();
         LocalTime horaSolicitada = cita.getFechaHora().toLocalTime();
         Long idDoctor = cita.getOdontologo().getId();
@@ -102,7 +111,28 @@ public class CitaService {
             throw new RuntimeException("La hora seleccionada está fuera del horario de atención del doctor.");
         }
 
+
         boolean doctorOcupado = citaRepository.existsByOdontologoIdAndFechaHoraAndEstado(idDoctor, cita.getFechaHora(), EstadoCita.PENDIENTE);
+
+        if (doctorOcupado) {
+            throw new RuntimeException("El doctor ya tiene una cita reservada en ese horario exacto.");
+        }
+
+         */
+
+        if (cita.getOdontologo() == null || cita.getOdontologo().getId() == null) {
+            throw new RuntimeException("Error: La cita debe tener un odontólogo asignado.");
+        }
+
+        Long idDoctor = cita.getOdontologo().getId();
+        LocalDateTime fechaHoraSolicitada = cita.getFechaHora();
+
+        // 2. ÚNICA VALIDACIÓN ACTIVA: Evitar cruce de citas
+        boolean doctorOcupado = citaRepository.existsByOdontologoIdAndFechaHoraAndEstado(
+                idDoctor,
+                fechaHoraSolicitada,
+                EstadoCita.PENDIENTE
+        );
 
         if (doctorOcupado) {
             throw new RuntimeException("El doctor ya tiene una cita reservada en ese horario exacto.");

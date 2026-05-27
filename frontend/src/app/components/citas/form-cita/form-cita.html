@@ -46,7 +46,7 @@
 
       <div class="input-group">
         <label>Fecha y Hora Planificada</label>
-        <input type="datetime-local" formControlName="fechaHora">
+        <input type="datetime-local" formControlName="fechaHora" [min]="fechaMinima">
         <div class="error-msg" *ngIf="citaForm.get('fechaHora')?.invalid && citaForm.get('fechaHora')?.touched">
           <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> La fecha y hora de la cita son obligatorias.
         </div>
@@ -56,8 +56,7 @@
         <label>Estado Inicial de la Cita</label>
         <select formControlName="estado">
           <option value="PENDIENTE">Pendiente</option>
-          <option value="CONFIRMADA">Confirmada</option>
-          <option value="COMPLETADA">Completada</option>
+          <option value="ATENDIDA">Atendida</option>
           <option value="CANCELADA">Cancelada</option>
         </select>
       </div>

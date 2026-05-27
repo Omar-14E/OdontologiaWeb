@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core'; // <-- Importamos las herramientas
-import { CommonModule, isPlatformBrowser } from '@angular/common'; // <-- isPlatformBrowser
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { CitaService } from '../../../services/cita';
+import { CitaService } from '../../../services/cita'; // Asegúrate de que la ruta sea correcta
 import { Cita } from '../../../models/cita';
 
 @Component({
@@ -15,14 +15,13 @@ export class ListaCitasComponent implements OnInit {
   citas: Cita[] = [];
 
   constructor(
-    private citaService: CitaService,
-    private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object, // <-- Inyectamos plataforma
-    private cdr: ChangeDetectorRef                   // <-- Inyectamos el detector
+      private citaService: CitaService,
+      private router: Router,
+      @Inject(PLATFORM_ID) private platformId: Object,
+      private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    // 1. Bloqueamos al servidor (SSR) para que no haga la petición sin token
     if (isPlatformBrowser(this.platformId)) {
       this.cargarCitas();
     }
@@ -30,21 +29,23 @@ export class ListaCitasComponent implements OnInit {
 
   cargarCitas() {
     this.citaService.getCitas().subscribe({
-      next: (datos) => {
-        this.citas = datos;
-
-        // 2. Obligamos a Angular a dibujar la tabla instantáneamente
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error al cargar las citas:', err);
-      }
-    });
+          // 👇 Le decimos explícitamente que 'datos' es un arreglo de Cita
+          next: (datos: Cita[]) => {
+            this.citas = datos;
+            this.cdr.detectChanges();
+          },
+          // 👇 Le decimos explícitamente que 'err' puede ser cualquier cosa (any)
+          error: (err: any) => {
+            console.error('Error al cargar citas:', err);
+          }
+        });
   }
 
   eliminar(id: number) {
-    if(confirm('¿Cancelar esta cita?')) {
-      this.citaService.deleteCita(id).subscribe(() => this.cargarCitas());
+    if(confirm('¿Estás seguro de eliminar esta cita?')) {
+      this.citaService.deleteCita(id).subscribe(() => {
+        this.cargarCitas(); // Recargamos la lista tras eliminar
+      });
     }
   }
 
