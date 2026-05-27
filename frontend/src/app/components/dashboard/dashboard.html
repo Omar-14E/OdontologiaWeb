@@ -1,0 +1,42 @@
+<div class="dashboard-header">
+  <div>
+    <h1>Resumen de la Clínica</h1>
+    <p>Estadísticas y datos en tiempo real de tu sistema.</p>
+  </div>
+</div>
+
+<div class="cards-grid" *ngIf="datos">
+
+  <div class="card">
+    <div class="card-icon">👥</div>
+    <div class="card-content">
+      <h3>Pacientes Registrados</h3>
+      <p class="number">{{ datos.totalPacientes }}</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-icon">👨‍⚕️</div>
+    <div class="card-content">
+      <h3>Cuerpo Médico</h3>
+      <p class="number">{{ datos.totalOdontologos }}</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-icon">📅</div>
+    <div class="card-content">
+      <h3>Citas Históricas</h3>
+      <p class="number">{{ datos.totalCitas }}</p>
+    </div>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-icon">🚨</div>
+    <div class="card-content">
+      <h3>Citas para Hoy</h3>
+      <p class="number">{{ datos.citasDelDia }}</p>
+    </div>
+  </div>
+
+</div>
