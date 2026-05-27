@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-// 1. Importamos el Router de Angular
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core'; // <-- 1. Nuevas importaciones
+import { CommonModule, isPlatformBrowser } from '@angular/common'; // <-- 2. Importamos isPlatformBrowser
 import { Router } from '@angular/router';
 import { OdontologoService } from '../../../services/odontologo';
 import { Odontologo } from '../../../models/odontologo';
@@ -15,19 +14,31 @@ import { Odontologo } from '../../../models/odontologo';
 export class ListaMedicosComponent implements OnInit {
   medicos: Odontologo[] = [];
 
-  // 2. Inyectamos el Router aquí en el constructor, junto a tu servicio
   constructor(
     private odontologoService: OdontologoService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object, // <-- 3. Inyectamos la plataforma
+    private cdr: ChangeDetectorRef                   // <-- 4. Inyectamos el detector de cambios
   ) {}
 
   ngOnInit(): void {
-    this.cargarMedicos();
+    // Bloqueamos al servidor para que esto solo se ejecute en el navegador del usuario
+    if (isPlatformBrowser(this.platformId)) {
+      this.cargarMedicos();
+    }
   }
 
   cargarMedicos() {
-    this.odontologoService.getOdontologos().subscribe(datos => {
-      this.medicos = datos;
+    this.odontologoService.getOdontologos().subscribe({
+      next: (datos) => {
+        this.medicos = datos;
+
+        // ¡LA MAGIA! Forzamos a Angular a mostrar la tabla SIN NECESIDAD del doble clic
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar médicos:', err);
+      }
     });
   }
 
@@ -43,7 +54,6 @@ export class ListaMedicosComponent implements OnInit {
     }
   }
 
-  // 3. Este es el método infalible que obligará a Angular a cambiar de ruta
   irNuevoMedico() {
     this.router.navigate(['/medicos/nuevo']);
   }

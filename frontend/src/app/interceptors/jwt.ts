@@ -8,6 +8,8 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (isPlatformBrowser(platformId)) {
     token = localStorage.getItem('token');
+    // 👇 ESTO ES LO NUEVO: Nos dirá si Angular está encontrando el token
+    console.log('🔍 Interceptor: ¿Hay token en localStorage?', token ? 'SÍ' : 'NO (está vacío)');
   }
 
   if (token) {
