@@ -19,15 +19,21 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres para ser segura")
+
+    private String password;
+
     @NotBlank(message = "El correo electrónico es obligatorio")
     @Email(message = "Debe ingresar un correo electrónico válido")
     private String gmail;
 
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres para ser segura")
-    private String password;
-
     @NotNull(message = "Debe asignar un rol al usuario")
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Rol rol; // aca va paciente, odontologo o administrador que ya esta predeterminado en enum Rol
 }

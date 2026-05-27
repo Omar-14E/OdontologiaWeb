@@ -1,0 +1,28 @@
+<div class="container" style="padding: 20px; animation: fadeIn 0.5s ease;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2><span class="material-symbols-outlined" style="vertical-align: text-bottom; color: #ec4899;">groups</span> Mis Pacientes</h2>
+  </div>
+
+  <div *ngIf="cargando" style="text-align: center; padding: 40px; color: #64748b;">
+    Cargando lista de pacientes...
+  </div>
+
+  <div class="grid-cards" *ngIf="!cargando" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+
+    <div class="card" *ngFor="let paciente of pacientes" style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+        <div style="background-color: #f1f5f9; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1.2rem; font-weight: bold;">
+          {{ paciente.nombre.charAt(0) }}{{ paciente.apellido.charAt(0) }}
+        </div>
+        <div>
+          <h3 style="margin: 0; font-size: 1.1rem; color: #1e293b;">{{ paciente.nombre }} {{ paciente.apellido }}</h3>
+          <p style="margin: 0; font-size: 0.85rem; color: #64748b;">DNI: {{ paciente.dni }}</p>
+        </div>
+      </div>
+      <div style="background-color: #f8fafc; padding: 10px; border-radius: 6px; font-size: 0.9rem; color: #475569;">
+        <span class="material-symbols-outlined" style="font-size: 1rem; vertical-align: middle;">call</span> {{ paciente.telefono }}
+      </div>
+    </div>
+
+  </div>
+</div>

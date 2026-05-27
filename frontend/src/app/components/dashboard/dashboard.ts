@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DashboardService } from '../../services/dashboard';
-import { DashboardDTO } from '../../models/dashboard';
+import { AuthService } from '../../services/auth';
+import { OdontologoService } from '../../services/odontologo'; // Importamos el servicio
 
 @Component({
   selector: 'app-dashboard',
@@ -11,18 +11,33 @@ import { DashboardDTO } from '../../models/dashboard';
   styleUrl: './dashboard.css'
 })
 export class DashboardComponent implements OnInit {
-  datos: DashboardDTO | null = null;
+  rol: string = '';
+  username: string = '';
 
-  constructor(private dashboardService: DashboardService) {}
+  totalCitas: number = 0;
+  totalPacientes: number = 0;
+
+  constructor(
+    private authService: AuthService,
+    private odontologoService: OdontologoService // Inyectamos el servicio
+  ) {}
 
   ngOnInit(): void {
-    this.dashboardService.getTotales().subscribe({
-      next: (data) => {
-        this.datos = data;
-      },
-      error: (err) => {
-        console.error('Error al conectar con el endpoint del dashboard', err);
-      }
+    this.rol = this.authService.rol;
+    this.username = localStorage.getItem('username') || 'Usuario';
+
+    if (this.rol === 'ODONTOLOGO') {
+      this.cargarMetricasOdontologo();
+    }
+  }
+
+  cargarMetricasOdontologo() {
+    this.odontologoService.getMisCitas().subscribe({
+      next: (data: any) => this.totalCitas = data.length
+    });
+
+    this.odontologoService.getMisPacientes().subscribe({
+      next: (data: any) => this.totalPacientes = data.length
     });
   }
 }

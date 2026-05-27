@@ -8,6 +8,7 @@ import com.example.DesarrolloWeb.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,7 +25,8 @@ public class DataSeeder {
             PacienteRepository pacienteRepository,
             TurnoOdontologoRepository turnoRepository,
             CitaRepository citaRepository,
-            OdontogramaRepository odontogramaRepository) {
+            OdontogramaRepository odontogramaRepository,
+            PasswordEncoder passwordEncoder) {
 
         return args -> {
             if (usuarioRepository.count() > 0) {
@@ -32,41 +34,47 @@ public class DataSeeder {
                 return;
             }
 
-            System.out.println("🌱 Cargando datos de prueba masivos (Fechas corregidas para el futuro)...");
+            System.out.println("🌱 Cargando datos de prueba masivos (Fechas en el futuro, usernames configurados y contraseñas encriptadas)...");
 
             // ==========================================
             // 1. CREAR USUARIOS
             // ==========================================
             Usuario admin = new Usuario();
+            admin.setUsername("admin");
             admin.setGmail("admin@clinica.com");
-            admin.setPassword("admin1234");
+            admin.setPassword(passwordEncoder.encode("admin1234"));
             admin.setRol(Rol.ADMIN);
 
             // Usuarios Doctores
             Usuario odonto1User = new Usuario();
+            odonto1User.setUsername("dr.smith");
             odonto1User.setGmail("dr.smith@clinica.com");
-            odonto1User.setPassword("odonto1234");
+            odonto1User.setPassword(passwordEncoder.encode("odonto1234"));
             odonto1User.setRol(Rol.ODONTOLOGO);
 
             Usuario odonto2User = new Usuario();
+            odonto2User.setUsername("dra.ana");
             odonto2User.setGmail("dra.ana@clinica.com");
-            odonto2User.setPassword("odonto5678");
+            odonto2User.setPassword(passwordEncoder.encode("odonto5678"));
             odonto2User.setRol(Rol.ODONTOLOGO);
 
             // Usuarios Pacientes
             Usuario pac1User = new Usuario();
+            pac1User.setUsername("carlos");
             pac1User.setGmail("carlos@clinica.com");
-            pac1User.setPassword("paciente1234");
+            pac1User.setPassword(passwordEncoder.encode("paciente1234"));
             pac1User.setRol(Rol.PACIENTE);
 
             Usuario pac2User = new Usuario();
+            pac2User.setUsername("maria");
             pac2User.setGmail("maria@clinica.com");
-            pac2User.setPassword("paciente5678");
+            pac2User.setPassword(passwordEncoder.encode("paciente5678"));
             pac2User.setRol(Rol.PACIENTE);
 
             Usuario pac3User = new Usuario();
+            pac3User.setUsername("luis");
             pac3User.setGmail("luis@clinica.com");
-            pac3User.setPassword("paciente9012");
+            pac3User.setPassword(passwordEncoder.encode("paciente9012"));
             pac3User.setRol(Rol.PACIENTE);
 
             usuarioRepository.saveAll(List.of(admin, odonto1User, odonto2User, pac1User, pac2User, pac3User));

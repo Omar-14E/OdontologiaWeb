@@ -1,0 +1,39 @@
+<div class="form-wrapper" style="min-height: 80vh;">
+  <div class="form-card" style="max-width: 450px;">
+    <div class="form-header" style="text-align: center;">
+      <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary); margin-bottom: 10px;">lock_open</span>
+      <h2>Iniciar Sesión</h2>
+      <p>Accede al Sistema de Gestión Odontológica</p>
+    </div>
+
+    <div class="error-msg" *ngIf="errorMensaje" style="background-color: #fee2e2; padding: 10px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+      <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">error</span> {{ errorMensaje }}
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <div class="input-group">
+        <label>Nombre de Usuario o Correo</label>
+        <input type="text" formControlName="username" placeholder="Ej. admin123">
+        <div class="error-msg" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> El usuario es obligatorio.
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Contraseña</label>
+        <input type="password" formControlName="password" placeholder="••••••••" style="width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+        <div class="error-msg" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> Ingrese una contraseña válida.
+        </div>
+      </div>
+
+      <div class="input-group" style="margin-top: 30px;">
+        <button type="submit" class="btn-primary-action" [disabled]="loginForm.invalid" style="width: 100%; padding: 14px;">
+          Ingresar al Sistema
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

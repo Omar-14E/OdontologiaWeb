@@ -1,0 +1,73 @@
+<div class="form-wrapper">
+  <div class="form-card">
+    <div class="form-header">
+      <span class="icon-back" routerLink="/citas" style="display: flex; align-items: center; cursor: pointer; color: #666; font-weight: 500;">
+        <span class="material-symbols-outlined" style="margin-right: 4px; font-size: 20px;">arrow_back</span> Volver
+      </span>
+      <h2>{{ tituloPantalla }}</h2>
+      <p>Establece los parámetros y vincula los actores correspondientes para la atención odontológica.</p>
+    </div>
+
+    <form [formGroup]="citaForm" (ngSubmit)="guardar()">
+
+      <div class="input-group">
+        <label>Seleccionar Paciente de la Lista</label>
+        <select formControlName="pacienteId">
+          <option value="" disabled selected>-- Elige un paciente --</option>
+          <option *ngFor="let p of listaPacientes" [value]="p.id">
+            {{ p.nombre }} {{ p.apellido }} (DNI: {{ p.dni }})
+          </option>
+        </select>
+        <div class="error-msg" *ngIf="citaForm.get('pacienteId')?.invalid && citaForm.get('pacienteId')?.touched">
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> Debe asignar un paciente a la cita.
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Asignar Odontólogo Especialista</label>
+        <select formControlName="odontologoId">
+          <option value="" disabled selected>-- Elige un especialista --</option>
+          <option *ngFor="let o of listaOdontologos" [value]="o.id">
+            Dr. {{ o.nombre }} {{ o.apellido }} — [{{ o.especialidad }}]
+          </option>
+        </select>
+        <div class="error-msg" *ngIf="citaForm.get('odontologoId')?.invalid && citaForm.get('odontologoId')?.touched">
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> Debe seleccionar el médico que atenderá la consulta.
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Problema o Consulta Médica (Motivo)</label>
+        <input type="text" formControlName="motivoConsulta" placeholder="Ej. Dolor agudo en molar inferior izquierdo / Limpieza de rutina">
+        <div class="error-msg" *ngIf="citaForm.get('motivoConsulta')?.invalid && citaForm.get('motivoConsulta')?.touched">
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> Describa brevemente la situación médica.
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Fecha y Hora Planificada</label>
+        <input type="datetime-local" formControlName="fechaHora">
+        <div class="error-msg" *ngIf="citaForm.get('fechaHora')?.invalid && citaForm.get('fechaHora')?.touched">
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> La fecha y hora de la cita son obligatorias.
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Estado Inicial de la Cita</label>
+        <select formControlName="estado">
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="CONFIRMADA">Confirmada</option>
+          <option value="COMPLETADA">Completada</option>
+          <option value="CANCELADA">Cancelada</option>
+        </select>
+      </div>
+
+      <div class="form-footer-actions">
+        <button type="button" class="btn-secondary-action" routerLink="/citas">Cancelar</button>
+        <button type="submit" class="btn-primary-action" [disabled]="citaForm.invalid">
+          Confirmar y Guardar Cita
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

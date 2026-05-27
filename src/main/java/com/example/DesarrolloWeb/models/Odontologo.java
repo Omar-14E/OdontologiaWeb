@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
@@ -42,4 +43,9 @@ public class Odontologo {
     @JsonIgnore
     @OneToMany(mappedBy = "odontologo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TurnoOdontologo> turnos;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "odontologo")
+    private List<Cita> citas;
+
 }

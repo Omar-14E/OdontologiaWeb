@@ -1,0 +1,59 @@
+<div class="medicos-container">
+  <div class="table-header-section">
+    <div>
+      <h2>Pacientes Registrados</h2>
+      <p>Gestiona el historial y los datos personales de tus pacientes.</p>
+    </div>
+    <button class="btn-nuevo" routerLink="/pacientes/nuevo">
+      <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 20px;">person_add</span> Añadir Paciente
+    </button>
+  </div>
+
+  <div class="card-table-wrapper">
+    <table class="tabla-premium">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Paciente</th>
+        <th>DNI</th>
+        <th>Contacto</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let paciente of pacientes">
+        <td class="col-id">#{{ paciente.id }}</td>
+        <td class="col-name">
+          <div class="avatar-mini">
+            <span class="material-symbols-outlined" style="font-size: 20px; color: #555;">person</span>
+          </div>
+          <div class="name-container">
+            <span class="full-name">{{ paciente.nombre }} {{ paciente.apellido }}</span>
+          </div>
+        </td>
+        <td>
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px; margin-right: 4px; color: #777;">badge</span>
+          {{ paciente.dni }}
+        </td>
+        <td class="col-phone">
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px; margin-right: 4px; color: #555;">call</span>
+          {{ paciente.telefono }}
+        </td>
+        <td class="col-actions">
+          <div class="actions-wrapper">
+            <button class="btn-action btn-editar" (click)="editar(paciente.id!)">
+              <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">edit</span>
+            </button>
+            <button class="btn-action btn-eliminar" (click)="eliminar(paciente.id!)">
+              <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">delete</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="pacientes.length === 0">
+        <td colspan="5" class="no-data">No hay pacientes registrados.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
