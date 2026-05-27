@@ -29,7 +29,7 @@ public class AuthController {
         String username = credenciales.get("username");
         String password = credenciales.get("password");
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
+        Usuario usuario = usuarioRepository.findByUsernameOrGmail(username, username) //busca usuarioo o correo
                 .orElse(null);
 
         // Validamos usuario y contraseña encriptada
