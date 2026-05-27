@@ -22,6 +22,11 @@ public class OdontologoController {
         return ResponseEntity.ok(odontologoService.obtenerTodos());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Odontologo> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(odontologoService.obtenerPorId(id));
+    }
+
     @GetMapping("/especialidad/{especialidad}")
     public ResponseEntity<List<Odontologo>> listarPorEspecialidad(@PathVariable Especialidad especialidad) {
         return ResponseEntity.ok(odontologoService.obtenerPorEspecialidad(especialidad));

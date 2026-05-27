@@ -13,12 +13,10 @@ public class OdontologoService {
     @Autowired
     private OdontologoRepository odontologoRepository;
 
-    //Adregar nuevo odonto
     public Odontologo guardarOdontologo(Odontologo odontologo){
         return odontologoRepository.save(odontologo);
     }
 
-    //editar info del odontologo
     public Odontologo actualizarOdontologo (Long id, Odontologo datoNuevo){
         Odontologo existente = odontologoRepository.findById(id).orElseThrow(()-> new RuntimeException("Odontologo no encontrado"));
 
@@ -30,17 +28,19 @@ public class OdontologoService {
         return odontologoRepository.save(existente);
     }
 
-    //despedir a un odontologo (eliminarlo)
     public void eliminarOdontolodo(Long id){
         odontologoRepository.deleteById(id);
     }
 
-    //ver todos los odontologos que tenemos
     public List<Odontologo> obtenerTodos(){
         return odontologoRepository.findAll();
     }
 
-    //ver odontologos por especialidad
+    public Odontologo obtenerPorId(Long id) {
+        return odontologoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Odontólogo no encontrado"));
+    }
+
     public List<Odontologo> obtenerPorEspecialidad(Especialidad especialidad){
         return odontologoRepository.findByEspecialidad(especialidad);
     }

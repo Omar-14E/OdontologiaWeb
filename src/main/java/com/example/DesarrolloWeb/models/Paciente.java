@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,4 +37,12 @@ public class Paciente {
 
     @OneToOne
     private Usuario usuario;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "paciente")
+    private List<Cita> citas;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "paciente")
+    private List<Odontograma> odontogramas;
 }

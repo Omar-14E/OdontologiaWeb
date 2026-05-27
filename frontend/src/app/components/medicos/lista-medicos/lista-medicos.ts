@@ -12,7 +12,7 @@ import { Odontologo } from '../../../models/odontologo';
   templateUrl: './lista-medicos.html',
   styleUrl: './lista-medicos.css'
 })
-export class ListaMedicos implements OnInit {
+export class ListaMedicosComponent implements OnInit {
   medicos: Odontologo[] = [];
 
   // 2. Inyectamos el Router aquí en el constructor, junto a tu servicio
@@ -29,6 +29,10 @@ export class ListaMedicos implements OnInit {
     this.odontologoService.getOdontologos().subscribe(datos => {
       this.medicos = datos;
     });
+  }
+
+  editar(id: number) {
+      this.router.navigate(['/medicos/editar', id]);
   }
 
   eliminar(id: number) {

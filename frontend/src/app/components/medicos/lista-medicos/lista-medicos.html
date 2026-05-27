@@ -4,8 +4,8 @@
       <h2>Personal Médico</h2>
       <p>Gestiona, registra y edita el equipo de odontólogos de la clínica.</p>
     </div>
-    <button class="btn-nuevo" routerLink="/medicos/nuevo">
-      <span class="icon">+</span> Registrar Médico
+    <button class="btn-nuevo" (click)="irNuevoMedico()">
+      <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 20px;">add_circle</span> Registrar Médico
     </button>
   </div>
 
@@ -34,11 +34,18 @@
               {{ medico.especialidad }}
             </span>
         </td>
-        <td class="col-phone">📞 {{ medico.telefono }}</td>
+        <td class="col-phone">
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px; margin-right: 4px; color: #555;">call</span>
+          {{ medico.telefono }}
+        </td>
         <td class="col-actions">
           <div class="actions-wrapper">
-            <button class="btn-action btn-editar">Editar</button>
-            <button class="btn-action btn-eliminar" (click)="eliminar(medico.id!)">Eliminar</button>
+            <button class="btn-action btn-editar" (click)="editar(medico.id!)">
+              <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle; margin-right: 2px;">edit</span> Editar
+            </button>
+            <button class="btn-action btn-eliminar" (click)="eliminar(medico.id!)">
+              <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle; margin-right: 2px;">delete</span> Eliminar
+            </button>
           </div>
         </td>
       </tr>

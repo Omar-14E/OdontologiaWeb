@@ -1,8 +1,11 @@
 <div class="form-wrapper">
   <div class="form-card">
+
     <div class="form-header">
-      <span class="icon-back" routerLink="/medicos">⬅ Volver</span>
-      <h2>Añadir Especialista</h2>
+      <span class="icon-back" routerLink="/medicos" style="display: flex; align-items: center; cursor: pointer; color: #666; font-weight: 500;">
+        <span class="material-symbols-outlined" style="margin-right: 4px; font-size: 20px;">arrow_back</span> Volver
+      </span>
+      <h2>{{ tituloPantalla }}</h2>
       <p>Ingresa la información requerida para dar de alta al odontólogo.</p>
     </div>
 
@@ -12,7 +15,7 @@
           <label>Nombre del Médico</label>
           <input type="text" formControlName="nombre" placeholder="Ej. Juan Alberto">
           <div class="error-msg" *ngIf="medicoForm.get('nombre')?.invalid && medicoForm.get('nombre')?.touched">
-            ⚠ El nombre es obligatorio (solo letras).
+            <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> El nombre es obligatorio (solo letras).
           </div>
         </div>
 
@@ -20,7 +23,7 @@
           <label>Apellidos</label>
           <input type="text" formControlName="apellido" placeholder="Ej. Perez Torres">
           <div class="error-msg" *ngIf="medicoForm.get('apellido')?.invalid && medicoForm.get('apellido')?.touched">
-            ⚠ El apellido es obligatorio (solo letras).
+            <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> El apellido es obligatorio (solo letras).
           </div>
         </div>
       </div>
@@ -32,7 +35,7 @@
           <input type="text" formControlName="telefono" placeholder="987 654 321">
         </div>
         <div class="error-msg" *ngIf="medicoForm.get('telefono')?.invalid && medicoForm.get('telefono')?.touched">
-          ⚠ Debe ser un número peruano válido (9 dígitos y empezar con 9).
+          <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">warning</span> Debe ser un número peruano válido (9 dígitos y empezar con 9).
         </div>
       </div>
 
