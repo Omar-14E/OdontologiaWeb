@@ -1,15 +1,19 @@
 package com.example.DesarrolloWeb.models;
 
-import com.example.DesarrolloWeb.enums.EstadoCIta;
+import com.example.DesarrolloWeb.enums.EstadoCita;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Cita {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +25,7 @@ public class Cita {
 
     @NotNull(message = "El estado de la cita es obligatorio")
     @Enumerated(EnumType.STRING)
-    private EstadoCIta estado; // "PENDIENTE", "ATENDIDA" , Cancelada
+    private EstadoCita estado;
 
     @NotNull(message = "La cita debe tener un paciente asignado")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,5 +36,4 @@ public class Cita {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "odontologo_id")
     private Odontologo odontologo;
-
 }

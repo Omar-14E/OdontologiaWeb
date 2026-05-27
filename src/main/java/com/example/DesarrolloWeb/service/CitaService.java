@@ -1,12 +1,14 @@
 package com.example.DesarrolloWeb.service;
 
-import com.example.DesarrolloWeb.enums.EstadoCIta;
+import com.example.DesarrolloWeb.enums.EstadoCita;
 import com.example.DesarrolloWeb.models.Cita;
 import com.example.DesarrolloWeb.models.TurnoOdontologo;
 import com.example.DesarrolloWeb.repository.CitaRepository;
 import com.example.DesarrolloWeb.repository.TurnoOdontologoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,13 +24,15 @@ public class CitaService {
     @Autowired
     private TurnoOdontologoRepository turnoRepository;
 
-    // 1. CREAR CITA
+    // CREAR CITA
+    @Transactional
     public Cita crearCita(Cita nuevaCita) {
         validarDisponibilidad(nuevaCita); // Llamamos al método ayudante
         return citaRepository.save(nuevaCita);
     }
 
-    // 2. EDITAR CITA
+    // EDITAR CITA
+    @Transactional
     public Cita editarCita(Long id, Cita datosActualizados) {
         Cita citaExistente = citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
@@ -49,22 +53,23 @@ public class CitaService {
         return citaRepository.save(citaExistente);
     }
 
-    // 3. ELIMINAR CITA
+    // ELIMINAR CITA
+    @Transactional
     public void eliminarCita(Long id) {
         citaRepository.deleteById(id);
     }
 
-    // 4. VER CITAS POR PACIENTE
+    // VER CITAS POR PACIENTE
     public List<Cita> obtenerCitasPorPaciente(Long pacienteId) {
         return citaRepository.findByPacienteId(pacienteId);
     }
 
-    // 5. VER CITAS POR ODONTÓLOGO
+    // VER CITAS POR ODONTÓLOGO
     public List<Cita> obtenerCitasPorOdontologo(Long odontologoId) {
         return citaRepository.findByOdontologoId(odontologoId);
     }
 
-    // 6. VER CITAS DE UN DÍA ESPECÍFICO
+    // VER CITAS DE UN DÍA ESPECÍFICO
     public List<Cita> obtenerCitasPorDia(LocalDate fecha) {
         // Como la base de datos guarda Fecha y Hora, buscamos desde las 00:00 hasta las 23:59 de ese día
         LocalDateTime inicioDelDia = fecha.atStartOfDay();
@@ -73,9 +78,7 @@ public class CitaService {
         return citaRepository.findByFechaHoraBetween(inicioDelDia, finDelDia);
     }
 
-    // ==========================================
     // MÉTODO PRIVADO AYUDANTE (Reutilizable)
-    // ==========================================
     private void validarDisponibilidad(Cita cita) {
         LocalDate fechaSolicitada = cita.getFechaHora().toLocalDate();
         LocalTime horaSolicitada = cita.getFechaHora().toLocalTime();
@@ -99,7 +102,7 @@ public class CitaService {
             throw new RuntimeException("La hora seleccionada está fuera del horario de atención del doctor.");
         }
 
-        boolean doctorOcupado = citaRepository.existsByOdontologoIdAndFechaHoraAndEstado(idDoctor, cita.getFechaHora(), EstadoCIta.PENDIENTE);
+        boolean doctorOcupado = citaRepository.existsByOdontologoIdAndFechaHoraAndEstado(idDoctor, cita.getFechaHora(), EstadoCita.PENDIENTE);
 
         if (doctorOcupado) {
             throw new RuntimeException("El doctor ya tiene una cita reservada en ese horario exacto.");

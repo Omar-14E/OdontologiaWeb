@@ -17,12 +17,12 @@ public class CitaController {
 
     @PostMapping("/agendar")
     public ResponseEntity<Cita> agendar(@RequestBody Cita cita) {
-        Cita citaGuardada = citaService.agendarCita(cita);
+        Cita citaGuardada = citaService.crearCita(cita);
         return ResponseEntity.ok(citaGuardada);
     }
 
     @GetMapping("/odontologo/{id}")
     public ResponseEntity<List<Cita>> verAgenda(@PathVariable Long id) {
-        return ResponseEntity.ok(citaService.obtenerCitasDelOdontologo(id));
+        return ResponseEntity.ok(citaService.obtenerCitasPorOdontologo(id));
     }
 }
