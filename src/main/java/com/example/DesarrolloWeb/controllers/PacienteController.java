@@ -15,13 +15,13 @@ public class PacienteController {
     @Autowired
     private PacienteService pacienteService;
 
-    @GetMapping
-    public ResponseEntity<List<Paciente>> listarPacientes() {
-        return ResponseEntity.ok(pacienteService.obtenerTodos());
-    }
+    //@GetMapping
+    //public ResponseEntity<List<Paciente>> listarPacientes() {
+        //return ResponseEntity.ok(pacienteService.obtenerTodos());
+    //}
 
-    @PostMapping("/registrar")
-    public ResponseEntity<Paciente> registrarPaciente(@RequestBody Paciente paciente) {
-        return ResponseEntity.ok(pacienteService.guardarPaciente(paciente));
-    }
+    //@PostMapping("/registrar")
+    //public ResponseEntity<Paciente> registrarPaciente(@RequestBody Paciente paciente) {
+        //return ResponseEntity.ok(pacienteService.guardarPaciente(paciente));
+    //}
 }

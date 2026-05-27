@@ -1,6 +1,9 @@
 package com.example.DesarrolloWeb.models;
 
+import com.example.DesarrolloWeb.enums.EstadoCIta;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,12 +14,23 @@ public class Cita {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime fechaHora;
-    private String estado; // "PENDIENTE", "ATENDIDA"
 
-    @ManyToOne
+    @NotNull(message = "La fecha y hora de la cita son obligatorias")
+    @FutureOrPresent(message = "No puedes programar una cita en el pasado")
+    private LocalDateTime fechaHora;
+
+    @NotNull(message = "El estado de la cita es obligatorio")
+    @Enumerated(EnumType.STRING)
+    private EstadoCIta estado; // "PENDIENTE", "ATENDIDA" , Cancelada
+
+    @NotNull(message = "La cita debe tener un paciente asignado")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paciente_id")
     private Paciente paciente;
 
-    @ManyToOne
-    private Usuario odontologo;
+    @NotNull(message = "La cita debe tener un odontólogo asignado")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "odontologo_id")
+    private Odontologo odontologo;
+
 }
