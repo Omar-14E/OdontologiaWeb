@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../../services/auth'; // Asegúrate de la ruta correcta
+import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-navbar',
@@ -10,13 +10,20 @@ import { AuthService } from '../../../services/auth'; // Asegúrate de la ruta c
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
+  // Creamos una variable normal en lugar de un 'get'
+  usuarioRol: string | null = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
-  // Lee el rol real directamente del localStorage a través del servicio
-  get usuarioRol(): string {
-    return this.authService.rol;
+  ngOnInit(): void {
+    // Solo leemos el rol si estamos en el navegador, para no romper el Servidor (SSR)
+    if (isPlatformBrowser(this.platformId)) {
+      this.usuarioRol = this.authService.rol;
+    }
   }
 
   cerrarSesion() {

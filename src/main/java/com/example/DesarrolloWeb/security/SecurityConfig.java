@@ -23,11 +23,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configure(http)) // Mantiene tu configuración de CORS para Angular
+                .cors(cors -> cors.configure(http))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll() // Login público
-                        .requestMatchers("/api/odontologos/**").hasRole("ADMIN") // Solo Admin maneja doctores
+                        .requestMatchers("/api/auth/login").permitAll()
+
+                        // ¡AGREGA ESTA LÍNEA AQUÍ!
+                        // Permite al Odontólogo acceder a sus propios datos
+                        .requestMatchers("/api/mi-perfil/**").hasRole("ODONTOLOGO")
+
+                        .requestMatchers("/api/odontologos/**").hasRole("ADMIN")
                         .requestMatchers("/api/pacientes/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
