@@ -1,0 +1,51 @@
+<div class="medicos-container">
+  <div class="table-header-section">
+    <div>
+      <h2>Personal Médico</h2>
+      <p>Gestiona, registra y edita el equipo de odontólogos de la clínica.</p>
+    </div>
+    <button class="btn-nuevo" routerLink="/medicos/nuevo">
+      <span class="icon">+</span> Registrar Médico
+    </button>
+  </div>
+
+  <div class="card-table-wrapper">
+    <table class="tabla-premium">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Especialista</th>
+        <th>Especialidad</th>
+        <th>Contacto</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let medico of medicos">
+        <td class="col-id">#{{ medico.id }}</td>
+        <td class="col-name">
+          <div class="avatar-mini">Dr</div>
+          <div class="name-container">
+            <span class="full-name">{{ medico.nombre }} {{ medico.apellido }}</span>
+          </div>
+        </td>
+        <td>
+            <span class="badge" [ngClass]="medico.especialidad.toLowerCase()">
+              {{ medico.especialidad }}
+            </span>
+        </td>
+        <td class="col-phone">📞 {{ medico.telefono }}</td>
+        <td class="col-actions">
+          <div class="actions-wrapper">
+            <button class="btn-action btn-editar">Editar</button>
+            <button class="btn-action btn-eliminar" (click)="eliminar(medico.id!)">Eliminar</button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="medicos.length === 0">
+        <td colspan="5" class="no-data">No hay médicos registrados en el sistema.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
