@@ -2,18 +2,21 @@ package com.example.DesarrolloWeb.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class JwtUtil {
-    // Clave secreta segura para firmar los tokens
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    // 👇 Usamos una clave secreta estática (fija). Debe tener al menos 32 caracteres.
+    private final String SECRET = "EstaEsUnaClaveSecretaMuySeguraParaOdontologiaWeb123456";
+    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+
     private final long expirationTime = 86400000; // 24 horas en milisegundos
 
     public String generarToken(String username, String rol) {

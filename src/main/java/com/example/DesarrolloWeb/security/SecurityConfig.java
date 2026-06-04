@@ -28,12 +28,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
 
-                        // ¡AGREGA ESTA LÍNEA AQUÍ!
-                        // Permite al Odontólogo acceder a sus propios datos
                         .requestMatchers("/api/mi-perfil/**").hasRole("ODONTOLOGO")
 
                         .requestMatchers("/api/odontologos/**").hasRole("ADMIN")
-                        .requestMatchers("/api/pacientes/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/pacientes/**").hasAnyRole("ADMIN", "ODONTOLOGO")
+
                         .anyRequest().authenticated()
                 );
 
@@ -43,7 +43,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Para encriptar contraseñas en Base de Datos
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

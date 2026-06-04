@@ -50,4 +50,12 @@ public class PacienteService {
         return pacienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
     }
+
+    // Eliminar paciente
+    public void eliminarPaciente(Long id) {
+        if (!pacienteRepository.existsById(id)) {
+            throw new RuntimeException("Paciente no encontrado para eliminar");
+        }
+        pacienteRepository.deleteById(id);
+    }
 }

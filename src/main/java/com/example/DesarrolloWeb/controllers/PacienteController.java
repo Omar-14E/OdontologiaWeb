@@ -24,4 +24,23 @@ public class PacienteController {
     public ResponseEntity<Paciente> registrarPaciente(@RequestBody Paciente paciente) {
         return ResponseEntity.ok(pacienteService.agregarPaciente(paciente));
     }
+
+    // 👇 Métodos corregidos usando los nombres exactos de tu PacienteService 👇
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Paciente> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(pacienteService.obtenerPacientePorId(id));
+    }
+
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<Paciente> actualizar(@PathVariable Long id, @RequestBody Paciente datoNuevo) {
+        return ResponseEntity.ok(pacienteService.editarPaciente(id, datoNuevo));
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        pacienteService.eliminarPaciente(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

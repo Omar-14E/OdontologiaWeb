@@ -37,7 +37,6 @@ public class CitaService {
         Cita citaExistente = citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
-        // Si se cambió la fecha, la hora o el doctor, VOLVEMOS a validar
         if (!citaExistente.getFechaHora().equals(datosActualizados.getFechaHora()) ||
                 !citaExistente.getOdontologo().getId().equals(datosActualizados.getOdontologo().getId())) {
 
@@ -47,7 +46,6 @@ public class CitaService {
             citaExistente.setOdontologo(datosActualizados.getOdontologo());
         }
 
-        // Actualizamos el estado (Ej: pasó a CANCELADA o ATENDIDA)
         citaExistente.setEstado(datosActualizados.getEstado());
 
         return citaRepository.save(citaExistente);
@@ -69,7 +67,6 @@ public class CitaService {
         return citaRepository.findByOdontologoId(odontologoId);
     }
 
-    // VER CITAS DE UN DÍA ESPECÍFICO
     public List<Cita> obtenerCitasPorDia(LocalDate fecha) {
         // Como la base de datos guarda Fecha y Hora, buscamos desde las 00:00 hasta las 23:59 de ese día
         LocalDateTime inicioDelDia = fecha.atStartOfDay();
@@ -78,7 +75,6 @@ public class CitaService {
         return citaRepository.findByFechaHoraBetween(inicioDelDia, finDelDia);
     }
 
-    // MÉTODO PRIVADO AYUDANTE (Reutilizable)
     private void validarDisponibilidad(Cita cita) {
         LocalDate fechaSolicitada = cita.getFechaHora().toLocalDate();
         LocalTime horaSolicitada = cita.getFechaHora().toLocalTime();
@@ -86,20 +82,19 @@ public class CitaService {
 
         List<TurnoOdontologo> turnosDelDia = turnoRepository.findByOdontologoIdAndFecha(idDoctor, fechaSolicitada);
 
-        if (turnosDelDia.isEmpty()) {
-            throw new RuntimeException("El odontólogo no trabaja en la fecha seleccionada.");
-        }
-
-        boolean horaValida = false;
-        for (TurnoOdontologo turno : turnosDelDia) {
-            if (!horaSolicitada.isBefore(turno.getHoraInicio()) && horaSolicitada.isBefore(turno.getHoraFin())) {
-                horaValida = true;
-                break;
+        if (!turnosDelDia.isEmpty()) {
+            boolean horaValida = false;
+            for (TurnoOdontologo turno : turnosDelDia) {
+                // Usamos !isBefore y !isAfter para incluir los extremos (inicio y fin)
+                if (!horaSolicitada.isBefore(turno.getHoraInicio()) && !horaSolicitada.isAfter(turno.getHoraFin())) {
+                    horaValida = true;
+                    break;
+                }
             }
-        }
 
-        if (!horaValida) {
-            throw new RuntimeException("La hora seleccionada está fuera del horario de atención del doctor.");
+            if (!horaValida) {
+                throw new RuntimeException("La hora seleccionada (" + horaSolicitada + ") está fuera del horario de atención.");
+            }
         }
 
         boolean doctorOcupado = citaRepository.existsByOdontologoIdAndFechaHoraAndEstado(idDoctor, cita.getFechaHora(), EstadoCita.PENDIENTE);
@@ -107,5 +102,14 @@ public class CitaService {
         if (doctorOcupado) {
             throw new RuntimeException("El doctor ya tiene una cita reservada en ese horario exacto.");
         }
+    }
+
+    public List<Cita> obtenerTodasLasCitas() {
+        return citaRepository.findAll();
+    }
+
+    public Cita obtenerCitaPorId(Long id) {
+        return citaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
     }
 }
