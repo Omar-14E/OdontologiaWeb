@@ -35,20 +35,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
-<<<<<<< HEAD
-
-                        .requestMatchers("/api/mi-perfil/**").hasRole("ODONTOLOGO")
-
-                        .requestMatchers("/api/odontologos/**").hasRole("ADMIN")
-
-                        .requestMatchers("/api/pacientes/**").hasAnyRole("ADMIN", "ODONTOLOGO")
-
-=======
+                        
                         .requestMatchers("/api/mi-perfil/**").hasRole("ODONTOLOGO")
                         .requestMatchers("/api/odontologos/**").hasAnyRole("ADMIN", "ODONTOLOGO")
                         .requestMatchers("/api/pacientes/**").hasAnyRole("ADMIN", "ODONTOLOGO")
                         .requestMatchers("/api/citas/**").authenticated()
->>>>>>> 3ff22dedcd14ab339cefa793cb56ffe20c72b3a1
+                        
                         .anyRequest().authenticated()
                 );
 

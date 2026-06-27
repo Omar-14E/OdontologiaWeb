@@ -75,15 +75,12 @@ public class CitaService {
         return citaRepository.findByFechaHoraBetween(inicioDelDia, finDelDia);
     }
 
-<<<<<<< HEAD
-=======
     //VER TODAS LAS CITAS
     public List<Cita> obtenerTodas() {
         return citaRepository.findAll();
     }
 
     // MÉTODO PRIVADO AYUDANTE (Reutilizable)
->>>>>>> 3ff22dedcd14ab339cefa793cb56ffe20c72b3a1
     private void validarDisponibilidad(Cita cita) {
 
         /* ======================================================================
