@@ -2,6 +2,7 @@ package com.example.DesarrolloWeb.models;
 
 import com.example.DesarrolloWeb.enums.Rol;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty; // <- Import nuevo agregado
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +26,7 @@ public class Usuario {
     @Column(nullable = false)
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres para ser segura")
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // <- Esta es la magia para la seguridad
     private String password;
 
     @NotBlank(message = "El correo electrónico es obligatorio")
