@@ -4,8 +4,8 @@
       <h2 class="greeting">Bienvenido, {{ username || 'Administrador' }}</h2>
       <p class="subtitle">Panel de control y resumen general de la clínica</p>
       <button (click)="loginDePrueba()" *ngIf="!username" class="btn btn-primary" style="margin-top: 1rem;">
-      🔑 Simular Login de Admin
-    </button>
+        🔑 Simular Login de Admin
+      </button>
     </div>
   </header>
 
@@ -16,7 +16,7 @@
       </div>
       <div class="card-data">
         <span class="label">Pacientes</span>
-        <span class="value">{{ metricas.totalPacientes || 0 }}</span>
+        <span class="value">{{ metricas().totalPacientes || 0 }}</span>
       </div>
     </div>
 
@@ -26,7 +26,7 @@
       </div>
       <div class="card-data">
         <span class="label">Odontólogos</span>
-        <span class="value">{{ metricas.totalOdontologos || 0 }}</span>
+        <span class="value">{{ metricas().totalOdontologos || 0 }}</span>
       </div>
     </div>
 
@@ -36,7 +36,7 @@
       </div>
       <div class="card-data">
         <span class="label">Citas Totales</span>
-        <span class="value">{{ metricas.totalCitas || 0 }}</span>
+        <span class="value">{{ metricas().totalCitas || 0 }}</span>
       </div>
     </div>
 
@@ -46,7 +46,7 @@
       </div>
       <div class="card-data">
         <span class="label">Citas del Día</span>
-        <span class="value highlight-text">{{ metricas.citasDelDia || 0 }}</span>
+        <span class="value highlight-text">{{ metricas().citasDelDia || 0 }}</span>
       </div>
     </div>
   </div>

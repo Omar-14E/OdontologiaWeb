@@ -84,4 +84,9 @@ public class OdontologoService {
     public List<Odontologo> obtenerPorEspecialidad(Especialidad especialidad){
         return odontologoRepository.findByEspecialidad(especialidad);
     }
+
+    public Odontologo obtenerPorUsername(String username) {
+        return odontologoRepository.findByUsuarioUsername(username)
+                .orElseThrow(() -> new RuntimeException("Odontólogo no encontrado para el usuario: " + username));
+    }
 }

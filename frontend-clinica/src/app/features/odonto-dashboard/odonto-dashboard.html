@@ -1,0 +1,65 @@
+<div class="dashboard-wrapper">
+  <header class="dash-header">
+    <div class="header-info">
+      <h2 class="greeting">Bienvenido, Dr. {{ metricas().nombre ? (metricas().nombre + ' ' + metricas().apellido) : 'Doctor' }}</h2>
+      <p class="subtitle">Resumen de tus pacientes asignados y agenda para el día de hoy.</p>
+    </div>
+  </header>
+
+  <div class="metrics-grid">
+    
+    <div class="metric-card">
+      <div class="card-icon patient-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div class="card-data">
+        <span class="label">Mis Pacientes a Cargo</span>
+        <span class="value">{{ metricas().pacientesACargo }}</span>
+      </div>
+    </div>
+
+    <div class="metric-card highlight">
+      <div class="card-icon active-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <div class="card-data">
+        <span class="label">Mis Citas de Hoy</span>
+        <span class="value highlight-text">{{ metricas().citasDelDia }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="quick-actions-section">
+    <h3 class="section-title">Mi Agenda y Herramientas</h3>
+    <div class="action-buttons">
+      
+      <button routerLink="/odonAgenda" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        Ver Mi Agenda de Citas
+      </button>
+
+      <button routerLink="/pacientes" class="btn btn-outline">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+        </svg>
+        Expedientes de Pacientes
+      </button>
+
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core'; // 👈 Importamos signal
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -11,15 +11,15 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./citas.css']
 })
 export class CitasComponent implements OnInit {
-  citas: any[] = [];
-  pacientes: any[] = [];
-  odontologos: any[] = [];
+  // 👈 Convertimos los arreglos en Signals
+  citas = signal<any[]>([]);
+  pacientes = signal<any[]>([]);
+  odontologos = signal<any[]>([]);
   
   citaForm: FormGroup;
   modoEdicion = false;
   citaIdEditando: number | null = null;
   
-  // Variable para bloquear fechas pasadas en el calendario HTML
   minDate: string = '';
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
@@ -39,26 +39,25 @@ export class CitasComponent implements OnInit {
 
   configurarFechaMinima() {
     const ahora = new Date();
-    // Ajustamos la zona horaria para que cuadre exactamente con tu hora local
     ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
-    // Formateamos a YYYY-MM-DDThh:mm para el input datetime-local
     this.minDate = ahora.toISOString().slice(0, 16);
   }
 
   cargarListas() {
-    this.http.get<any[]>('http://localhost:8080/api/pacientes').subscribe(res => this.pacientes = res);
-    this.http.get<any[]>('http://localhost:8080/api/odontologos').subscribe(res => this.odontologos = res);
+    // 👈 Usamos .set() para actualizar las signals
+    this.http.get<any[]>('http://localhost:8080/api/pacientes').subscribe(res => this.pacientes.set(res));
+    this.http.get<any[]>('http://localhost:8080/api/odontologos').subscribe(res => this.odontologos.set(res));
   }
 
   cargarCitas() {
-    this.http.get<any[]>('http://localhost:8080/api/citas').subscribe(res => this.citas = res);
+    // 👈 Usamos .set() para actualizar las signals
+    this.http.get<any[]>('http://localhost:8080/api/citas').subscribe(res => this.citas.set(res));
   }
 
   guardarCita() {
     if (this.citaForm.invalid) return;
 
     if (this.modoEdicion && this.citaIdEditando) {
-      // ACTUALIZAR CITA
       this.http.put(`http://localhost:8080/api/citas/actualizar/${this.citaIdEditando}`, this.citaForm.value)
         .subscribe({
           next: () => {
@@ -69,7 +68,6 @@ export class CitasComponent implements OnInit {
           error: (err) => alert(err.error?.error || 'Error al actualizar cita')
         });
     } else {
-      // REGISTRAR NUEVA CITA
       this.http.post('http://localhost:8080/api/citas/registrar', this.citaForm.value)
         .subscribe({
           next: () => {
@@ -86,7 +84,6 @@ export class CitasComponent implements OnInit {
     this.modoEdicion = true;
     this.citaIdEditando = cita.id;
     
-    // Rellenamos el formulario con los datos de la cita seleccionada
     this.citaForm.patchValue({
       fechaHora: cita.fechaHora,
       estado: cita.estado,

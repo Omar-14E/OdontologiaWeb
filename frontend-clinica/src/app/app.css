@@ -1,0 +1,13 @@
+/* 🛠️ Obligamos al navegador a tratar el contenedor del Navbar como bloque de ancho completo */
+app-navbar {
+  display: block !important;
+  width: 100% !important;
+  height: 65px !important;
+  position: relative;
+  z-index: 9999;
+}
+
+/* Modificamos el router-outlet para que herede el flujo normal de la app */
+router-outlet {
+  display: block;
+}

@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core'; // 👈 Importamos signal
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-// 👇 Importa el servicio de autenticación
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService } from '../auth/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,14 +12,20 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrls: ['./dashboard.css']
 })
 export class DashboardComponent implements OnInit {
-  metricas: any = {};
+  
+  // 👈 Convertimos metricas en una Signal con un estado inicial seguro
+  metricas = signal<any>({
+    totalPacientes: 0,
+    totalOdontologos: 0,
+    totalCitas: 0,
+    citasDelDia: 0
+  });
+
   username: string | null = localStorage.getItem('username');
 
-  // 👇 Inyecta el AuthService en el constructor
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit(): void {
-    // Si hay token, cargamos los datos
     if (this.authService.getToken()) {
       this.cargarMetricas();
     }
@@ -28,21 +33,21 @@ export class DashboardComponent implements OnInit {
 
   cargarMetricas() {
     this.http.get('http://localhost:8080/api/dashboard').subscribe({
-      next: (data) => this.metricas = data,
+      // 👈 Actualizamos la signal usando .set()
+      next: (data) => this.metricas.set(data),
       error: (err) => console.error('Error cargando dashboard', err)
     });
   }
 
-  // 👇 MÉTODO TEMPORAL PARA SIMULAR EL LOGIN
   loginDePrueba() {
-    const credencialesAdmin = { username: 'admin', password: 'admin1234' }; // Credenciales de tu DataSeeder
+    const credencialesAdmin = { username: 'admin', password: 'admin1234' };
     
     this.authService.login(credencialesAdmin).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         alert('✅ Login simulado con éxito. Ya tenemos Token JWT.');
-        window.location.reload(); // Recargamos para que todo funcione
+        window.location.reload();
       },
-      error: (err) => alert('❌ Error: ¿Está encendido Spring Boot en el puerto 8080?')
+      error: (err: any ) => alert('❌ Error: ¿Está encendido Spring Boot en el puerto 8080?')
     });
   }
 }

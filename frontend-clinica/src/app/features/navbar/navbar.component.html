@@ -1,0 +1,52 @@
+<nav class="navbar">
+  <button class="btn-menu-trigger" (click)="toggleMenu()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <div class="nav-brand">
+    <a [routerLink]="usuarioRol() === 'ODONTOLOGO' ? '/odonDashboard' : '/dashboard'" class="logo-link">
+      <span class="logo-text">DenSalud</span>
+    </a>
+  </div>
+</nav>
+
+<div class="sidebar-backdrop" *ngIf="menuAbierto()" (click)="toggleMenu()"></div>
+
+<div class="sidebar-menu" [class.sidebar-open]="menuAbierto()">
+  <div class="sidebar-header">
+    <span class="rol-badge">{{ usuarioRol() }}</span>
+    <button class="btn-close-sidebar" (click)="toggleMenu()">×</button>
+  </div>
+  
+  <hr class="sidebar-divider">
+
+  
+  <div class="sidebar-links">
+    <ng-container *ngIf="usuarioRol() === 'ODONTOLOGO'">
+      <a routerLink="/odonDashboard" (click)="toggleMenu()" class="sidebar-item">Inicio</a>
+      <a routerLink="/odonAgenda" (click)="toggleMenu()" class="sidebar-item">Citas Programadas</a>
+      <a routerLink="/pacientes" (click)="toggleMenu()" class="sidebar-item">Registro de Pacientes</a>
+      <a routerLink="/pacientes" (click)="toggleMenu()" class="sidebar-item">Mi Horario</a>
+    </ng-container>
+
+    <ng-container *ngIf="usuarioRol() === 'ADMIN'">
+      <a routerLink="/dashboard" (click)="toggleMenu()" class="sidebar-item">Inicio</a>
+      <a routerLink="/citas" (click)="toggleMenu()" class="sidebar-item">Agendar Cita</a>
+      <a routerLink="/RegistroCitas" (click)="toggleMenu()" class="sidebar-item">Historial de Citas</a>
+      <a routerLink="/RegistroCitas" (click)="toggleMenu()" class="sidebar-item">Gestion de Pacientes</a>
+      <a routerLink="/RegistroCitas" (click)="toggleMenu()" class="sidebar-item">Gestion de Médicos</a>
+      <a routerLink="/RegistroCitas" (click)="toggleMenu()" class="sidebar-item">Asignación de Turnos</a>
+    </ng-container>
+  </div>
+
+  <div class="sidebar-footer">
+    <hr class="sidebar-divider">
+    <button (click)="ejecutarLogout()" class="sidebar-item logout-btn">
+       Cerrar Sesión 
+    </button>
+  </div>
+</div>
