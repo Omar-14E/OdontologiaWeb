@@ -2,6 +2,7 @@ package com.example.DesarrolloWeb.controllers;
 
 import com.example.DesarrolloWeb.dto.DashboardOdontologoDTO;
 import com.example.DesarrolloWeb.dto.AgendaOdontoDTO;
+import com.example.DesarrolloWeb.dto.ConsultaHistorialPacienteDTO;
 import com.example.DesarrolloWeb.models.Cita;
 import com.example.DesarrolloWeb.models.Odontologo;
 import com.example.DesarrolloWeb.models.Paciente;
@@ -97,9 +98,50 @@ public class OdontologoPerfilController {
         return ResponseEntity.ok(agenda);
     }
 
+    // 1. LISTAR PACIENTES ATENDIDOS POR EL ODONTÓLOGO LOGUEADO
+    // 1. LISTAR ABSOLUTAMENTE TODOS LOS PACIENTES QUE TIENEN O TUVIERON CITA CON EL ODONTÓLOGO
     @GetMapping("/pacientes")
     public ResponseEntity<List<Paciente>> getMisPacientes(Principal principal) {
-        List<Paciente> misPacientes = citaRepository.findPacientesByOdontologoUsername(principal.getName());
-        return ResponseEntity.ok(misPacientes);
+        String username = principal.getName();
+        
+        // Obtenemos todas las citas históricas, presentes y futuras de este odontólogo
+        List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
+        
+        // Extraemos los pacientes únicos (distinct) sin importar el estado de la cita
+        List<Paciente> todosMisPacientes = todasMisCitas.stream()
+            .map(Cita::getPaciente)
+            .distinct()
+            .collect(Collectors.toList());
+            
+        return ResponseEntity.ok(todosMisPacientes);
+    }
+
+    // 2. OBTENER EL HISTORIAL COMPLETO DE TODAS LAS CITAS DEL PACIENTE EN CUALQUIER ESTADO
+    @GetMapping("/historial-paciente/{pacienteId}")
+    public ResponseEntity<List<ConsultaHistorialPacienteDTO>> getHistorialPaciente(
+            @PathVariable Long pacienteId, 
+            Principal principal) {
+        
+        String username = principal.getName();
+        
+        // Buscamos todas las consultas del paciente con este odontólogo (trae PENDIENTE, ATENDIDA y CANCELADA)
+        List<Cita> historialCitas = citaRepository.findHistorialClinicoPaciente(pacienteId, username);
+        
+        // Transformamos la lista completa al DTO
+        List<ConsultaHistorialPacienteDTO> historialDTO = historialCitas.stream().map(cita -> {
+            String especialidadMedica = (cita.getOdontologo().getEspecialidad() != null) 
+                ? cita.getOdontologo().getEspecialidad().toString() 
+                : "GENERAL"; // Mantiene el fallback estético que ya usas
+
+            return new ConsultaHistorialPacienteDTO(
+                cita.getId(),
+                cita.getFechaHora(),
+                especialidadMedica,
+                cita.getObservaciones() != null ? cita.getObservaciones() : "Sin observaciones registradas.",
+                cita.getEstado().toString() // Mapeará PENDIENTE, ATENDIDA o CANCELADA de forma dinámica
+            );
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(historialDTO);
     }
 }

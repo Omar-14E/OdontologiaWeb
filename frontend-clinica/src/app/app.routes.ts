@@ -5,6 +5,7 @@ import { CitasComponent } from './features/citas/citas';
 import { LoginComponent } from './features/auth/login/login.component';
 import { OdontoDashboardComponent } from './features/odonto-dashboard/odonto-dashboard';
 import { OdontoAgendaComponent } from './features/odonto-agenda/odonto-agenda';
+import { OdontoPacientesComponent } from './features/odonto-pacientes/odonto-pacientes';
 
 export const routes: Routes = [
   // Dejamos las rutas libres por ahora para probar la UI
@@ -28,6 +29,10 @@ export const routes: Routes = [
   {
     path: 'odonAgenda',
     component: OdontoAgendaComponent
+  },
+  {
+    path: 'odonPacientes',
+    component: OdontoPacientesComponent
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }

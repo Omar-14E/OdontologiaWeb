@@ -1,11 +1,22 @@
 /* ==========================================================================
    ESTILOS GENERALES Y MAQUETACIÓN BASE
    ========================================================================== */
-.agenda-wrapper { padding: 2.5rem; background-color: #f8fafc; min-height: 100vh; font-family: sans-serif; }
-.subtitle { color: #64748b; margin-top: 0.5rem; font-size: 0.95rem; }
+.agenda-wrapper { 
+  padding: 2.5rem; 
+  background-color: #f8fafc; 
+  min-height: 100vh; 
+  font-family: sans-serif; 
+}
+.subtitle { 
+  color: #64748b; 
+  margin-top: 0.5rem; 
+  font-size: 0.95rem; 
+}
 
 /* Cabecera Estructurada (Flexbox) */
-.agenda-header { margin-bottom: 2rem; }
+.agenda-header { 
+  margin-bottom: 2rem; 
+}
 
 .header-main-row {
   display: flex;
@@ -15,7 +26,11 @@
   gap: 1rem;
 }
 
-.header-main-row h2 { margin: 0; font-size: 1.75rem; color: #0f172a; }
+.header-main-row h2 { 
+  margin: 0; 
+  font-size: 1.75rem; 
+  color: #0f172a; 
+}
 
 .btn-back { 
   background: none; 
@@ -27,26 +42,83 @@
   font-size: 0.95rem; 
   margin: 0; 
 }
-.btn-back:hover { color: #0f766e; text-decoration: underline; }
+.btn-back:hover { 
+  color: #0f766e; 
+  text-decoration: underline; 
+}
 
 /* Barra de pestañas */
-.tabs-bar { display: flex; gap: 0.5rem; border-bottom: 2px solid #e2e8f0; margin-bottom: 2rem; }
-.tabs-bar button { padding: 0.85rem 1.5rem; border: none; background: none; font-weight: 600; color: #64748b; cursor: pointer; font-size: 0.95rem; transition: all 0.2s; position: relative; bottom: -2px; }
-.tabs-bar button.active { color: #0d9488; border-bottom: 3px solid #0d9488; font-weight: 700; }
+.tabs-bar { 
+  display: flex; 
+  gap: 0.5rem; 
+  border-bottom: 2px solid #e2e8f0; 
+  margin-bottom: 2rem; 
+}
+.tabs-bar button { 
+  padding: 0.85rem 1.5rem; 
+  border: none; 
+  background: none; 
+  font-weight: 600; 
+  color: #64748b; 
+  cursor: pointer; 
+  font-size: 0.95rem; 
+  transition: all 0.2s; 
+  position: relative; 
+  bottom: -2px; 
+}
+.tabs-bar button.active { 
+  color: #0d9488; 
+  border-bottom: 3px solid #0d9488; 
+  font-weight: 700; 
+}
 
 /* Contenedor Principal */
-.panel-view { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.panel-title { margin-top: 0; margin-bottom: 1.5rem; color: #0f172a; font-size: 1.15rem; font-weight: 600; border-bottom: 1px dashed #e2e8f0; padding-bottom: 0.5rem; }
+.panel-view { 
+  background: #ffffff; 
+  border-radius: 12px; 
+  border: 1px solid #e2e8f0; 
+  padding: 2rem; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+}
+.panel-title { 
+  margin-top: 0; 
+  margin-bottom: 1.5rem; 
+  color: #0f172a; 
+  font-size: 1.15rem; 
+  font-weight: 600; 
+  border-bottom: 1px dashed #e2e8f0; 
+  padding-bottom: 0.5rem; 
+}
 
 /* Badges de Estado Comunes */
-.status-badge { padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; background: #e2e8f0; color: #475569; display: inline-block; }
-.status-badge.status-pendiente { background: #fef3c7; color: #d97706; }
+.status-badge { 
+  padding: 0.25rem 0.5rem; 
+  border-radius: 6px; 
+  font-size: 0.75rem; 
+  font-weight: 700; 
+  background: #e2e8f0; 
+  color: #475569; 
+  display: inline-block; 
+}
+.status-badge.status-pendiente { 
+  background: #fef3c7; 
+  color: #d97706; 
+}
+.status-badge.status-atendida {
+  background-color: #d1fae5;
+  color: #065f46;
+}
 
 /* ==========================================================================
-   ESTILOS FUSIÓN: PANEL DEL DÍA (Dos columnas ordenadas)
+   PANEL DEL DÍA (Dos columnas ordenadas)
    ========================================================================== */
-.dashboard-split { display: flex; gap: 2rem; }
-.split-main { flex: 2; }
+.dashboard-split { 
+  display: flex; 
+  gap: 2rem; 
+}
+.split-main { 
+  flex: 2; 
+}
 
 .split-sidebar { 
   flex: 1; 
@@ -56,34 +128,135 @@
 }
 
 /* Fichas de pacientes (Derecha) */
-.pacientes-list { display: flex; flex-direction: column; gap: 0.75rem; }
-.paciente-mini-card { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; transition: background 0.2s; }
-.paciente-mini-card:hover { background: #f8fafc; }
-.card-avatar { width: 36px; height: 36px; border-radius: 50%; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
-.card-info h4 { margin: 0; color: #0f172a; font-size: 0.9rem; }
-.card-info p { margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.8rem; }
+.pacientes-list { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.75rem; 
+}
+.paciente-mini-card { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.75rem; 
+  padding: 0.75rem; 
+  border: 1px solid #e2e8f0; 
+  border-radius: 8px; 
+  background: #fff; 
+  transition: background 0.2s; 
+}
+.paciente-mini-card:hover { 
+  background: #f8fafc; 
+}
+.card-avatar { 
+  width: 36px; 
+  height: 36px; 
+  border-radius: 50%; 
+  background: #e0f2fe; 
+  color: #0369a1; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-weight: 700; 
+  font-size: 0.85rem; 
+  flex-shrink: 0; 
+}
+.card-info h4 { 
+  margin: 0; 
+  color: #0f172a; 
+  font-size: 0.9rem; 
+}
+.card-info p { 
+  margin: 0.15rem 0 0 0; 
+  color: #64748b; 
+  font-size: 0.8rem; 
+}
 
 /* Tabla compacta (Izquierda) */
-.table-container { overflow-x: auto; }
-.custom-table { width: 100%; border-collapse: collapse; text-align: left; }
-.custom-table th { padding: 0.75rem; color: #64748b; font-weight: 600; border-bottom: 2px solid #e2e8f0; font-size: 0.85rem; }
-.custom-table td { padding: 0.9rem 0.75rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-size: 0.9rem; }
-.time-col { color: #0d9488; }
+.table-container { 
+  overflow-x: auto; 
+}
+.custom-table { 
+  width: 100%; 
+  border-collapse: collapse; 
+  text-align: left; 
+}
+.custom-table th { 
+  padding: 0.75rem; 
+  color: #64748b; 
+  font-weight: 600; 
+  border-bottom: 2px solid #e2e8f0; 
+  font-size: 0.85rem; 
+}
+.custom-table td { 
+  padding: 0.9rem 0.75rem; 
+  border-bottom: 1px solid #f1f5f9; 
+  color: #334155; 
+  font-size: 0.9rem; 
+}
+.time-col { 
+  color: #0d9488; 
+}
+
+/* Interactividad en filas */
+.table-clickable tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.table-clickable tbody tr:hover {
+  background-color: #f1f5f9;
+}
 
 /* ==========================================================================
-   ESTILOS: AGENDA SEMANAL REAL VERTICAL (Alineación Perfecta)
+   AGENDA SEMANAL REAL VERTICAL
    ========================================================================== */
-.weekly-agenda-container { display: flex; flex-direction: column; gap: 0.75rem; background: #f8fafc; padding: 1rem; border-radius: 10px; }
-.agenda-day-row { display: flex; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; min-height: 70px; }
+.weekly-agenda-container { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.75rem; 
+  background: #f8fafc; 
+  padding: 1rem; 
+  border-radius: 10px; 
+}
+.agenda-day-row { 
+  display: flex; 
+  background: #ffffff; 
+  border: 1px solid #e2e8f0; 
+  border-radius: 8px; 
+  overflow: hidden; 
+  min-height: 70px; 
+}
 
-/* Bloque izquierdo del día (Gris / Azul si es hoy) */
-.day-indicator { background: #f1f5f9; width: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid #e2e8f0; padding: 0.5rem; flex-shrink: 0; }
-.day-indicator.is-today { background: #e0f2fe; border-right-color: #bae6fd; }
-.day-indicator.is-today .day-name { color: #0369a1; font-weight: 700; }
-.day-name { font-size: 0.85rem; font-weight: 600; color: #475569; text-transform: uppercase; }
-.day-date { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-top: 0.15rem; }
+.day-indicator { 
+  background: #f1f5f9; 
+  width: 110px; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  border-right: 1px solid #e2e8f0; 
+  padding: 0.5rem; 
+  flex-shrink: 0; 
+}
+.day-indicator.is-today { 
+  background: #e0f2fe; 
+  border-right-color: #bae6fd; 
+}
+.day-indicator.is-today .day-name { 
+  color: #0369a1; 
+  font-weight: 700; 
+}
+.day-name { 
+  font-size: 0.85rem; 
+  font-weight: 600; 
+  color: #475569; 
+  text-transform: uppercase; 
+}
+.day-date { 
+  font-size: 0.95rem; 
+  font-weight: 700; 
+  color: #0f172a; 
+  margin-top: 0.15rem; 
+}
 
-/* Bloque derecho con las cápsulas de citas */
 .day-appointments { 
   flex: 1; 
   padding: 0.75rem 1.25rem; 
@@ -93,7 +266,6 @@
   justify-content: center; 
 }
 
-/* Tarjeta inline de la cita compactada */
 .appointment-inline-card { 
   display: flex; 
   align-items: center; 
@@ -107,7 +279,16 @@
   width: 100%; 
 }
 
-/* Columnas de datos internos con anchos controlados para alineación en red */
+.appt-clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.appt-clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  background-color: #f1f5f9;
+}
+
 .appt-info { 
   display: flex; 
   align-items: center; 
@@ -125,14 +306,175 @@
 .appt-patient { 
   font-weight: 500; 
   color: #1e293b; 
-  width: 250px; /* Ancho idéntico fijo para que las etiquetas inicien parejamente */
+  width: 250px; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; 
   flex-shrink: 0;
 }
 
-/* Textos informativos de estado vacío */
 .no-appointments { font-style: italic; color: #94a3b8; font-size: 0.85rem; }
 .empty-text { color: #94a3b8; text-align: center; padding: 2rem 1rem; font-size: 0.9rem; }
 .empty-text-mini { color: #94a3b8; text-align: center; padding: 1rem 0; font-size: 0.85rem; font-style: italic; }
+
+/* ==========================================================================
+   NUEVOS ESTILOS: DETALLE DE ATENCIÓN CLÍNICA
+   ========================================================================== */
+.split-atencion-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.atencion-subtitle {
+  margin-top: 0;
+  color: #0f172a;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.grid-datos-paciente {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  background-color: #f8fafc;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.dato-item label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.dato-item p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.dato-item .highlight-text {
+  color: #0d9488;
+  font-weight: 700;
+}
+
+.input-instruction {
+  font-size: 0.9rem;
+  color: #475569;
+  margin-bottom: 0.75rem;
+}
+
+.custom-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #334155;
+  resize: vertical;
+  background-color: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.custom-textarea:focus {
+  outline: none;
+  border-color: #0d9488;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.action-buttons-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-guardar {
+  background-color: #0d9488;
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-guardar:hover {
+  background-color: #0f766e;
+}
+
+.btn-cancelar {
+  background-color: #ffffff;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-cancelar:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+/* ==========================================================================
+   ELEMENTOS DE CAMBIO DE ESTADO (MÓDULO MÉDICO)
+   ========================================================================== */
+.action-buttons-row {
+  display: flex;
+  justify-content: space-between; /* Separa el selector a la izquierda y los botones a la derecha */
+  align-items: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.status-selector-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.select-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.custom-select {
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #334155;
+  background-color: #ffffff;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.custom-select:focus {
+  border-color: #0d9488;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.buttons-group {
+  display: flex;
+  gap: 1rem;
+}

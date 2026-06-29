@@ -34,5 +34,9 @@ public interface CitaRepository extends JpaRepository<Cita, Long> {
 
     @Query("SELECT DISTINCT c.paciente FROM Cita c WHERE c.odontologo.usuario.username = :username")
     List<Paciente> findPacientesByOdontologoUsername(@Param("username") String username);
+
+    // Busca el historial clínico de un paciente específico atendido por el odontólogo logueado
+    @Query("SELECT c FROM Cita c WHERE c.paciente.id = :pacienteId AND c.odontologo.usuario.username = :username ORDER BY c.fechaHora DESC")
+    List<Cita> findHistorialClinicoPaciente(@Param("pacienteId") Long pacienteId, @Param("username") String username);
 }
 

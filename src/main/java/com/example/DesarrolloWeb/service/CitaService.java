@@ -27,6 +27,12 @@ public class CitaService {
     // CREAR CITA
     @Transactional
     public Cita crearCita(Cita nuevaCita) {
+
+        // === NUEVA VALIDACIÓN PARA EL ADMINISTRADOR ===
+        if (nuevaCita.getFechaHora() != null && nuevaCita.getFechaHora().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("No puedes programar una cita en el pasado");
+        }
+
         validarDisponibilidad(nuevaCita); // Llamamos al método ayudante
         return citaRepository.save(nuevaCita);
     }
@@ -37,16 +43,28 @@ public class CitaService {
         Cita citaExistente = citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
-        if (!citaExistente.getFechaHora().equals(datosActualizados.getFechaHora()) ||
-                !citaExistente.getOdontologo().getId().equals(datosActualizados.getOdontologo().getId())) {
+        // ¿El Administrador está reprogramando la cita?
+        if ((datosActualizados.getFechaHora() != null && !citaExistente.getFechaHora().equals(datosActualizados.getFechaHora())) ||
+            (datosActualizados.getOdontologo() != null && datosActualizados.getOdontologo().getId() != null && 
+            !citaExistente.getOdontologo().getId().equals(datosActualizados.getOdontologo().getId()))) {
 
-            validarDisponibilidad(datosActualizados); // Validamos los nuevos datos
+            // Si el admin cambia la fecha a una nueva, también validamos que no sea en el pasado
+            if (datosActualizados.getFechaHora().isBefore(LocalDateTime.now())) {
+                throw new RuntimeException("No puedes reprogramar una cita al pasado");
+            }
+
+            validarDisponibilidad(datosActualizados); 
 
             citaExistente.setFechaHora(datosActualizados.getFechaHora());
             citaExistente.setOdontologo(datosActualizados.getOdontologo());
         }
 
-        citaExistente.setEstado(datosActualizados.getEstado());
+        // ¿El Doctor está atendiendo la cita?
+        if (datosActualizados.getEstado() != null) {
+            citaExistente.setEstado(datosActualizados.getEstado());
+        }
+        
+        citaExistente.setObservaciones(datosActualizados.getObservaciones()); 
 
         return citaRepository.save(citaExistente);
     }

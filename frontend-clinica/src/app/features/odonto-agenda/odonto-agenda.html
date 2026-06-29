@@ -1,99 +1,166 @@
 <div class="agenda-wrapper">
-  <header class="agenda-header">
-    <div class="header-main-row">
-      <h2>Control de Citas </h2>
-      <button routerLink="/odonDashboard" class="btn-back">← Volver al Dashboard</button>
-    </div>
-    <p class="subtitle">Consulte su panel diario unificado y su planificación semanal.</p>
-  </header>
-
-  <div class="tabs-bar">
-    <button [class.active]="pestanaActiva() === 'hoy'" (click)="cambiarPestana('hoy')">
-       Panel del Día ({{ agenda().citasDeHoy.length }})
-    </button>
-    <button [class.active]="pestanaActiva() === 'semana'" (click)="cambiarPestana('semana')">
-       Vista Semanal
-    </button>
-  </div>
-
-  <div class="panel-view">
-    
-    <div *ngIf="pestanaActiva() === 'hoy'" class="dashboard-split">
-      
-      <div class="split-main">
-        <h3 class="panel-title">⏱️ Horarios de Consultas</h3>
-        <div class="table-container" *ngIf="agenda().citasDeHoy.length > 0; else vacioHoy">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>Hora</th>
-                <th>Paciente</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let cita of agenda().citasDeHoy">
-                <td class="time-col"><strong>{{ cita.fechaHora | date:'HH:mm' }} hs</strong></td>
-                <td>{{ cita.paciente.nombre }} {{ cita.paciente.apellido }}</td>
-                <td>
-                  <span class="status-badge" [class.status-pendiente]="cita.estado === 'PENDIENTE'">
-                    {{ cita.estado }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <ng-template #vacioHoy><p class="empty-text">No tiene citas para hoy.</p></ng-template>
+  
+  <div *ngIf="!citaSeleccionada()">
+    <header class="agenda-header">
+      <div class="header-main-row">
+        <h2>Control de Citas </h2>
+        <button routerLink="/odonDashboard" class="btn-back">← Volver al Dashboard</button>
       </div>
+      <p class="subtitle">Consulte su panel diario unificado y su planificación semanal.</p>
+    </header>
 
-      <div class="split-sidebar">
-        <h3 class="panel-title">👥 Pacientes de Hoy</h3>
-        <div class="pacientes-list" *ngIf="agenda().pacientesDeHoy.length > 0; else vacioPacientes">
-          <div class="paciente-mini-card" *ngFor="let paciente of agenda().pacientesDeHoy">
-            <div class="card-avatar">{{ paciente.nombre[0] }}{{ paciente.apellido[0] }}</div>
-            <div class="card-info">
-              <h4>{{ paciente.nombre }} {{ paciente.apellido }}</h4>
-              <p>📞 {{ paciente.telefono || 'Sin teléfono' }}</p>
-            </div>
-          </div>
-        </div>
-        <ng-template #vacioPacientes><p class="empty-text-mini">No hay pacientes asignados.</p></ng-template>
-      </div>
-
+    <div class="tabs-bar">
+      <button [class.active]="pestanaActiva() === 'hoy'" (click)="cambiarPestana('hoy')">
+         Panel del Día ({{ agenda().citasDeHoy.length }})
+      </button>
+      <button [class.active]="pestanaActiva() === 'semana'" (click)="cambiarPestana('semana')">
+         Vista Semanal
+      </button>
     </div>
 
-    <div *ngIf="pestanaActiva() === 'semana'">
-      <h3 class="panel-title"> Planificación Semanal (Lunes a Domingo)</h3>
-      
-      <div class="weekly-agenda-container">
-        <div class="agenda-day-row" *ngFor="let dia of diasDeLaSemana">
-          
-          <div class="day-indicator" [class.is-today]="esHoy(dia.fecha)">
-            <span class="day-name">{{ dia.nombre }}</span>
-            <span class="day-date">{{ dia.fecha | date:'dd/MM' }}</span>
+    <div class="panel-view">
+      <div *ngIf="pestanaActiva() === 'hoy'" class="dashboard-split">
+        
+        <div class="split-main">
+          <h3 class="panel-title">⏱️ Horarios de Consultas</h3>
+          <div class="table-container" *ngIf="agenda().citasDeHoy.length > 0; else vacioHoy">
+            <table class="custom-table table-clickable">
+              <thead>
+                <tr>
+                  <th>Hora</th>
+                  <th>Paciente</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cita of agenda().citasDeHoy" (click)="seleccionarCita(cita)">
+                  <td class="time-col"><strong>{{ cita.fechaHora | date:'HH:mm' }} hs</strong></td>
+                  <td>{{ cita.paciente.nombre }} {{ cita.paciente.apellido }}</td>
+                  <td>
+                    <span class="status-badge" 
+                          [class.status-pendiente]="cita.estado === 'PENDIENTE'"
+                          [class.status-atendida]="cita.estado === 'ATENDIDA'">
+                      {{ cita.estado }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          <ng-template #vacioHoy><p class="empty-text">No tiene citas para hoy.</p></ng-template>
+        </div>
 
-          <div class="day-appointments">
-            <div class="appointment-inline-card" *ngFor="let cita of filtrarCitasPorDia(dia.fecha)">
-              <div class="appt-info">
-                <span class="appt-time">⏰ {{ cita.fechaHora | date:'HH:mm' }} hs</span>
-                <span class="appt-patient">👤 {{ cita.paciente.nombre }} {{ cita.paciente.apellido }}</span>
+        <div class="split-sidebar">
+          <h3 class="panel-title">👥 Pacientes de Hoy</h3>
+          <div class="pacientes-list" *ngIf="agenda().pacientesDeHoy.length > 0; else vacioPacientes">
+            <div class="paciente-mini-card" *ngFor="let paciente of agenda().pacientesDeHoy">
+              <div class="card-avatar">{{ paciente.nombre[0] }}{{ paciente.apellido[0] }}</div>
+              <div class="card-info">
+                <h4>{{ paciente.nombre }} {{ paciente.apellido }}</h4>
+                <p>📞 {{ paciente.telefono || 'Sin teléfono' }}</p>
               </div>
-              <span class="status-badge" [class.status-pendiente]="cita.estado === 'PENDIENTE'">
-                {{ cita.estado }}
-              </span>
-            </div>
-            
-            <div class="no-appointments" *ngIf="filtrarCitasPorDia(dia.fecha).length === 0">
-              Libre / Sin citas programadas
             </div>
           </div>
+          <ng-template #vacioPacientes><p class="empty-text-mini">No hay pacientes asignados.</p></ng-template>
+        </div>
 
+      </div>
+
+      <div *ngIf="pestanaActiva() === 'semana'">
+        <h3 class="panel-title"> Planificación Semanal (Lunes a Domingo)</h3>
+        <div class="weekly-agenda-container">
+          <div class="agenda-day-row" *ngFor="let dia of diasDeLaSemana">
+            <div class="day-indicator" [class.is-today]="esHoy(dia.fecha)">
+              <span class="day-name">{{ dia.nombre }}</span>
+              <span class="day-date">{{ dia.fecha | date:'dd/MM' }}</span>
+            </div>
+            <div class="day-appointments">
+              <div class="appointment-inline-card appt-clickable" *ngFor="let cita of filtrarCitasPorDia(dia.fecha)" (click)="seleccionarCita(cita)">
+                <div class="appt-info">
+                  <span class="appt-time">⏰ {{ cita.fechaHora | date:'HH:mm' }} hs</span>
+                  <span class="appt-patient">👤 {{ cita.paciente.nombre }} {{ cita.paciente.apellido }}</span>
+                </div>
+                <span class="status-badge" 
+                      [class.status-pendiente]="cita.estado === 'PENDIENTE'"
+                      [class.status-atendida]="cita.estado === 'ATENDIDA'">
+                  {{ cita.estado }}
+                </span>
+              </div>
+              <div class="no-appointments" *ngIf="filtrarCitasPorDia(dia.fecha).length === 0">
+                Libre / Sin citas programadas
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="citaSeleccionada()" class="view-atencion-medica">
+    <header class="agenda-header">
+      <div class="header-main-row">
+        <h2>Atención de la Consulta</h2>
+        <button (click)="volverALaAgenda()" class="btn-back">← Volver al Control de Citas</button>
+      </div>
+      <p class="subtitle">Registre y gestione el diagnóstico u observaciones clínicas del paciente.</p>
+    </header>
+
+    <div class="panel-view split-atencion-container">
+      
+      <div class="info-cita-box">
+        <h3 class="atencion-subtitle">📋 Datos de la Consulta</h3>
+        <div class="grid-datos-paciente">
+          <div class="dato-item">
+            <label>Paciente:</label>
+            <p>{{ citaSeleccionada().paciente.nombre }} {{ citaSeleccionada().paciente.apellido }}</p>
+          </div>
+          <div class="dato-item">
+            <label>DNI / Documento:</label>
+            <p>{{ citaSeleccionada().paciente.dni || 'No especificado' }}</p>
+          </div>
+          <div class="dato-item">
+            <label>Hora Programada:</label>
+            <p class="highlight-text">⏰ {{ citaSeleccionada().fechaHora | date:'HH:mm' }} hs</p>
+          </div>
+          <div class="dato-item">
+            <label>Estado Actual:</label>
+            <span class="status-badge" 
+                  [class.status-pendiente]="citaSeleccionada().estado === 'PENDIENTE'"
+                  [class.status-atendida]="citaSeleccionada().estado === 'ATENDIDA'">
+              {{ citaSeleccionada().estado }}
+            </span>
+          </div>
         </div>
       </div>
 
-    </div>
+      <div class="form-observacion-box">
+        <h3 class="atencion-subtitle">🩺 Observaciones del Odontólogo</h3>
+        <p class="input-instruction">Escriba las limpiezas, hallazgos (caries, anomalías) o tratamientos efectuados:</p>
+        
+        <textarea 
+          [(ngModel)]="citaSeleccionada().observaciones" 
+          placeholder="Ej: Limpieza dental profunda realizada, se detectaron caries en el segundo molar..."
+          rows="8"
+          class="custom-textarea">
+        </textarea>
 
+        <div class="action-buttons-row">
+          <div class="status-selector-box">
+            <label for="cambioEstado" class="select-label">Cambiar Estado de Cita:</label>
+            <select id="cambioEstado" [(ngModel)]="citaSeleccionada().estado" class="custom-select">
+              <option value="PENDIENTE">PENDIENTE</option>
+              <option value="ATENDIDA">ATENDIDA ✅</option>
+              <option value="CANCELADA">CANCELADA ❌</option>
+            </select>
+          </div>
+
+          <div class="buttons-group">
+            <button (click)="volverALaAgenda()" class="btn-cancelar">Cancelar</button>
+            <button (click)="guardarObservacion()" class="btn-guardar">💾 Guardar Cambios</button>
+          </div>
+        </div>
+
+    </div>
   </div>
+
 </div>

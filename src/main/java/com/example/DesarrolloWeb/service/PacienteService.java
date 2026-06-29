@@ -88,4 +88,5 @@ public class PacienteService {
         }
         pacienteRepository.deleteById(id);
     }
-}
+
+}    // Obtener pacientes asignados al odontólogo logueado

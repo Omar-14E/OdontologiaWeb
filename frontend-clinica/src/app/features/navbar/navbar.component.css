@@ -4,6 +4,18 @@
   box-sizing: border-box;
 }
 
+/* Modifica tu regla de app-navbar agregando la propiedad isolation */
+app-navbar {
+  display: block !important;
+  width: 100% !important;
+  height: 65px !important;
+  position: relative;
+  z-index: 9999;
+  
+  /* 🌟 ESTA PROPIEDAD BLOQUEA EL EFECTO ESPEJO HACIA ABAJO: */
+  isolation: isolate !important; 
+}
+
 /* TOP NAVBAR */
 .navbar {
   display: flex;
@@ -146,14 +158,19 @@
   color: #dc2626;
 }
 
-/* BACKDROP OSCURO */
+/* BACKDROP OSCURO (Versión ultra-compatible sin bugs) */
 .sidebar-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(15, 23, 42, 0.3);
-  backdrop-filter: blur(2px);
+  /* Subimos la opacidad a 0.55 para dar un buen contraste ya que no hay blur */
+  background-color: rgba(15, 23, 42, 0.55); 
   z-index: 9999;
+  
+  /* Eliminamos por completo las líneas de blur y transform */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
 }
