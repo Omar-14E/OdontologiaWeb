@@ -267,3 +267,134 @@
   margin: 0 auto 1.5rem auto;
   color: #3b82f6;
 }   
+
+/* =========================================
+   SISTEMA DE MODAL FLOTANTE (POP-UP)
+   ========================================= */
+
+/* Fondo oscuro desenfocado */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.4); /* Azul oscuro semi-transparente */
+  backdrop-filter: blur(4px); /* Efecto cristal */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* Tarjeta del formulario */
+.modal-content {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 650px; /* Ancho máximo para que no se estire mucho */
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+/* Cabecera del Modal */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background: #f8fafc;
+}
+
+.modal-title {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Botón "X" de cerrar */
+.btn-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+  background-color: #fee2e2;
+  color: var(--danger);
+}
+
+/* Ajustes del grid dentro del modal */
+.modal-content .form-grid {
+  padding: 2rem;
+  margin: 0;
+}
+
+/* Pie del Modal */
+.modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border-color);
+  background: #f8fafc;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Textos de Error */
+.text-danger {
+  font-size: 0.8rem;
+  color: var(--danger);
+  margin-top: 0.2rem;
+}
+
+/* =========================================
+   ANIMACIONES
+   ========================================= */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* -----------------------------------------
+   BOTONES DE ICONO PARA LA TABLA
+   (Si no los tenías, asegúrate de añadirlos)
+   ----------------------------------------- */
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  display: inline-flex;
+}
+.edit-btn { color: #3b82f6; }
+.edit-btn:hover { background-color: #eff6ff; }
+.delete-btn { color: var(--danger); }
+.delete-btn:hover { background-color: #fef2f2; }

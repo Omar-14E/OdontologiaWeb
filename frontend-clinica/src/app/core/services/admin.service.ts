@@ -74,4 +74,8 @@ export class AdminService {
   getHistorialCitas(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrlCitas);
   }
+
+  crearCita(cita: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrlCitas}/registrar`, cita);
+  }
 }

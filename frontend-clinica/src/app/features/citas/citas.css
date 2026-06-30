@@ -1,195 +1,214 @@
 :host {
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
-  --text-main: #0f172a;
+  --text-main: #1e293b;
   --text-muted: #64748b;
   --border-color: #e2e8f0;
-  --primary: #0d9488;
-  --primary-hover: #0f766e;
-  --danger: #ef4444;
-  --danger-hover: #dc2626;
-  --info: #3b82f6;
-  --info-hover: #2563eb;
+  --primary: #69b9aa; 
+  --primary-hover: #58a396;
 }
 
-.citas-wrapper {
+.dashboard-wrapper {
   padding: 2.5rem;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, sans-serif;
   background-color: var(--bg-color);
   min-height: 100vh;
 }
 
-.section-header { margin-bottom: 2rem; }
-.title { margin: 0; color: var(--text-main); font-size: 1.75rem; font-weight: 700; letter-spacing: -0.025em; }
-.subtitle { color: var(--text-muted); margin-top: 0.25rem; font-size: 0.95rem; }
+.dash-header { margin-bottom: 2rem; }
+.greeting { margin: 0; color: var(--text-main); font-size: 1.6rem; font-weight: 700; }
+.subtitle { color: var(--text-muted); margin-top: 0.3rem; font-size: 0.95rem; }
 
+/* =========================================
+   NUEVO LAYOUT: LADO A LADO
+   ========================================= */
 .citas-layout {
-  display: flex;
+  display: grid;
+  grid-template-columns: 320px 1fr; 
   gap: 1.5rem;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  align-items: start;
 }
 
-/* Tarjetas (Cards) */
-.card {
+@media (max-width: 1024px) {
+  .citas-layout {
+    grid-template-columns: 1fr; 
+  }
+}
+
+/* =========================================
+   TARJETAS
+   ========================================= */
+.admin-card {
   background: var(--card-bg);
   border-radius: 12px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-.panel { flex: 1; min-width: 320px; }
-.table-card { flex: 2; min-width: 600px; }
+.side-form-card { padding: 1.5rem; }
+.table-card { padding: 0; overflow: hidden; }
 
-.card-header {
-  padding: 1.25rem 1.5rem;
+.section-title {
+  color: var(--text-main);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* =========================================
+   FORMULARIO VERTICAL (AQUÍ ESTÁ LA MAGIA)
+   ========================================= */
+.vertical-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.4rem; 
+}
+
+.form-label { 
+  color: var(--text-main); 
+  font-size: 0.85rem; 
+  font-weight: 600; 
+}
+
+/* Hacemos que todos los inputs midan igual */
+.form-control {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  height: 42px; /* Altura estricta para alinear todo */
+  font-family: inherit;
+}
+
+.form-control:focus { border-color: var(--primary); }
+.form-control:disabled { background-color: #f8fafc; color: #94a3b8; }
+
+/* Corrección exacta para Fecha y Hora */
+.date-time-inputs { 
+  display: flex; 
+  gap: 0.75rem; 
+  align-items: center;
+  width: 100%;
+}
+
+.date-time-inputs .form-control {
+  flex: 1; /* Reparte 50% de espacio exacto a cada uno */
+  margin: 0; 
+}
+
+.help-text { 
+  font-size: 0.75rem; 
+  color: var(--text-muted); 
+  margin-top: 0.2rem; 
+  line-height: 1.3;
+}
+
+.w-100 { width: 100%; }
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-primary:hover:not(:disabled) { background-color: var(--primary-hover); }
+.btn-primary:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+/* =========================================
+   CABECERA DE LA TABLA Y BADGES
+   ========================================= */
+.table-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  margin-bottom: 1rem;
 }
 
-.border-bottom { border-bottom: 1px solid var(--border-color); }
-
-.card-title {
-  margin: 0;
-  font-size: 1.1rem;
-  color: var(--text-main);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.results-count {
-  font-size: 0.85rem;
-  color: var(--text-muted);
+.badge-count {
   background: #f1f5f9;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-weight: 500;
-}
-
-/* Formulario */
-.modern-form { padding: 0 1.5rem 1.5rem 1.5rem; }
-
-.form-group { margin-bottom: 1.25rem; }
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #334155;
-  font-size: 0.9rem;
-}
-
-.form-control {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-family: inherit;
-  font-size: 0.95rem;
-  color: var(--text-main);
-  box-sizing: border-box;
-  transition: all 0.2s ease;
-  background-color: #f8fafc;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--primary);
-  background-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
-}
-
-.form-actions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 2rem;
-}
-
-/* Botones */
-.btn {
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-.btn-primary { background-color: var(--primary); color: white; border-color: var(--primary); }
-.btn-primary:hover:not(:disabled) { background-color: var(--primary-hover); border-color: var(--primary-hover); }
-
-.btn-outline { background-color: transparent; color: var(--text-main); border-color: var(--border-color); }
-.btn-outline:hover { background-color: #f1f5f9; }
-
-/* Tabla Moderna */
-.table-responsive { overflow-x: auto; padding: 0 1.5rem 1.5rem 1.5rem; }
-
-.modern-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
-.modern-table th {
-  text-align: left;
-  padding: 1rem 0.5rem;
+  color: #475569;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
   font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* =========================================
+   TABLA
+   ========================================= */
+.table-container { overflow-x: auto; }
+.custom-table { width: 100%; border-collapse: collapse; }
+.custom-table th {
   color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+.custom-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f8fafc;
+  font-size: 0.9rem;
 }
 
-.table-row { border-bottom: 1px solid var(--border-color); transition: background-color 0.2s; }
-.table-row:hover { background-color: #f8fafc; }
-.modern-table td { padding: 1rem 0.5rem; font-size: 0.95rem; vertical-align: middle; color: var(--text-main); }
+.date-text { display: flex; align-items: center; gap: 0.4rem; color: var(--text-main); font-weight: 500; }
 
-.text-right { text-align: right !important; }
-.text-muted { color: var(--text-muted); }
-.fw-medium { font-weight: 500; }
-
-/* Elementos de tabla (Avatar, Fechas, Badges) */
-.user-cell { display: flex; align-items: center; gap: 0.75rem; }
-.avatar {
-  width: 32px; height: 32px;
-  border-radius: 50%; background-color: #e0f2fe; color: #0284c7;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;
+.patient-cell { display: flex; align-items: center; gap: 0.7rem; color: var(--text-main); font-weight: 500; }
+.avatar-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
-
-.date-cell { display: flex; align-items: center; gap: 0.5rem; }
 
 .status-badge {
-  padding: 0.35rem 0.75rem;
+  padding: 0.3rem 0.7rem;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  display: inline-flex;
 }
+.status-pending { background: #fef3c7; color: #b45309; }
+.status-success { background: #dcfce7; color: #166534; }
+.status-danger { background: #fee2e2; color: #b91c1c; }
 
-.status-badge.pendiente { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
-.status-badge.atendida { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
-.status-badge.cancelada { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
-
-/* Botones de acción en tabla */
-.action-cells { display: flex; justify-content: flex-end; gap: 0.5rem; }
-
-.btn-icon {
-  background: transparent; border: 1px solid transparent; border-radius: 6px;
-  padding: 0.4rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-  transition: all 0.2s ease;
+/* Botoncitos de Acción (Lápiz y Basura) */
+.action-buttons { display: flex; gap: 0.5rem; }
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 6px;
+  transition: background-color 0.2s;
 }
-
-.btn-icon.edit { color: var(--info); }
-.btn-icon.edit:hover { background: #eff6ff; border-color: #bfdbfe; }
-
-.btn-icon.delete { color: var(--danger); }
-.btn-icon.delete:hover { background: #fef2f2; border-color: #fecaca; }
-
-/* Estado vacío */
-.empty-state { text-align: center; padding: 4rem 2rem !important; color: var(--text-muted); }
-.empty-state p { margin-top: 1rem; font-size: 0.95rem; }
+.edit-btn { color: #3b82f6; }
+.edit-btn:hover { background-color: #eff6ff; }
+.delete-btn { color: #ef4444; }
+.delete-btn:hover { background-color: #fef2f2; }

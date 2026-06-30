@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core'; // 👈 Importamos signal
+import { Component, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { AdminService } from '../../core/services/admin.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-citas',
@@ -11,99 +12,126 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./citas.css']
 })
 export class CitasComponent implements OnInit {
-  // 👈 Convertimos los arreglos en Signals
-  citas = signal<any[]>([]);
+  
+  // Señales de las bases de datos
   pacientes = signal<any[]>([]);
   odontologos = signal<any[]>([]);
+  citasAgendadas = signal<any[]>([]);
   
-  citaForm: FormGroup;
-  modoEdicion = false;
-  citaIdEditando: number | null = null;
-  
-  minDate: string = '';
+  // Señal DINÁMICA que solo contiene los médicos de la especialidad elegida
+  odontologosFiltrados = signal<any[]>([]);
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  especialidadesEnum = [
+    'GENERAL', 'ORTODONCIA', 'ENDODONCIA', 
+    'PERIODONCIA', 'CIRUGIA', 'ODONTOPEDIATRIA'
+  ];
+
+  citaForm: FormGroup;
+
+  constructor(private adminService: AdminService, private fb: FormBuilder) {
     this.citaForm = this.fb.group({
-      fechaHora: ['', Validators.required],
-      estado: ['PENDIENTE', Validators.required],
-      paciente: this.fb.group({ id: ['', Validators.required] }),
-      odontologo: this.fb.group({ id: ['', Validators.required] })
+      pacienteId: ['', Validators.required],
+      especialidad: ['', Validators.required],
+      // Inicia deshabilitado. Se habilitará cuando elijan especialidad.
+      odontologoId: [{value: '', disabled: true}, Validators.required], 
+      fecha: ['', Validators.required],
+      hora: ['', Validators.required],
+      observaciones: ['']
+    });
+
+    // 🌟 MAGIA REACTIVA: Escuchar los cambios en el select de Especialidad
+    this.citaForm.get('especialidad')?.valueChanges.subscribe(especialidadSeleccionada => {
+      if (especialidadSeleccionada) {
+        
+        // Filtramos el arreglo maestro de odontologos
+        const filtrados = this.odontologos().filter(medico => medico.especialidad === especialidadSeleccionada);
+        this.odontologosFiltrados.set(filtrados);
+        
+        // Habilitamos el selector de médicos y reseteamos el valor anterior
+        this.citaForm.get('odontologoId')?.enable();
+        this.citaForm.get('odontologoId')?.setValue('');
+        
+      } else {
+        // Si borran la especialidad, volvemos a bloquear el selector de médicos
+        this.citaForm.get('odontologoId')?.disable();
+        this.odontologosFiltrados.set([]);
+      }
     });
   }
 
   ngOnInit(): void {
-    this.configurarFechaMinima();
-    this.cargarListas();
+    this.cargarCatalogos();
     this.cargarCitas();
   }
 
-  configurarFechaMinima() {
-    const ahora = new Date();
-    ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
-    this.minDate = ahora.toISOString().slice(0, 16);
+  cargarCatalogos(): void {
+    this.adminService.getPacientes().subscribe(data => this.pacientes.set(data));
+    this.adminService.getOdontologos().subscribe(data => this.odontologos.set(data));
   }
 
-  cargarListas() {
-    // 👈 Usamos .set() para actualizar las signals
-    this.http.get<any[]>('http://localhost:8080/api/pacientes').subscribe(res => this.pacientes.set(res));
-    this.http.get<any[]>('http://localhost:8080/api/odontologos').subscribe(res => this.odontologos.set(res));
-  }
-
-  cargarCitas() {
-    // 👈 Usamos .set() para actualizar las signals
-    this.http.get<any[]>('http://localhost:8080/api/citas').subscribe(res => this.citas.set(res));
-  }
-
-  guardarCita() {
-    if (this.citaForm.invalid) return;
-
-    if (this.modoEdicion && this.citaIdEditando) {
-      this.http.put(`http://localhost:8080/api/citas/actualizar/${this.citaIdEditando}`, this.citaForm.value)
-        .subscribe({
-          next: () => {
-            alert('Cita actualizada correctamente');
-            this.cancelarEdicion();
-            this.cargarCitas();
-          },
-          error: (err) => alert(err.error?.error || 'Error al actualizar cita')
-        });
-    } else {
-      this.http.post('http://localhost:8080/api/citas/registrar', this.citaForm.value)
-        .subscribe({
-          next: () => {
-            alert('Cita registrada correctamente');
-            this.citaForm.reset({ estado: 'PENDIENTE' });
-            this.cargarCitas();
-          },
-          error: (err) => alert(err.error?.error || 'Error al crear cita. Verifica la disponibilidad del médico.')
-        });
-    }
-  }
-
-  editarCita(cita: any) {
-    this.modoEdicion = true;
-    this.citaIdEditando = cita.id;
-    
-    this.citaForm.patchValue({
-      fechaHora: cita.fechaHora,
-      estado: cita.estado,
-      paciente: { id: cita.paciente.id },
-      odontologo: { id: cita.odontologo.id }
+  cargarCitas(): void {
+    this.adminService.getHistorialCitas().subscribe({
+      next: (data) => {
+        const citasRecientes = data.sort((a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime());
+        this.citasAgendadas.set(citasRecientes);
+      },
+      error: (err) => console.error('Error cargando citas', err)
     });
   }
 
-  cancelarEdicion() {
-    this.modoEdicion = false;
-    this.citaIdEditando = null;
-    this.citaForm.reset({ estado: 'PENDIENTE' });
+  guardarCita(): void {
+    if (this.citaForm.invalid) {
+      Swal.fire('Faltan Datos', 'Por favor completa todos los campos obligatorios.', 'warning');
+      return;
+    }
+
+    const val = this.citaForm.value;
+    
+    // 1. Unimos fecha y hora (ej: 2026-07-15T14:30:00) para el backend
+    const fechaHoraFormateada = `${val.fecha}T${val.hora}:00`;
+
+    // 2. Construimos el JSON exacto que pide Spring Boot para relacionar entidades
+    const nuevaCita = {
+      fechaHora: fechaHoraFormateada,
+      estado: 'PENDIENTE',
+      observaciones: val.observaciones,
+      paciente: { id: val.pacienteId },
+      odontologo: { id: val.odontologoId }
+    };
+
+    // 3. Enviamos al servidor
+    this.adminService.crearCita(nuevaCita).subscribe({
+      next: () => {
+        Swal.fire('¡Agendada!', 'La cita ha sido registrada con éxito en la agenda del doctor.', 'success');
+        this.cargarCitas();
+        
+        // Limpiamos el formulario para la siguiente cita sin ocultarlo
+        this.citaForm.reset({ pacienteId: '', especialidad: '', odontologoId: '', fecha: '', hora: '', observaciones: '' });
+        this.citaForm.get('odontologoId')?.disable(); // Volvemos a bloquear el médico
+      },
+      error: (err) => {
+        // Aprovechamos los mensajes de error potentes de Spring Boot
+        const mensajeBackend = err.error?.message || err.error || 'El doctor no tiene disponibilidad o está fuera de su horario.';
+        Swal.fire({
+          title: 'No se puede agendar',
+          text: typeof mensajeBackend === 'string' ? mensajeBackend : 'Conflicto de horario.',
+          icon: 'error',
+          confirmButtonColor: '#ef4444'
+        });
+      }
+    });
   }
 
-  eliminarCita(id: number) {
-    if(confirm('¿Estás seguro de eliminar o cancelar esta cita?')) {
-      this.http.delete(`http://localhost:8080/api/citas/eliminar/${id}`).subscribe({
-        next: () => this.cargarCitas(),
-        error: (err) => alert('Error al eliminar la cita')
-      });
-    }
+  formatearFechaHora(fechaHoraISO: string): { fecha: string, hora: string } {
+    if (!fechaHoraISO) return { fecha: '-', hora: '-' };
+    const dateObj = new Date(fechaHoraISO);
+    return {
+      fecha: dateObj.toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      hora: dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+    };
+  }
+
+  getFechaMinimaActual(): string {
+    return new Date().toISOString().split('T')[0];
   }
 }
