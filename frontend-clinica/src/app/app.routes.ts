@@ -7,6 +7,12 @@ import { OdontoDashboardComponent } from './features/odonto-dashboard/odonto-das
 import { OdontoAgendaComponent } from './features/odonto-agenda/odonto-agenda';
 import { OdontoPacientesComponent } from './features/odonto-pacientes/odonto-pacientes';
 
+// Importamos los nuevos componentes del administrador
+import { AdminMedicosComponent } from './features/admin-medicos/admin-medicos';
+import { AdminPacientesComponent } from './features/admin-pacientes/admin-pacientes';
+
+import { AdminTurnosComponent } from './features/admin-turnos/admin-turnos';
+
 export const routes: Routes = [
   // Dejamos las rutas libres por ahora para probar la UI
 
@@ -34,6 +40,23 @@ export const routes: Routes = [
     path: 'odonPacientes',
     component: OdontoPacientesComponent
   },
+  
+  // --- Nuevas rutas del Administrador ---
+  {
+    path: 'admin-medicos',
+    component: AdminMedicosComponent
+  },
+  {
+    path: 'admin-pacientes',
+    component: AdminPacientesComponent
+  },
+
+  {
+    path: 'admin-turnos',
+    component: AdminTurnosComponent
+  },
+
+  // Las redirecciones por defecto y el comodín siempre deben ir al final
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

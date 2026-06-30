@@ -1,0 +1,120 @@
+<div class="dashboard-wrapper">
+  <header class="dash-header">
+    <div class="header-info">
+      <h2 class="greeting">Staff Médico</h2>
+      <p class="subtitle">Directorio de profesionales y especialistas de la clínica</p>
+    </div>
+    <button class="btn btn-primary" (click)="abrirFormulario()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+      Añadir Profesional
+    </button>
+  </header>
+
+  <div *ngIf="mostrarFormulario" class="admin-card">
+    <h3 class="section-title">
+      <svg *ngIf="!modoEdicion" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+      <svg *ngIf="modoEdicion" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      {{ modoEdicion ? 'Actualizar Datos del Médico' : 'Registrar Nuevo Profesional' }}
+    </h3>
+    
+    <form [formGroup]="medicoForm" (ngSubmit)="guardarMedico()">
+      <div class="form-grid">
+        
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" formControlName="nombre" placeholder="Ej. Carlos">
+          <small *ngIf="medicoForm.get('nombre')?.hasError('pattern') && medicoForm.get('nombre')?.touched" class="text-danger" style="font-size: 0.8rem; color: var(--danger);">Solo se permiten letras.</small>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Apellido</label>
+          <input type="text" class="form-control" formControlName="apellido" placeholder="Ej. Mendoza">
+          <small *ngIf="medicoForm.get('apellido')?.hasError('pattern') && medicoForm.get('apellido')?.touched" class="text-danger" style="font-size: 0.8rem; color: var(--danger);">Solo se permiten letras.</small>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Especialidad Clínica</label>
+          <select class="form-control" formControlName="especialidad">
+            <option value="" disabled selected>Seleccione la especialidad</option>
+            <option *ngFor="let esp of especialidadesEnum" [value]="esp">{{ esp }}</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Teléfono de Contacto</label>
+          <input type="text" class="form-control" formControlName="telefono" placeholder="Ej. 912345678" maxlength="9">
+          <small *ngIf="medicoForm.get('telefono')?.hasError('pattern') && medicoForm.get('telefono')?.touched" class="text-danger" style="font-size: 0.8rem; color: var(--danger);">Debe tener 9 dígitos y empezar con 9.</small>
+        </div>
+
+      </div>
+      <div class="action-buttons" style="margin-top: 1rem;">
+        <button type="submit" class="btn btn-primary" [disabled]="medicoForm.invalid">
+          Guardar Registro
+        </button>
+        <button type="button" class="btn btn-outline" (click)="cerrarFormulario()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="admin-card" style="padding: 1rem 2rem;">
+    <div class="table-container">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Profesional</th>
+            <th>Especialidad</th>
+            <th>Teléfono</th>
+            <th style="text-align: right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let medico of odontologos()">
+            <td>
+              <div class="doctor-profile">
+                <div class="avatar">
+                  {{ medico.nombre.charAt(0) | uppercase }}{{ medico.apellido.charAt(0) | uppercase }}
+                </div>
+                <div class="doctor-info">
+                  <span class="doctor-name">Dr/a. {{ medico.nombre }} {{ medico.apellido }}</span>
+                  <span class="doctor-id">Registro ID: #{{ medico.id }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge-specialty">{{ medico.especialidad }}</span>
+            </td>
+            <td style="color: var(--text-muted); font-weight: 500;">
+              {{ medico.telefono }}
+            </td>
+            <td>
+              <div class="action-buttons" style="justify-content: flex-end;">
+                <button class="btn btn-outline btn-sm" (click)="abrirFormulario(medico)" title="Editar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                </button>
+                <button class="btn btn-danger-outline btn-sm" (click)="eliminarMedico(medico.id)" title="Eliminar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="odontologos().length === 0">
+            <td colspan="4">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="17" y1="8" x2="23" y2="8"></line><line x1="20" y1="5" x2="20" y2="11"></line></svg>
+                </div>
+                <h4 style="color: var(--text-main); margin-bottom: 0.5rem; font-size: 1.1rem;">Aún no hay médicos registrados</h4>
+                <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 400px; margin: 0 auto;">
+                  Comienza agregando profesionales al directorio para que puedan empezar a gestionar sus citas odontológicas.
+                </p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
