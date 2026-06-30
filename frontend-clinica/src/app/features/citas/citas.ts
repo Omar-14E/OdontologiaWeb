@@ -27,9 +27,12 @@ export class CitasComponent implements OnInit {
   ];
 
   citaForm: FormGroup;
+  
+  // Variable para controlar si estamos en modo edición
+  idCitaEdicion: number | null = null;
 
   constructor(private adminService: AdminService, private fb: FormBuilder) {
-    // Formulario limpio sin observaciones según captura original
+    // Formulario limpio
     this.citaForm = this.fb.group({
       pacienteId: ['', Validators.required],
       especialidad: ['', Validators.required],
@@ -51,7 +54,12 @@ export class CitasComponent implements OnInit {
         const filtrados = this.odontologos().filter(medico => medico.especialidad === especialidadSeleccionada);
         this.odontologosFiltrados.set(filtrados);
         this.citaForm.get('odontologoId')?.enable();
-        this.citaForm.get('odontologoId')?.setValue('');
+        
+        // Solo limpiamos si el valor no coincide con los filtrados (útil en modo edición)
+        const currentOdontologo = this.citaForm.get('odontologoId')?.value;
+        if (!filtrados.find(m => m.id === currentOdontologo)) {
+           this.citaForm.get('odontologoId')?.setValue('');
+        }
       } else {
         this.citaForm.get('odontologoId')?.disable();
         this.odontologosFiltrados.set([]);
@@ -79,7 +87,7 @@ export class CitasComponent implements OnInit {
     });
   }
 
-  // 🚀 METODO MODAL INTERACTIVO CON SWEETALERT2 CORREGIDO Y ESTILIZADO NATIVO
+  // 🚀 METODO MODAL INTERACTIVO
   abrirModalPaciente(): void {
     Swal.fire({
       title: 'Registrar Nuevo Paciente',
@@ -115,7 +123,6 @@ export class CitasComponent implements OnInit {
         const dni = (document.getElementById('swal-dni') as HTMLInputElement).value.trim();
         const telefono = (document.getElementById('swal-telefono') as HTMLInputElement).value.trim();
 
-        // Validaciones idénticas a las restricciones RegEx de tu backend
         if (!nombre || !apellido || !dni || !telefono) {
           Swal.showValidationMessage('Todos los campos son obligatorios');
           return false;
@@ -141,7 +148,6 @@ export class CitasComponent implements OnInit {
       }
     }).then((result) => {
       if (result.isConfirmed && result.value) {
-        // Guardamos en la base de datos usando tu método real
         this.adminService.crearPaciente(result.value).subscribe({
           next: (pacienteCreado) => {
             Swal.fire({
@@ -151,10 +157,8 @@ export class CitasComponent implements OnInit {
               confirmButtonColor: '#69b9aa'
             });
             
-            // Recargamos catálogo completo actualizado
             this.adminService.getPacientes().subscribe(data => {
               this.pacientes.set(data);
-              // Selección automática evitando bucles de eventos ({ emitEvent: false })
               this.citaForm.get('pacienteId')?.setValue(pacienteCreado.id, { emitEvent: false });
             });
           },
@@ -170,12 +174,14 @@ export class CitasComponent implements OnInit {
           }
         });
       } else {
-        // Si el administrador cancela, regresamos el select al estado inicial vacío
         this.citaForm.get('pacienteId')?.setValue('');
       }
     });
   }
 
+  // --------------------------------------------------
+  // GUARDAR O ACTUALIZAR CITA
+  // --------------------------------------------------
   guardarCita(): void {
     if (this.citaForm.invalid) {
       Swal.fire('Faltan Datos', 'Por favor completa todos los campos obligatorios.', 'warning');
@@ -185,8 +191,7 @@ export class CitasComponent implements OnInit {
     const val = this.citaForm.value;
     const fechaHoraFormateada = `${val.fecha}T${val.hora}:00`;
 
-    // Estructura exacta requerida por Spring Boot (observaciones por defecto va vacío)
-    const nuevaCita = {
+    const datosCita = {
       fechaHora: fechaHoraFormateada,
       estado: 'PENDIENTE',
       observaciones: '', 
@@ -194,27 +199,104 @@ export class CitasComponent implements OnInit {
       odontologo: { id: val.odontologoId }
     };
 
-    this.adminService.crearCita(nuevaCita).subscribe({
-      next: () => {
-        Swal.fire({
-          title: '¡Agendada!',
-          text: 'La cita ha sido registrada con éxito en la agenda del doctor.',
-          icon: 'success',
-          confirmButtonColor: '#69b9aa'
-        });
-        this.cargarCitas();
-        this.citaForm.reset({ pacienteId: '', especialidad: '', odontologoId: '', fecha: '', hora: '' });
-        this.citaForm.get('odontologoId')?.disable();
-      },
-      error: (err) => {
-        const mensajeBackend = err.error?.message || err.error || 'El doctor no tiene disponibilidad o está fuera de su horario.';
-        Swal.fire({
-          title: 'No se puede agendar',
-          text: typeof mensajeBackend === 'string' ? mensajeBackend : 'Conflicto de horario.',
-          icon: 'error',
-          confirmButtonColor: '#ef4444'
+    if (this.idCitaEdicion) {
+      this.adminService.actualizarCita(this.idCitaEdicion, datosCita).subscribe({
+        next: () => {
+          Swal.fire({
+            title: '¡Actualizada!',
+            text: 'La cita ha sido modificada con éxito.',
+            icon: 'success',
+            confirmButtonColor: '#69b9aa'
+          });
+          this.resetearFormulario();
+        },
+        error: (err) => this.mostrarErrorCita(err)
+      });
+    } else {
+      this.adminService.crearCita(datosCita).subscribe({
+        next: () => {
+          Swal.fire({
+            title: '¡Agendada!',
+            text: 'La cita ha sido registrada con éxito en la agenda del doctor.',
+            icon: 'success',
+            confirmButtonColor: '#69b9aa'
+          });
+          this.resetearFormulario();
+        },
+        error: (err) => this.mostrarErrorCita(err)
+      });
+    }
+  }
+
+  // --------------------------------------------------
+  // EDITAR CITA
+  // --------------------------------------------------
+  editarCita(cita: any): void {
+    this.idCitaEdicion = cita.id;
+    
+    const [fechaCita, horaCompleta] = cita.fechaHora.split('T');
+    const horaCita = horaCompleta.substring(0, 5);
+
+    const odontologoSeleccionado = this.odontologos().find(med => med.id === cita.odontologo.id);
+
+    this.citaForm.patchValue({
+      pacienteId: cita.paciente.id,
+      especialidad: odontologoSeleccionado ? odontologoSeleccionado.especialidad : '',
+      fecha: fechaCita,
+      hora: horaCita
+    });
+
+    setTimeout(() => {
+      this.citaForm.patchValue({ odontologoId: cita.odontologo.id });
+    });
+  }
+
+  // --------------------------------------------------
+  // ELIMINAR CITA
+  // --------------------------------------------------
+  eliminarCita(id: number): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Se cancelará y eliminará esta cita del sistema.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.eliminarCita(id).subscribe({
+          next: () => {
+            Swal.fire('¡Eliminada!', 'La cita ha sido borrada con éxito.', 'success');
+            this.cargarCitas();
+          },
+          error: (err) => {
+            Swal.fire('Error', 'No se pudo eliminar la cita.', 'error');
+            console.error(err);
+          }
         });
       }
+    });
+  }
+
+  // --------------------------------------------------
+  // MÉTODOS AUXILIARES
+  // --------------------------------------------------
+  resetearFormulario() {
+    this.cargarCitas();
+    this.idCitaEdicion = null;
+    this.citaForm.reset({ pacienteId: '', especialidad: '', odontologoId: '', fecha: '', hora: '' });
+    this.citaForm.get('odontologoId')?.disable();
+  }
+
+  mostrarErrorCita(err: any) {
+    const mensajeBackend = err.error?.message || err.error || 'El doctor no tiene disponibilidad o está fuera de su horario.';
+    Swal.fire({
+      title: 'No se puede procesar',
+      text: typeof mensajeBackend === 'string' ? mensajeBackend : 'Conflicto de horario o indisponibilidad.',
+      icon: 'error',
+      confirmButtonColor: '#ef4444'
     });
   }
 

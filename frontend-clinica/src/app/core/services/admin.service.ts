@@ -70,6 +70,8 @@ export class AdminService {
     return this.http.delete<any>(`${this.apiUrlTurnos}/eliminar/${turnoId}`);
   }
 
+  // ... (tu código anterior)
+
   // HISTORIAL DE CITAS :D
   getHistorialCitas(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrlCitas);
@@ -77,5 +79,17 @@ export class AdminService {
 
   crearCita(cita: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrlCitas}/registrar`, cita);
+  }
+
+  // 👇 AGREGA ESTAS DOS FUNCIONES 👇
+
+  actualizarCita(id: number, cita: any): Observable<any> {
+    // Coincide con @PutMapping("/actualizar/{id}")
+    return this.http.put<any>(`${this.apiUrlCitas}/actualizar/${id}`, cita);
+  }
+
+  eliminarCita(id: number): Observable<any> {
+    // Coincide con @DeleteMapping("/eliminar/{id}")
+    return this.http.delete<any>(`${this.apiUrlCitas}/eliminar/${id}`);
   }
 }
