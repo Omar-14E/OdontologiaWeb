@@ -13,25 +13,22 @@ import { AdminService } from '../../core/services/admin.service';
 export class AdminMedicosComponent implements OnInit {
   
   odontologos = signal<any[]>([]);
-  
-  // Array basado en tu Enum de Java para llenar un combobox (select)
-  especialidadesEnum = [
-    'GENERAL', 'ORTODONCIA', 'ENDODONCIA', 
-    'PERIODONCIA', 'CIRUGIA', 'ODONTOPEDIATRIA'
-  ];
+  especialidadesEnum = ['GENERAL', 'ORTODONCIA', 'ENDODONCIA', 'PERIODONCIA', 'CIRUGIA', 'ODONTOPEDIATRIA'];
   
   medicoForm: FormGroup;
   modoEdicion: boolean = false;
   medicoSeleccionadoId: number | null = null;
   mostrarFormulario: boolean = false;
 
+  // NUEVAS VARIABLES PARA CREDENCIALES
+  mostrarCredenciales: boolean = false;
+  medicoRecienCreado: any = null;
+
   constructor(private adminService: AdminService, private fb: FormBuilder) {
     this.medicoForm = this.fb.group({
-      // Añadimos la regex de letras que tienes en Java
       nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
       apellido: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
       especialidad: ['', Validators.required],
-      // Cambiado 'matricula' a 'telefono' con la regex estricta de 9 dígitos empezando en 9
       telefono: ['', [Validators.required, Validators.pattern(/^9[0-9]{8}$/)]] 
     });
   }
@@ -65,6 +62,12 @@ export class AdminMedicosComponent implements OnInit {
     this.medicoForm.reset();
   }
 
+  // MÉTODO PARA CERRAR EL MODAL DE CREDENCIALES
+  cerrarCredenciales(): void {
+    this.mostrarCredenciales = false;
+    this.medicoRecienCreado = null;
+  }
+
   guardarMedico(): void {
     if (this.medicoForm.invalid) return;
 
@@ -76,9 +79,21 @@ export class AdminMedicosComponent implements OnInit {
         });
     } else {
       this.adminService.crearOdontologo(this.medicoForm.value)
-        .subscribe(() => {
+        .subscribe((response: any) => {
+          
+          console.log("ESTO LLEGA DE JAVA:", response); // <--- AÑADE ESTO
+
           this.cargarOdontologos();
           this.cerrarFormulario();
+          
+          this.medicoRecienCreado = {
+            nombre: response.nombre,
+            apellido: response.apellido,
+            usuario: response.usuario?.username, 
+            email: response.usuario?.gmail       
+          };
+          
+          this.mostrarCredenciales = true;
         });
     }
   }

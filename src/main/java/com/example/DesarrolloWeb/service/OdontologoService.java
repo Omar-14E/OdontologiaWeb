@@ -29,24 +29,36 @@ public class OdontologoService {
     @Transactional // Evita datos corruptos si hay un error a mitad del proceso
     public Odontologo guardarOdontologo(Odontologo odontologo) {
         
-        // Extraer y procesar el Usuario (si viene en la petición JSON)
-        if (odontologo.getUsuario() != null) {
-            Usuario usuario = odontologo.getUsuario();
+        // Si desde Angular no nos envían un usuario, lo creamos automáticamente
+        if (odontologo.getUsuario() == null) {
+            Usuario nuevoUsuario = new Usuario();
             
-            // Validar que el username no exista ya en el sistema
-            if (usuarioRepository.findByUsername(usuario.getUsername()).isPresent()) {
-                throw new RuntimeException("Error: El nombre de usuario ya está en uso");
+            // 1. Limpiamos espacios y pasamos a minúsculas para el usuario
+            String nombreBase = odontologo.getNombre().toLowerCase().trim().replaceAll("\\s+", "");
+            String apellidoBase = odontologo.getApellido().toLowerCase().trim().replaceAll("\\s+", "");
+            
+            // 2. Generamos el formato base: dr.nombre.apellido
+            String baseUsername = "dr." + nombreBase + "." + apellidoBase;
+            String usernameFinal = baseUsername;
+            
+            // 3. Verificamos que el username no exista (si existe, le añadimos un número)
+            int contador = 1;
+            while (usuarioRepository.findByUsername(usernameFinal).isPresent()) {
+                usernameFinal = baseUsername + contador;
+                contador++;
             }
             
-            // Encriptar contraseña y asignar el rol de ODONTOLOGO
-            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-            usuario.setRol(Rol.ODONTOLOGO);
+            // 4. Asignamos los datos al nuevo usuario
+            nuevoUsuario.setUsername(usernameFinal);
+            nuevoUsuario.setGmail(usernameFinal + "@clinica.com");
+            nuevoUsuario.setPassword(passwordEncoder.encode("odonto1234")); // Contraseña temporal por defecto
+            nuevoUsuario.setRol(Rol.ODONTOLOGO);
             
-            // Guardar el usuario primero en la base de datos
-            usuario = usuarioRepository.save(usuario);
+            // 5. Guardamos el usuario en la BD
+            nuevoUsuario = usuarioRepository.save(nuevoUsuario);
             
-            // Vincular el usuario recién creado al perfil del odontólogo
-            odontologo.setUsuario(usuario);
+            // 6. Vinculamos el usuario al médico
+            odontologo.setUsuario(nuevoUsuario);
         }
 
         return odontologoRepository.save(odontologo);
