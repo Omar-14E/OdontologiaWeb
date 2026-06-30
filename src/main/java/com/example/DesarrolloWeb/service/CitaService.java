@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.scheduling.annotation.Scheduled; // 👈 IMPORTACIÓN AÑADIDA PARA EL AUTOMATIZADOR
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -147,5 +148,24 @@ public class CitaService {
     public Cita obtenerCitaPorId(Long id) {
         return citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+    }
+
+    @Transactional
+    @Scheduled(fixedRate = 300000) 
+    public void marcarCitasPasadasComoRealizadas() {
+        
+        LocalDateTime haceDosHoras = LocalDateTime.now().minusHours(2);
+
+        List<Cita> citasVencidas = citaRepository.findByEstadoAndFechaHoraBefore(EstadoCita.PENDIENTE, haceDosHoras);
+
+        if (!citasVencidas.isEmpty()) {
+            
+            for (Cita cita : citasVencidas) {
+                cita.setEstado(EstadoCita.ATENDIDA); 
+            }
+
+            citaRepository.saveAll(citasVencidas);
+            System.out.println("Automatización: Se cambiaron a ATENDIDA " + citasVencidas.size() + " citas pasadas hace más de 2 horas.");
+        }
     }
 }

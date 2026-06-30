@@ -13,6 +13,8 @@ import { AdminPacientesComponent } from './features/admin-pacientes/admin-pacien
 
 import { AdminTurnosComponent } from './features/admin-turnos/admin-turnos';
 
+import { AdminHistorialCitasComponent } from './features/admin-historial-citas/admin-historial-citas';
+
 export const routes: Routes = [
   // Dejamos las rutas libres por ahora para probar la UI
 
@@ -54,6 +56,11 @@ export const routes: Routes = [
   {
     path: 'admin-turnos',
     component: AdminTurnosComponent
+  },
+
+  {
+    path: 'admin-historial-citas',
+    component: AdminHistorialCitasComponent
   },
 
   // Las redirecciones por defecto y el comodín siempre deben ir al final

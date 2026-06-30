@@ -2,7 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../core/services/admin.service';
-import { forkJoin } from 'rxjs'; // 👈 Importante para el generador masivo
+import { forkJoin } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-turnos',
@@ -97,75 +98,130 @@ export class AdminTurnosComponent implements OnInit {
     const val = this.turnoForm.value;
 
     if (this.modoEdicion && this.turnoSeleccionadoId) {
-      // 1. LÓGICA DE EDICIÓN INDIVIDUAL (LA EXCEPCIÓN)
+      // --- LÓGICA DE EDICIÓN INDIVIDUAL ---
       if (!val.fecha || !val.horaInicio || !val.horaFin) {
-        alert("Por favor complete fecha y horas para editar.");
+        Swal.fire({
+          title: 'Faltan Datos',
+          text: 'Por favor complete fecha y horas para editar el turno.',
+          icon: 'warning',
+          confirmButtonColor: '#f59e0b'
+        });
         return;
       }
       const turnoEditado = { fecha: val.fecha, horaInicio: val.horaInicio, horaFin: val.horaFin };
       
-      this.adminService.moverTurno(this.turnoSeleccionadoId, turnoEditado).subscribe(() => {
-        this.cargarTurnos(this.odontologoSeleccionadoId!);
-        this.cerrarFormulario();
+      this.adminService.moverTurno(this.turnoSeleccionadoId, turnoEditado).subscribe({
+        next: () => {
+          Swal.fire({
+            title: '¡Actualizado!',
+            text: 'El turno ha sido reprogramado con éxito.',
+            icon: 'success',
+            confirmButtonColor: '#0d9488',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.cargarTurnos(this.odontologoSeleccionadoId!);
+          this.cerrarFormulario();
+        },
+        error: () => {
+          Swal.fire('Error', 'No se pudo actualizar el turno.', 'error');
+        }
       });
 
     } else {
-      // 2. LÓGICA DE GENERACIÓN MASIVA (EL PATRÓN)
+      // --- LÓGICA DE GENERACIÓN MASIVA ---
       if (!val.fechaInicio || !val.fechaFin || !val.horaInicio || !val.horaFin) {
-        alert("Debe seleccionar un rango de fechas y un horario base.");
+        Swal.fire({
+          title: 'Faltan Datos',
+          text: 'Debe seleccionar un rango de fechas y un horario base.',
+          icon: 'warning',
+          confirmButtonColor: '#f59e0b'
+        });
         return;
       }
 
-      // Convertimos las fechas respetando la zona horaria
       const start = new Date(val.fechaInicio + 'T00:00:00');
       const end = new Date(val.fechaFin + 'T00:00:00');
       const turnosAGuardar = [];
 
-      // Recorremos cada día entre la fecha de inicio y fin
       while (start <= end) {
-        const diaSemana = start.getDay(); // 0 es Domingo, 1 es Lunes...
-        // Si el día está marcado en los checkboxes, lo agregamos a la lista
+        const diaSemana = start.getDay(); 
         if (val.dias[diaSemana]) {
           turnosAGuardar.push({
-            fecha: start.toISOString().split('T')[0], // formato YYYY-MM-DD
+            fecha: start.toISOString().split('T')[0], 
             horaInicio: val.horaInicio,
             horaFin: val.horaFin
           });
         }
-        start.setDate(start.getDate() + 1); // Avanzamos al siguiente día
+        start.setDate(start.getDate() + 1); 
       }
 
       if (turnosAGuardar.length === 0) {
-        alert("⚠️ No hay días que coincidan con su selección en este rango de fechas.");
+        Swal.fire({
+          title: 'Sin coincidencias',
+          text: 'No hay días que coincidan con su selección en este rango de fechas.',
+          icon: 'info',
+          confirmButtonColor: '#3b82f6'
+        });
         return;
       }
 
-      // Empaquetamos todas las peticiones a Spring Boot
       const peticiones = turnosAGuardar.map(turno => 
         this.adminService.asignarTurno(this.odontologoSeleccionadoId!, turno)
       );
 
-      // forkJoin ejecuta todas las peticiones en paralelo
       forkJoin(peticiones).subscribe({
         next: () => {
-          alert(`✅ ¡Éxito! Se generaron ${turnosAGuardar.length} turnos para el profesional.`);
+          Swal.fire({
+            title: '¡Generación Exitosa!',
+            text: `Se generaron ${turnosAGuardar.length} turnos para el Medico.`,
+            icon: 'success',
+            confirmButtonColor: '#0d9488',
+            confirmButtonText: 'Genial'
+          });
           this.cargarTurnos(this.odontologoSeleccionadoId!);
           this.cerrarFormulario();
         },
         error: (err) => {
           console.error(err);
-          alert("Hubo un error al generar los turnos. Revise si hay fechas pasadas.");
+          Swal.fire({
+            title: 'Oops...',
+            text: 'Hubo un error al generar los turnos. Revisa tu conexión o intenta con un rango menor.',
+            icon: 'error',
+            confirmButtonColor: '#0d9488'
+          });
         }
       });
     }
   }
 
   eliminarTurno(id: number): void {
-    if (confirm('¿Estás seguro de eliminar este horario?')) {
-      this.adminService.eliminarTurno(id).subscribe(() => {
-        if (this.odontologoSeleccionadoId) this.cargarTurnos(this.odontologoSeleccionadoId);
-      });
-    }
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Eliminarás este horario de atención y no se podrá recuperar.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.eliminarTurno(id).subscribe(() => {
+          Swal.fire({
+            title: '¡Eliminado!',
+            text: 'El turno ha sido borrado de la agenda.',
+            icon: 'success',
+            confirmButtonColor: '#0d9488',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          if (this.odontologoSeleccionadoId) {
+            this.cargarTurnos(this.odontologoSeleccionadoId);
+          }
+        });
+      }
+    });
   }
 
   getFechaMinimaActual(): string {

@@ -9,6 +9,7 @@ export class AdminService {
   private apiUrlOdontologos = 'http://localhost:8080/api/odontologos';
   private apiUrlPacientes = 'http://localhost:8080/api/pacientes';
   private apiUrlTurnos = 'http://localhost:8080/api/turnos';
+  private apiUrlCitas = 'http://localhost:8080/api/citas';
 
   constructor(private http: HttpClient) {}
 
@@ -67,5 +68,10 @@ export class AdminService {
 
   eliminarTurno(turnoId: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrlTurnos}/eliminar/${turnoId}`);
+  }
+
+  // HISTORIAL DE CITAS :D
+  getHistorialCitas(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrlCitas);
   }
 }

@@ -1,0 +1,133 @@
+<div class="dashboard-wrapper">
+  <header class="dash-header">
+    <div class="header-info">
+      <h2 class="greeting">Historial y Reporte de Citas</h2>
+      <p class="subtitle">Monitorea el flujo general de atenciones, estados y asignaciones de la clínica.</p>
+    </div>
+    <button class="btn btn-outline" (click)="cargarHistorial()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+      Actualizar Datos
+    </button>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Total Registradas</span>
+        <span class="stat-value">{{ totalCitas() }}</span>
+      </div>
+    </div>
+    
+    <div class="stat-card pending">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Pendientes / Próximas</span>
+        <span class="stat-value">{{ citasPendientes() }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card success">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Realizadas</span>
+        <span class="stat-value">{{ citasRealizadas() }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card danger">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Canceladas</span>
+        <span class="stat-value">{{ citasCanceladas() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <div class="table-container">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Fecha y Hora</th>
+            <th>Paciente (DNI)</th>
+            <th>Profesional Asignado</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cita of citas()">
+            
+            <td>
+              <div class="date-time-cell">
+                <span class="date-text">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  {{ formatearFechaHora(cita.fechaHora).fecha }}
+                </span>
+                <span class="time-text">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  {{ formatearFechaHora(cita.fechaHora).hora }} hrs
+                </span>
+              </div>
+            </td>
+
+            <td>
+              <div class="profile-cell">
+                <div class="avatar bg-blue">
+                  {{ cita.paciente.nombre.charAt(0) }}{{ cita.paciente.apellido.charAt(0) }}
+                </div>
+                <div class="profile-info">
+                  <span class="profile-name">{{ cita.paciente.nombre }} {{ cita.paciente.apellido }}</span>
+                  <span class="profile-sub">DNI: {{ cita.paciente.dni }}</span>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <div class="profile-cell">
+                <div class="avatar bg-teal">
+                  {{ cita.odontologo.nombre.charAt(0) }}{{ cita.odontologo.apellido.charAt(0) }}
+                </div>
+                <div class="profile-info">
+                  <span class="profile-name">Dr/a. {{ cita.odontologo.nombre }} {{ cita.odontologo.apellido }}</span>
+                  <span class="profile-sub">{{ cita.odontologo.especialidad }}</span>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <span class="status-badge" 
+                    [ngClass]="{
+                      'status-pending': cita.estado === 'PENDIENTE',
+                      'status-success': cita.estado === 'ATENDIDA', 
+                      'status-danger': cita.estado === 'CANCELADA'
+                    }">
+                {{ cita.estado }}
+              </span>
+            </td>
+
+          </tr>
+
+          <tr *ngIf="citas().length === 0">
+            <td colspan="4">
+              <div class="empty-state">
+                <div class="empty-state-icon" style="color: #94a3b8; background: #f1f5f9;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+                <h4 style="color: var(--text-main);">No hay citas registradas en el historial</h4>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

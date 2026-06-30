@@ -132,13 +132,28 @@
             <tr *ngIf="turnos().length === 0">
               <td colspan="4">
                 <div class="empty-state">
-                  <h4 style="color: var(--text-main);">Sin horarios configurados</h4>
+                  <div class="empty-state-icon" style="color: #f59e0b; background: #fef3c7;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  </div>
+                  <h4 style="color: var(--text-main); margin-bottom: 0.5rem; font-size: 1.1rem;">Sin horarios configurados</h4>
+                  <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 400px; margin: 0 auto;">
+                    Este profesional no tiene turnos vigentes asignados. Añade un patrón de horarios para que los pacientes puedan agendar citas.
+                  </p>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div *ngIf="!odontologoSeleccionadoId" class="admin-card d-flex align-items-center justify-content-center" style="min-height: 400px; border: 2px dashed #cbd5e1; background: transparent; box-shadow: none;">
+    <div class="empty-state">
+      <div class="empty-state-icon" style="background: #f1f5f9; color: var(--text-muted);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      </div>
+      <h4 style="color: var(--text-muted); font-weight: 500;">Selecciona un médico en el panel superior para administrar sus turnos</h4>
     </div>
   </div>
 </div>
