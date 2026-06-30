@@ -80,7 +80,17 @@ export class CitasComponent implements OnInit {
   cargarCitas(): void {
     this.adminService.getHistorialCitas().subscribe({
       next: (data) => {
-        const citasRecientes = data.sort((a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime());
+        const { inicio, fin } = this.obtenerLimitesSemana();
+
+        const citasDeEstaSemana = data.filter(cita => {
+          const fechaCita = new Date(cita.fechaHora);
+          return fechaCita >= inicio && fechaCita <= fin;
+        });
+
+        const citasRecientes = citasDeEstaSemana.sort((a, b) => 
+          new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime()
+        );
+        
         this.citasAgendadas.set(citasRecientes);
       },
       error: (err) => console.error('Error cargando citas', err)
@@ -312,4 +322,23 @@ export class CitasComponent implements OnInit {
   getFechaMinimaActual(): string {
     return new Date().toISOString().split('T')[0];
   }
+
+  // FILTRO DE SEMANA ACTUAL
+  obtenerLimitesSemana(): { inicio: Date, fin: Date } {
+    const hoy = new Date();
+    const diaSemana = hoy.getDay(); 
+    
+    const distanciaLunes = diaSemana === 0 ? -6 : 1 - diaSemana;
+
+    const lunes = new Date(hoy);
+    lunes.setDate(hoy.getDate() + distanciaLunes);
+    lunes.setHours(0, 0, 0, 0); 
+
+    const domingo = new Date(lunes);
+    domingo.setDate(lunes.getDate() + 6);
+    domingo.setHours(23, 59, 59, 999); 
+
+    return { inicio: lunes, fin: domingo };
+  }
+
 }
