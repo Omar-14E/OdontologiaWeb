@@ -19,16 +19,17 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    background-color: #F2EADF; /* COLOR DE FONDO */
+    background-color: #f1f5f9; /* 👈 Gris slate claro, idéntico al ambiente interno de la app */
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     box-sizing: border-box;
+    padding: 20px;
 }
-
-/* Estructura de la tarjeta Login */
+/* Estructura de la tarjeta Login (Optimizada para ser más ancha que alta) */
 .login-wrapper {
     display: flex;
-    width: 1000px;
-    height: 600px;
+    width: 85vw;          /* Ajuste dinámico basado en el ancho de la pantalla */
+    max-width: 1060px;    /* Límite horizontal máximo */
+    height: 520px;        /* Reducción de altura para lograr el formato rectangular perfecto */
     background: #ffffff;
     border-radius: 20px;
     overflow: hidden;
@@ -99,7 +100,7 @@
     display: flex;
     justify-content: center; /* Centra horizontalmente el bloque */
     align-items: center;     /* Centra verticalmente el bloque respecto a la imagen */
-    padding: 50px;
+    padding: 40px 50px;      /* Compactación sutil del padding vertical */
     box-sizing: border-box;
     background: #ffffff;
 }
@@ -113,14 +114,14 @@
 }
 
 .form-header {
-    margin-bottom: 35px;
+    margin-bottom: 25px;    /* Reducción menor de espacio para acoplarse al contenedor más bajo */
 }
 
 .form-header h2 {
     font-size: 26px;
     color: #0f172a;
     font-weight: 700;
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     letter-spacing: -0.5px;
 }
 
@@ -141,7 +142,7 @@ form {
 /* Grupos de inputs obligados a ocupar el 100% del ancho disponible */
 .form-group {
     position: relative;
-    margin-bottom: 24px;
+    margin-bottom: 20px;    /* Reducción de margen para mantener simetría limpia */
     width: 100%;
     box-sizing: border-box;
 }
@@ -150,7 +151,7 @@ form {
 .form-group input {
     width: 100%;
     padding: 20px 14px 8px 14px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid #cbd5e1; /* 👈 Gris más definido, el mismo del textarea de tus observaciones */
     border-radius: 10px;
     font-size: 15px;
     color: #0f172a;
@@ -160,7 +161,6 @@ form {
     display: block;
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
 }
-
 .form-group label {
     position: absolute;
     left: 14px;
@@ -203,7 +203,7 @@ form {
 .error-msg {
     color: #ef4444;
     font-size: 12px;
-    margin-top: 6px;
+    margin-top: 4px;
 }
 
 /* Caja de error del servidor */
@@ -214,9 +214,9 @@ form {
     background-color: #fef2f2;
     border: 1px solid #fee2e2;
     color: #b91c1c;
-    padding: 12px 14px;
+    padding: 10px 14px;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     font-size: 13px;
 }
 
@@ -234,7 +234,7 @@ button {
     box-sizing: border-box;
     display: block;
     transition: all 0.2s ease;
-    margin-top: 8px;
+    margin-top: 4px;
 }
 
 button:hover:not([disabled]) {

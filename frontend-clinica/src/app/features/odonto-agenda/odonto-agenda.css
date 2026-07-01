@@ -1,3 +1,5 @@
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css');
+
 /* ==========================================================================
    ESTILOS GENERALES Y MAQUETACIÓN BASE
    ========================================================================== */
@@ -507,4 +509,25 @@
   font-weight: 600 !important;
   border-radius: 6px !important;
   letter-spacing: 0.2px !important;
+}
+
+/* ==========================================================================
+   Alineación de Iconos Vectoriales
+   ========================================================================== */
+.icon-margin {
+  margin-right: 0.5rem;
+  font-size: 1.15rem;
+  vertical-align: -0.125em;
+  color: #0d9488;
+}
+
+.icon-margin-sm {
+  margin-right: 0.4rem;
+  font-size: 1rem;
+  vertical-align: -0.075em;
+  color: #64748b;
+}
+
+.time-col .icon-margin-sm, .highlight-text .icon-margin-sm {
+  color: #0d9488;
 }

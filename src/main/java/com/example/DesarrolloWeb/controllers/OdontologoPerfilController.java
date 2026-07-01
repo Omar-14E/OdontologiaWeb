@@ -6,10 +6,12 @@ import com.example.DesarrolloWeb.dto.PerfilOdontoDTO;
 import com.example.DesarrolloWeb.models.Cita;
 import com.example.DesarrolloWeb.models.Odontologo;
 import com.example.DesarrolloWeb.models.Paciente;
+import com.example.DesarrolloWeb.models.TurnoOdontologo;
 import com.example.DesarrolloWeb.models.Usuario;
 import com.example.DesarrolloWeb.repository.CitaRepository;
 import com.example.DesarrolloWeb.repository.UsuarioRepository;
 import com.example.DesarrolloWeb.service.OdontologoService;
+import com.example.DesarrolloWeb.service.TurnoOdontologoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,10 +44,12 @@ public class OdontologoPerfilController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private TurnoOdontologoService turnoOdontologoService;
+
     // =========================================================================
-    // 🌟 PANTALLA: DASHBOARD (MÉTRICAS GENERALES)
+    // 🌟 PANTALLA: DASHBOARD (MÉTRICAS GENERALES ORIGINAL)
     // =========================================================================
-    
     @GetMapping("") 
     public ResponseEntity<DashboardOdontologoDTO> getDashboardOdontologo(Principal principal) {
         String username = principal.getName();
@@ -83,13 +87,11 @@ public class OdontologoPerfilController {
         return ResponseEntity.ok(dto);
     }
 
-    // Sirve para renderizar las tarjetas internas con scroll en el Dashboard y la Vista Semanal
     @GetMapping("/citas")
     public ResponseEntity<AgendaOdontoDTO> getMisCitas(Principal principal) {
         String username = principal.getName();
         List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
         
-        // 1. Límites exactos para HOY (Sin datos simulados artificialmente)
         LocalDateTime inicioHoy = LocalDate.now().atStartOfDay();
         LocalDateTime finHoy = LocalDate.now().atTime(LocalTime.MAX);
         
@@ -102,7 +104,6 @@ public class OdontologoPerfilController {
             .distinct()
             .collect(Collectors.toList());
 
-        // 2. Límites para la SEMANA COMPLETA (Lunes a Domingo históricos)
         LocalDate hoy = LocalDate.now();
         LocalDate lunesDeEstaSemana = hoy.minusDays(hoy.getDayOfWeek().getValue() - 1);
         LocalDate domingoDeEstaSemana = lunesDeEstaSemana.plusDays(6);
@@ -118,11 +119,6 @@ public class OdontologoPerfilController {
         return ResponseEntity.ok(agenda);
     }
 
-    // =========================================================================
-    // 👥 PANTALLA: REGISTRO Y EXPEDIENTE DE PACIENTES (RESTAURADO)
-    // =========================================================================
-
-    // 1. Carga inicial: Pacientes que alguna vez en la vida se han atendido con el doctor
     @GetMapping("/pacientes")
     public ResponseEntity<List<Paciente>> getMisPacientesHistoricos(Principal principal) {
         String username = principal.getName();
@@ -136,7 +132,6 @@ public class OdontologoPerfilController {
         return ResponseEntity.ok(pacientesHistoricos);
     }
 
-    // 2. Vista detalle: Historial de TODAS las citas de un paciente
     @GetMapping("/historial-paciente/{id}")
     public ResponseEntity<List<Cita>> getHistorialPaciente(@PathVariable Long id, Principal principal) {
         String username = principal.getName();
@@ -148,10 +143,6 @@ public class OdontologoPerfilController {
             
         return ResponseEntity.ok(historialPaciente);
     }
-
-    // =========================================================================
-    // 🛠️ MÉTODOS GESTIÓN DE PERFIL INTERACTIVO
-    // =========================================================================
 
     @GetMapping("/detalles")
     public ResponseEntity<PerfilOdontoDTO> getPerfilDetallado(Principal principal) {
@@ -193,5 +184,55 @@ public class OdontologoPerfilController {
         }
 
         return ResponseEntity.ok().body(Map.of("message", "Perfil actualizado con éxito"));
+    }
+
+    @GetMapping("/mis-turnos-semana")
+    public ResponseEntity<List<TurnoOdontologo>> getMisTurnosDeLaSemana(Principal principal) {
+        String username = principal.getName();
+        Odontologo odontologo = odontologoService.obtenerPorUsername(username);
+        
+        List<TurnoOdontologo> todosLosTurnos = turnoOdontologoService.obtenerTurnosVigentes(odontologo.getId());
+        
+        LocalDate hoy = LocalDate.now();
+        LocalDate lunes = hoy.minusDays(hoy.getDayOfWeek().getValue() - 1);
+        LocalDate domingo = lunes.plusDays(6);
+        
+        List<TurnoOdontologo> turnosSemanaActual = todosLosTurnos.stream()
+            .filter(t -> !t.getFecha().isBefore(lunes) && !t.getFecha().isAfter(domingo))
+            .collect(Collectors.toList());
+            
+        return ResponseEntity.ok(turnosSemanaActual);
+    }
+
+    // =========================================================================
+    // 🆕 NUEVO ENDPOINT AISLADO: EXCLUSIVO PARA EL HORARIO REAL DE HOY
+    // =========================================================================
+    @GetMapping("/horario-hoy")
+    public ResponseEntity<Map<String, Object>> getHorarioDeHoy(Principal principal) {
+        String username = principal.getName();
+        LocalDate hoy = LocalDate.now();
+        Odontologo odontologo = odontologoService.obtenerPorUsername(username);
+
+        List<TurnoOdontologo> todosLosTurnos = turnoOdontologoService.obtenerTurnosVigentes(odontologo.getId());
+        
+        TurnoOdontologo turnoDeHoy = todosLosTurnos.stream()
+            .filter(t -> t.getFecha().equals(hoy))
+            .findFirst()
+            .orElse(null);
+
+        Map<String, Object> horarioData = new java.util.HashMap<>();
+        
+        if (turnoDeHoy != null) {
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm");
+            horarioData.put("tieneTurno", true);
+            horarioData.put("entrada", turnoDeHoy.getHoraInicio().format(formatter));
+            horarioData.put("salida", turnoDeHoy.getHoraFin().format(formatter));
+        } else {
+            horarioData.put("tieneTurno", false);
+            horarioData.put("entrada", null);
+            horarioData.put("salida", null);
+        }
+
+        return ResponseEntity.ok(horarioData);
     }
 }
