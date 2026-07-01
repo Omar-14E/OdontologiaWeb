@@ -1,18 +1,37 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core'; // 👈 Se añadió 'computed'
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../core/services/admin.service';
-import Swal from 'sweetalert2'; // 👈 IMPORTACIÓN AÑADIDA PARA LAS ALERTAS
+import { RouterModule } from '@angular/router';
+import Swal from 'sweetalert2'; 
 
 @Component({
   selector: 'app-admin-pacientes',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './admin-pacientes.html',
   styleUrls: ['./admin-pacientes.css'],
 })
 export class AdminPacientesComponent implements OnInit {
+  
   pacientes = signal<any[]>([]);
+  
+  // 🌟 NUEVO: Signals para la Búsqueda / Filtro 🌟
+  filtroTexto = signal<string>('');
+
+  // 🌟 NUEVO: Filtro reactivo para Nombre, Apellido o DNI 🌟
+  pacientesFiltrados = computed(() => {
+    const texto = this.filtroTexto().toLowerCase().trim();
+    const lista = this.pacientes();
+
+    if (!texto) return lista;
+
+    return lista.filter(p => 
+      (p.nombre && p.nombre.toLowerCase().includes(texto)) ||
+      (p.apellido && p.apellido.toLowerCase().includes(texto)) ||
+      (p.dni && p.dni.includes(texto))
+    );
+  });
 
   pacienteForm: FormGroup;
   modoEdicion: boolean = false;
@@ -24,8 +43,8 @@ export class AdminPacientesComponent implements OnInit {
     private fb: FormBuilder,
   ) {
     this.pacienteForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
-      apellido: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+      apellido: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
       dni: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
       telefono: ['', [Validators.required, Validators.pattern(/^9[0-9]{8}$/)]],
     });
@@ -40,6 +59,15 @@ export class AdminPacientesComponent implements OnInit {
       next: (data) => this.pacientes.set(data),
       error: (err) => console.error('Error cargando pacientes:', err),
     });
+  }
+
+  // 🌟 NUEVOS MÉTODOS: Para capturar lo que el usuario escribe en el buscador 🌟
+  onBuscarTexto(event: any): void {
+    this.filtroTexto.set(event.target.value);
+  }
+
+  limpiarFiltros(): void {
+    this.filtroTexto.set('');
   }
 
   abrirFormulario(paciente?: any): void {
@@ -100,15 +128,14 @@ export class AdminPacientesComponent implements OnInit {
         error: (err: any) => {
           const mensajeBackend = err.error?.message || err.error || 'Ocurrió un problema.';
           Swal.fire({
-            title: 'No se pudo actualizar', // O 'DNI Duplicado' en el otro bloque
+            title: 'No se pudo actualizar', 
             text: typeof mensajeBackend === 'string' ? mensajeBackend : 'El DNI ya está en uso.',
             icon: 'error',
             confirmButtonColor: '#ef4444',
-            // 👇 ESTA ES LA SOLUCIÓN INFALIBLE 👇
             didOpen: () => {
               const swalContainer = document.querySelector('.swal2-container') as HTMLElement;
               if (swalContainer) {
-                swalContainer.style.zIndex = '9999999'; // Forzamos la capa más alta mediante JavaScript
+                swalContainer.style.zIndex = '9999999'; 
               }
             },
           });

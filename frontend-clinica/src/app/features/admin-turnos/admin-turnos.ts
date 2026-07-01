@@ -27,7 +27,8 @@ export class AdminTurnosComponent implements OnInit {
     this.turnoForm = this.fb.group({
       // Horarios base
       horaInicio: ['', Validators.required],
-      horaFin: ['', Validators.required],
+      tipoTurno: [8, Validators.required], // 8 horas por defecto
+      horaFin: [{ value: '', disabled: true }, Validators.required], // Deshabilitado para que el usuario no lo edite
       
       // Para modo Masivo (Rango de fechas)
       fechaInicio: [''],
@@ -45,6 +46,10 @@ export class AdminTurnosComponent implements OnInit {
       // Para modo Edición Individual
       fecha: ['']
     });
+
+    // Suscribirse a los cambios para calcular automáticamente
+    this.turnoForm.get('horaInicio')?.valueChanges.subscribe(() => this.calcularHoraFin());
+    this.turnoForm.get('tipoTurno')?.valueChanges.subscribe(() => this.calcularHoraFin());
   }
 
   ngOnInit(): void {
@@ -52,6 +57,25 @@ export class AdminTurnosComponent implements OnInit {
       next: (data) => this.odontologos.set(data),
       error: (err) => console.error('Error cargando odontólogos', err)
     });
+  }
+
+  // --- NUEVO MÉTODO PARA CALCULAR LA HORA ---
+  calcularHoraFin(): void {
+    const horaInicio = this.turnoForm.get('horaInicio')?.value;
+    const horasTurno = Number(this.turnoForm.get('tipoTurno')?.value);
+
+    if (horaInicio && horasTurno) {
+      const [horasStr, minutosStr] = horaInicio.split(':');
+      let horas = parseInt(horasStr, 10);
+      
+      horas += horasTurno;
+      const horasFinales = (horas % 24).toString().padStart(2, '0');
+      
+      // Actualizamos el valor del campo deshabilitado
+      this.turnoForm.get('horaFin')?.setValue(`${horasFinales}:${minutosStr}`);
+    } else {
+      this.turnoForm.get('horaFin')?.setValue('');
+    }
   }
 
   onOdontologoSeleccionado(event: any): void {
@@ -73,6 +97,7 @@ export class AdminTurnosComponent implements OnInit {
     this.modoEdicion = false;
     this.turnoSeleccionadoId = null;
     this.turnoForm.reset({
+      tipoTurno: 8, // Reiniciar al valor por defecto
       dias: { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 0: false }
     });
   }
@@ -81,11 +106,19 @@ export class AdminTurnosComponent implements OnInit {
     this.mostrarFormulario = true;
     this.modoEdicion = true;
     this.turnoSeleccionadoId = turno.id;
+    
+    // Calculamos si era turno de 4 u 8 horas basándonos en la hora inicio y fin
+    const [hIni] = turno.horaInicio.split(':');
+    const [hFin] = turno.horaFin.split(':');
+    let duracion = parseInt(hFin, 10) - parseInt(hIni, 10);
+    if (duracion < 0) duracion += 24; // Por si pasa de la medianoche
+
     this.turnoForm.patchValue({
       fecha: turno.fecha,
       horaInicio: turno.horaInicio,
-      horaFin: turno.horaFin
+      tipoTurno: duracion
     });
+    // El valueChanges de arriba detectará el patchValue y calculará la horaFin automáticamente
   }
 
   cerrarFormulario(): void {
@@ -95,10 +128,11 @@ export class AdminTurnosComponent implements OnInit {
 
   guardarTurno(): void {
     if (!this.odontologoSeleccionadoId) return;
-    const val = this.turnoForm.value;
+    
+    // IMPORTANTE: getRawValue() incluye campos "disabled" como horaFin
+    const val = this.turnoForm.getRawValue(); 
 
     if (this.modoEdicion && this.turnoSeleccionadoId) {
-      // --- LÓGICA DE EDICIÓN INDIVIDUAL ---
       if (!val.fecha || !val.horaInicio || !val.horaFin) {
         Swal.fire({
           title: 'Faltan Datos',
@@ -129,7 +163,6 @@ export class AdminTurnosComponent implements OnInit {
       });
 
     } else {
-      // --- LÓGICA DE GENERACIÓN MASIVA ---
       if (!val.fechaInicio || !val.fechaFin || !val.horaInicio || !val.horaFin) {
         Swal.fire({
           title: 'Faltan Datos',

@@ -10,6 +10,7 @@
     </button>
   </header>
 
+  <!-- Tarjetas de Métricas -->
   <div class="stats-grid">
     <div class="stat-card total">
       <div class="stat-icon">
@@ -52,31 +53,50 @@
     </div>
   </div>
 
-  <div class="admin-card search-filter-bar">
-    
-    <div class="search-box">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <input type="text" class="form-control" [value]="filtroTexto()" (input)="onBuscarTexto($event)" placeholder="Buscar paciente o DNI...">
+  <!-- Panel de Filtros Estructurado -->
+  <div class="admin-card filter-section">
+    <div class="filter-header">
+      <div class="filter-title-area">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        <h4 style="margin:0; font-size:1.1rem; color: var(--text-main);">Filtros de Búsqueda</h4>
+      </div>
+      <button class="btn btn-reset" (click)="limpiarFiltros()" [disabled]="!filtroTexto() && !filtroEspecialidad() && !filtroFechaInicio() && !filtroFechaFin()">
+        Limpiar Filtros
+      </button>
     </div>
 
-    <div class="date-filter-box">
-      <input type="date" class="form-control" [value]="filtroFechaInicio()" (input)="onFiltrarFechaInicio($event)" title="Fecha Desde">
-      <span class="date-separator">hasta</span>
-      <input type="date" class="form-control" [value]="filtroFechaFin()" (input)="onFiltrarFechaFin($event)" title="Fecha Hasta">
-    </div>
-    
-    <div class="filter-box">
-      <select class="form-control select-clean" [value]="filtroEspecialidad()" (change)="onFiltrarEspecialidad($event)">
-        <option value="">Todas las especialidades</option>
-        <option *ngFor="let esp of especialidadesEnum" [value]="esp">{{ esp }}</option>
-      </select>
-    </div>
+    <div class="filter-grid">
+      <!-- Filtro Búsqueda -->
+      <div class="form-group search-group">
+        <label class="form-label">Paciente o DNI</label>
+        <div class="search-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" class="form-control" [value]="filtroTexto()" (input)="onBuscarTexto($event)" placeholder="Ej. Juan Pérez o 72485933...">
+        </div>
+      </div>
+      
+      <!-- Filtro Fechas -->
+      <div class="form-group date-group">
+        <label class="form-label">Rango de Fechas</label>
+        <div class="date-filter-box">
+          <input type="date" class="form-control" [value]="filtroFechaInicio()" (input)="onFiltrarFechaInicio($event)" title="Fecha Desde">
+          <span class="date-separator">hasta</span>
+          <input type="date" class="form-control" [value]="filtroFechaFin()" (input)="onFiltrarFechaFin($event)" title="Fecha Hasta">
+        </div>
+      </div>
 
-    <button class="btn btn-reset" (click)="limpiarFiltros()" [disabled]="!filtroTexto() && !filtroEspecialidad() && !filtroFechaInicio() && !filtroFechaFin()">
-      Limpiar Filtros
-    </button>
+      <!-- Filtro Especialidad -->
+      <div class="form-group">
+        <label class="form-label">Especialidad Asignada</label>
+        <select class="form-control select-clean" [value]="filtroEspecialidad()" (change)="onFiltrarEspecialidad($event)">
+          <option value="">Todas las especialidades</option>
+          <option *ngFor="let esp of especialidadesEnum" [value]="esp">{{ esp }}</option>
+        </select>
+      </div>
+    </div>
   </div>
 
+  <!-- Tabla de Resultados -->
   <div class="admin-card table-wrapper-card">
     <div class="table-container">
       <table class="custom-table">
@@ -139,7 +159,8 @@
             </td>
           </tr>
 
-          <tr *ngIf="citasFiltradasYRecortadas().length === 0">
+          <!-- Fila vacía con clase no-hover para evitar que se ilumine -->
+          <tr *ngIf="citasFiltradasYRecortadas().length === 0" class="no-hover">
             <td colspan="4">
               <div class="empty-state">
                 <div class="empty-state-icon" style="color: #94a3b8; background: #f1f5f9;">

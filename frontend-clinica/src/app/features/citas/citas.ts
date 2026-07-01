@@ -115,11 +115,11 @@ export class CitasComponent implements OnInit {
       html: `
         <div class="swal-form-body" style="text-align: left; display: flex; flex-direction: column; gap: 0.8rem; font-family: 'Inter', sans-serif;">
           <div class="swal-input-group" style="display: flex; flex-direction: column; gap: 0.3rem;">
-            <label class="swal-label" style="font-size: 0.85rem; font-weight: 600; color: #1e293b;">Nombre *</label>
+            <label class="swal-label" style="font-size: 0.85rem; font-weight: 600; color: #1e293b;">Nombre * (Mín. 3 letras)</label>
             <input id="swal-nombre" class="swal2-input" placeholder="Ej. Juan" style="margin: 0; width: 100%; box-sizing: border-box; height: 42px; font-size: 0.9rem;">
           </div>
           <div class="swal-input-group" style="display: flex; flex-direction: column; gap: 0.3rem;">
-            <label class="swal-label" style="font-size: 0.85rem; font-weight: 600; color: #1e293b;">Apellido *</label>
+            <label class="swal-label" style="font-size: 0.85rem; font-weight: 600; color: #1e293b;">Apellido * (Mín. 3 letras)</label>
             <input id="swal-apellido" class="swal2-input" placeholder="Ej. Pérez" style="margin: 0; width: 100%; box-sizing: border-box; height: 42px; font-size: 0.9rem;">
           </div>
           <div class="swal-input-group" style="display: flex; flex-direction: column; gap: 0.3rem;">
@@ -134,18 +134,26 @@ export class CitasComponent implements OnInit {
       `,
       preConfirm: () => {
         const nombre = (document.getElementById('swal-nombre') as HTMLInputElement).value.trim();
-        const apellido = (
-          document.getElementById('swal-apellido') as HTMLInputElement
-        ).value.trim();
+        const apellido = (document.getElementById('swal-apellido') as HTMLInputElement).value.trim();
         const dni = (document.getElementById('swal-dni') as HTMLInputElement).value.trim();
-        const telefono = (
-          document.getElementById('swal-telefono') as HTMLInputElement
-        ).value.trim();
+        const telefono = (document.getElementById('swal-telefono') as HTMLInputElement).value.trim();
 
         if (!nombre || !apellido || !dni || !telefono) {
           Swal.showValidationMessage('Todos los campos son obligatorios');
           return false;
         }
+
+        // 👇 NUEVAS VALIDACIONES DE LONGITUD MÍNIMA 👇
+        if (nombre.length < 3) {
+          Swal.showValidationMessage('El nombre debe tener al menos 3 caracteres');
+          return false;
+        }
+        if (apellido.length < 3) {
+          Swal.showValidationMessage('El apellido debe tener al menos 3 caracteres');
+          return false;
+        }
+        // ---------------------------------------------
+
         if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
           Swal.showValidationMessage('El nombre solo puede contener letras');
           return false;
@@ -159,7 +167,7 @@ export class CitasComponent implements OnInit {
           return false;
         }
         if (!/^9[0-9]{8}$/.test(telefono)) {
-          Swal.showValidationMessage('El teléfono debe tener 9 dígitos y empezar con el número 9');
+          Swal.showValidationMessage('El teléfono debe tener 9 dígitos y empezar con 9');
           return false;
         }
 
@@ -198,7 +206,7 @@ export class CitasComponent implements OnInit {
       }
     });
   }
-
+  
   buscarHorariosDisponibles(odontologoId: number, fecha: string): void {
     this.buscandoHorarios.set(true);
     this.adminService.getDisponibilidad(odontologoId, fecha).subscribe({

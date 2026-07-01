@@ -144,21 +144,15 @@
 }
 
 .btn-outline {
-  background-color: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-color);
-}
+   background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; font-size: 0.85rem;}
 
 .btn-outline:hover {
   background-color: #f1f5f9;
   color: var(--text-main);
 }
 
-.btn-danger-outline {
-  background-color: #fef2f2;
-  color: var(--danger);
-  border: 1px solid #fecaca;
-}
+.btn-danger-outline { background-color: transparent; color: var(--danger); border: 1px solid #fecaca; padding: 0.5rem 1rem; font-size: 0.85rem;}
+
 
 .btn-danger-outline:hover {
   background-color: var(--danger);
@@ -172,10 +166,6 @@
   border-radius: 8px;
 }
 
-/* Tablas Modernas */
-.table-container {
-  overflow-x: auto;
-}
 
 .custom-table {
   width: 100%;
@@ -251,22 +241,10 @@
 }
 
 /* Estado Vacío (Empty State) */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-}
+.empty-state { text-align: center; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; }
 
-.empty-state-icon {
-  background: #eff6ff;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem auto;
-  color: #3b82f6;
-}   
+.empty-state-icon { width: 72px; height: 72px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 1.5rem; }
+   
 
 /* =========================================
    SISTEMA DE MODAL FLOTANTE (POP-UP)
@@ -398,3 +376,163 @@
 .swal2-container {
   z-index: 999999 !important;
 }
+
+
+/* -------------------------------------
+   PANEL DE BÚSQUEDA
+   ------------------------------------- */
+.filter-section {
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.filter-title-area {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--primary);
+}
+
+.single-search {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1.2rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.form-control.input-large {
+  padding: 1rem 1rem 1rem 3.2rem;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background-color: #f8fafc;
+  font-family: inherit;
+  font-size: 1.05rem;
+  color: var(--text-main);
+  outline: none;
+  width: 100%;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-control.input-large:focus {
+  background-color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15);
+}
+
+/* -------------------------------------
+   TABLA DE PACIENTES
+   ------------------------------------- */
+.table-wrapper-card { 
+  padding: 0; 
+  overflow: hidden; 
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.table-container { overflow-x: auto; }
+
+.custom-table tbody tr:not(.no-hover):hover td {
+  background-color: #f8fafc;
+}
+
+/* Perfil (Avatar + Info) */
+.profile-cell { display: flex; align-items: center; gap: 1rem; }
+.bg-indigo { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
+
+.profile-info { display: flex; flex-direction: column; }
+.profile-name { font-weight: 600; color: var(--text-main); font-size: 0.95rem; }
+.profile-sub { font-size: 0.8rem; margin-top: 0.1rem; }
+
+/* Badges e Info de Contacto */
+.dni-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.text-muted { color: var(--text-muted); font-weight: 400; }
+
+
+.btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+
+.btn-outline:hover { background-color: #f1f5f9; }
+
+.btn-danger-outline:hover { background-color: #fef2f2; }
+
+.btn-reset {
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 0 1.2rem;
+  height: 38px;
+}
+.btn-reset:hover:not(:disabled) { background-color: #f1f5f9; color: var(--text-main); }
+.btn-reset:disabled { opacity: 0.5; cursor: not-allowed; }
+
+
+
+/* =========================================
+   ENLACE VOLVER AL DASHBOARD
+   ========================================= */
+.btn-back-dashboard {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.btn-back-dashboard:hover {
+  color: var(--primary-hover);
+} 
+
