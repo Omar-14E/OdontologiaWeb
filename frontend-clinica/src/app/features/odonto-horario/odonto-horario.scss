@@ -1,3 +1,6 @@
+// ==========================================
+// CONFIGURACIÓN GLOBAL / HOST
+// ==========================================
 :host {
   display: block;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -6,9 +9,15 @@
   min-height: 100vh;
   padding: 3rem 2rem; /* Añade espacio arriba y abajo para que no quede pegado */
   box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    padding: 1rem;
+  }
 }
 
-/* Contenedor Principal (Sigue la estructura de tarjeta del Dashboard) */
+// ==========================================
+// CONTENEDOR PRINCIPAL
+// ==========================================
 .horario-container {
   max-width: 1280px;
   margin: 0 auto;
@@ -16,27 +25,40 @@
   border-radius: 16px; /* Bordes redondeados idénticos a tus componentes */
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
   padding: 2.5rem; /* Margen interno para centrar el contenido */
+
+  @media (max-width: 640px) {
+    padding: 1.5rem;
+  }
 }
 
-/* Barra Superior */
+// ==========================================
+// BARRA SUPERIOR Y HEADER
+// ==========================================
 .horario-top-bar {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1.5rem;
+
+  @media (max-width: 640px) {
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
 }
 
-.horario-header h2 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem 0;
-  color: #0f172a;
-}
+.horario-header {
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: #0f172a;
+  }
 
-.horario-header .subtitulo {
-  font-size: 0.95rem;
-  color: #64748b;
-  margin: 0;
+  .subtitulo {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+  }
 }
 
 /* Enlace Volver al Dashboard */
@@ -47,11 +69,11 @@
   text-decoration: none;
   transition: color 0.2s ease;
   padding: 0.5rem 0;
-}
 
-.back-link:hover {
-  color: #004d40;
-  text-decoration: underline;
+  &:hover {
+    color: #004d40;
+    text-decoration: underline;
+  }
 }
 
 .divisor {
@@ -61,14 +83,27 @@
   margin-bottom: 2.5rem;
 }
 
-/* Grid del Horario Semanal */
+// ==========================================
+// GRID DEL HORARIO SEMANAL
+// ==========================================
 .horario-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 1.25rem;
   align-items: start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 }
 
+// ==========================================
+// COLUMNAS Y CONTENEDORES DE DÍAS
+// ==========================================
 .columna-dia {
   display: flex;
   flex-direction: column;
@@ -79,19 +114,19 @@
   flex-direction: column;
   margin-bottom: 1.25rem;
   padding-left: 0.25rem;
-}
 
-.nombre-dia {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #1e293b;
-  letter-spacing: 0.05em;
-}
+  .nombre-dia {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: 0.05em;
+  }
 
-.fecha-dia {
-  font-size: 0.8rem;
-  color: #64748b;
-  margin-top: 0.2rem;
+  .fecha-dia {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 0.2rem;
+  }
 }
 
 .bloques-wrapper {
@@ -100,18 +135,24 @@
   gap: 0.85rem;
 }
 
-/* Bloque con Turno Asignado (Estilo Citas del Dashboard) */
-.bloque-turno.bloque-activo {
-  background-color: #e6f7f4; /* Mismo tono menta/verde claro del bloque 'Mis Citas de Hoy' */
-  border: 1px solid #b2dfdb;
-  border-radius: 10px;
-  padding: 1rem 0.85rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+// ==========================================
+// BLOQUES DE TURNO (ACTIVO / VACÍO)
+// ==========================================
 
-.bloque-turno.bloque-activo:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 137, 123, 0.08);
+/* Bloque con Turno Asignado */
+.bloque-turno {
+  &.bloque-activo {
+    background-color: #e6f7f4; /* Mismo tono menta/verde claro del bloque 'Mis Citas de Hoy' */
+    border: 1px solid #b2dfdb;
+    border-radius: 10px;
+    padding: 1rem 0.85rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 137, 123, 0.08);
+    }
+  }
 }
 
 .bloque-contenido {
@@ -130,19 +171,19 @@
 .info-turno {
   display: flex;
   flex-direction: column;
-}
 
-.titulo-servicio {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #004d40;
-  margin-bottom: 0.2rem;
-}
+  .titulo-servicio {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #004d40;
+    margin-bottom: 0.2rem;
+  }
 
-.horas {
-  font-size: 0.8rem;
-  color: #00796b;
-  font-weight: 600;
+  .horas {
+    font-size: 0.8rem;
+    color: #00796b;
+    font-weight: 600;
+  }
 }
 
 /* Bloque Vacío */
@@ -152,40 +193,19 @@
   padding: 1.2rem;
   text-align: center;
   background-color: #f8fafc;
+
+  span {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: 500;
+  }
 }
 
-.bloque-vacio span {
-  font-size: 0.8rem;
-  color: #94a3b8;
-  font-weight: 500;
-}
-
-/* Loader */
+// ==========================================
+// COMPONENTES AUXILIARES
+// ==========================================
 .loader-container {
   text-align: center;
   padding: 4rem;
   color: #64748b;
-}
-
-/* Responsividad */
-@media (max-width: 1024px) {
-  .horario-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  :host {
-    padding: 1rem;
-  }
-  .horario-container {
-    padding: 1.5rem;
-  }
-  .horario-top-bar {
-    flex-direction: column-reverse;
-    gap: 1rem;
-  }
-  .horario-grid {
-    grid-template-columns: 1fr;
-  }
 }

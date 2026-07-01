@@ -1,3 +1,6 @@
+// ==========================================
+// VARIABLES DE ÁMBITO LOCAL Y HOST
+// ==========================================
 :host {
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
@@ -8,6 +11,9 @@
   --primary-hover: #0f766e;
 }
 
+// ==========================================
+// ENVOLTORIO GENERAL DE LA PÁGINA
+// ==========================================
 .perfil-wrapper {
   padding: 2.5rem;
   background-color: var(--bg-color);
@@ -16,39 +22,45 @@
   box-sizing: border-box;
 }
 
+// ==========================================
+// CABECERA PRINCIPAL (HEADER)
+// ==========================================
 .perfil-header-section {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 2rem;
+
+  .page-main-title {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .page-subtitle {
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    font-size: 0.95rem;
+  }
+
+  .btn-back-dashboard {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--primary-hover);
+    }
+  }
 }
 
-.page-main-title {
-  margin: 0;
-  color: var(--text-main);
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-}
-
-.page-subtitle {
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-  font-size: 0.95rem;
-}
-
-.btn-back-dashboard {
-  color: var(--primary);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: color 0.2s ease;
-}
-
-.btn-back-dashboard:hover {
-  color: var(--primary-hover);
-}
-
+// ==========================================
+// CONTENEDOR DE TARJETA (PROFILE CARD)
+// ==========================================
 .perfil-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -57,6 +69,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* Fila Superior del Perfil (Avatar y Badge General) */
 .perfil-top-row {
   display: flex;
   justify-content: space-between;
@@ -70,42 +83,43 @@
   display: flex;
   align-items: center;
   gap: 1.25rem;
+
+  .avatar-circle {
+    width: 68px;
+    height: 68px;
+    background: #e0f2fe; /* Celeste sutil */
+    color: #0369a1;    /* Azul clínico contrastante */
+    font-size: 1.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .doctor-title {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
 }
 
-/* 🌟 CELESTE SUTIL EN LAS INICIALES (Mismo estilo que tus pacientes) */
-.avatar-circle {
-  width: 68px;
-  height: 68px;
-  background: #e0f2fe; /* Celeste sutil */
-  color: #0369a1;    /* Azul clínico contrastante */
-  font-size: 1.5rem;
-  font-weight: 700;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.doctor-title {
-  margin: 0;
-  color: var(--text-main);
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
+// ==========================================
+// DISTRIBUCIÓN GRID EN DOS COLUMNAS
+// ==========================================
 .perfil-grid-content {
   display: grid;
   grid-template-columns: 1.6fr 1fr;
   gap: 2rem;
-}
 
-@media (max-width: 992px) {
-  .perfil-grid-content {
+  @media (max-width: 992px) {
     grid-template-columns: 1fr;
   }
 }
 
+/* Títulos internos de los paneles */
 .panel-inside-title {
   margin: 0 0 1.25rem 0;
   font-size: 0.85rem;
@@ -115,7 +129,11 @@
   letter-spacing: 0.05em;
 }
 
-.info-box-panel, .auth-box-panel {
+// ==========================================
+// PANELES INTERNOS DE INFORMACIÓN
+// ==========================================
+.info-box-panel, 
+.auth-box-panel {
   background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -123,18 +141,18 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
+/* Panel izquierdo: Información del Médico */
 .panel-fields-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.25rem;
-}
 
-@media (max-width: 576px) {
-  .panel-fields-grid {
+  @media (max-width: 576px) {
     grid-template-columns: 1fr;
   }
 }
 
+/* Panel derecho: Seguridad de la cuenta */
 .auth-fields-stack {
   display: flex;
   flex-direction: column;
@@ -142,19 +160,22 @@
   margin-bottom: 1.5rem;
 }
 
+// ==========================================
+// CAMPOS DE DATOS Y VALORES ESTÁTICOS
+// ==========================================
 .data-field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
 }
 
-.data-field label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-/* RECUADROS LIGERAMENTE REDONDEADOS Y SUTILES */
+/* Estilo para los inputs de solo lectura / valores fijos */
 .static-card-value {
   font-size: 0.9rem;
   font-weight: 500;
@@ -167,37 +188,34 @@
   min-height: 20px;
   display: flex;
   align-items: center;
-  gap: 0.6rem; /* Separación interna entre icono y texto */
+  gap: 0.6rem;
+
+  .field-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  &.highlight-user {
+    color: var(--primary);
+    font-weight: 600;
+    background-color: #f0fdfa;
+    border-color: #b9f6e4;
+  }
+
+  &.password-masked {
+    color: var(--text-main);
+
+    .field-icon {
+      color: var(--text-muted);
+    }
+  }
 }
 
-/* 🌟 ESTILOS PARA LOS ICONOS VECTORIALES MINIMALISTAS */
-.field-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-.text-primary {
-  color: var(--primary) !important;
-}
-
-.highlight-user {
-  color: var(--primary);
-  font-weight: 600;
-  background-color: #f0fdfa;
-  border-color: #b9f6e4;
-}
-
-.password-masked {
-  color: var(--text-main);
-}
-
-.password-masked .field-icon {
-  color: var(--text-muted);
-}
-
-/* BOTÓN CORPORATIVO DENSALUD */
+// ==========================================
+// BOTÓN E INTERACCIONES
+// ==========================================
 .btn-change-password {
   display: flex;
   align-items: center;
@@ -213,14 +231,20 @@
   font-family: inherit;
   transition: all 0.2s ease;
   width: 100%;
+
+  &:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
 }
 
-.btn-change-password:hover {
-  background-color: var(--primary-hover);
-  border-color: var(--primary-hover);
+// ==========================================
+// MODIFICADORES Y BADGES (ESPECIALIDADES)
+// ==========================================
+.text-primary {
+  color: var(--primary) !important;
 }
 
-/* Especialidades */
 .especialidad-badge {
   padding: 0.4rem 1.2rem;
   border-radius: 20px;
@@ -229,11 +253,11 @@
   text-transform: uppercase;
   display: inline-block;
   letter-spacing: 0.03em;
-}
 
-.badge-general { background-color: #e0f2fe; color: #0284c7; }
-.badge-ortodoncia { background-color: #f3e8ff; color: #6b21a8; }
-.badge-endodoncia { background-color: #fef2f2; color: #ef4444; }
-.badge-periodoncia { background-color: #d1fae5; color: #065f46; }
-.badge-cirugia { background-color: #fff7ed; color: #ea580c; }
-.badge-odontopediatria { background-color: #fdf2f8; color: #db2777; }
+  &.badge-general { background-color: #e0f2fe; color: #0284c7; }
+  &.badge-ortodoncia { background-color: #f3e8ff; color: #6b21a8; }
+  &.badge-endodoncia { background-color: #fef2f2; color: #ef4444; }
+  &.badge-periodoncia { background-color: #d1fae5; color: #065f46; }
+  &.badge-cirugia { background-color: #fff7ed; color: #ea580c; }
+  &.badge-odontopediatria { background-color: #fdf2f8; color: #db2777; }
+}
