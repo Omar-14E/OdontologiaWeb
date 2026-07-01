@@ -1,127 +1,156 @@
-/* Variables de color basadas en tu referencia */
+/* Paleta de Colores Material Design 3 (Turquesa Clínico) */
 :host {
-  --bg-color: #f8fafc;
-  --card-bg: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --primary: #0d9488; /* Turquesa clínico profesional */
-  --primary-hover: #0f766e;
-  --highlight-bg: #f0fdfa;
+  /* Superficies */
+  --md-bg-color: #f8fafc;
+  --md-surface: #ffffff;
+  --md-surface-variant: #f1f5f9;
+  
+  /* Colores Primarios */
+  --md-primary: #0d9488;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #ccfbf1;
+  --md-on-primary-container: #115e59;
+  
+  /* Textos y Bordes */
+  --md-text-main: #0f172a;
+  --md-text-muted: #64748b;
+  --md-outline: #e2e8f0;
+
+  /* Sombras MD3 (Elevaciones suaves) */
+  --md-elevation-1: 0px 4px 8px 3px rgba(0, 0, 0, 0.02), 0px 1px 3px rgba(0, 0, 0, 0.04);
+  --md-elevation-2: 0px 6px 12px 4px rgba(0, 0, 0, 0.03), 0px 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .dashboard-wrapper {
   padding: 2.5rem;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--bg-color);
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--md-bg-color);
   min-height: 100vh;
 }
 
+/* --- CABECERA --- */
 .dash-header {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .greeting {
   margin: 0;
-  color: var(--text-main);
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
+  color: var(--md-text-main);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .subtitle {
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-  font-size: 0.95rem;
+  color: var(--md-text-muted);
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  font-weight: 400;
 }
 
-/* Grid de Métricas */
+/* --- GRID DE MÉTRICAS --- */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
   margin-bottom: 3rem;
 }
 
 .metric-card {
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: var(--md-surface);
+  border-radius: 24px; /* Estilo MD3 */
+  padding: 1.75rem;
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: 1.5rem;
+  box-shadow: var(--md-elevation-1);
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1);
+  border: 1px solid rgba(0,0,0,0.01);
 }
 
 .metric-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  transform: translateY(-4px);
+  box-shadow: var(--md-elevation-2);
 }
 
 .card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .card-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
 }
 
 /* Colores sutiles para los iconos */
 .patient-icon { background: #eff6ff; color: #3b82f6; }
 .doctor-icon { background: #f3e8ff; color: #a855f7; }
 .date-icon { background: #fff7ed; color: #f97316; }
-.active-icon { background: #ccfbf1; color: var(--primary); }
 
+/* Tarjeta Destacada (Citas del Día) */
+.metric-card.highlight {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+.metric-card.highlight .card-icon {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+
+.metric-card.highlight .card-data .label {
+  color: var(--md-on-primary-container);
+  opacity: 0.8;
+}
+
+.metric-card.highlight .card-data .value {
+  color: var(--md-on-primary-container);
+}
+
+/* Textos de las tarjetas */
 .card-data {
   display: flex;
   flex-direction: column;
 }
 
 .card-data .label {
-  color: var(--text-muted);
-  font-size: 0.85rem;
+  color: var(--md-text-muted);
+  font-size: 0.9rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .card-data .value {
-  color: var(--text-main);
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-top: 0.25rem;
+  color: var(--md-text-main);
+  font-size: 2rem;
+  font-weight: 800;
+  margin-top: 0.2rem;
+  line-height: 1;
 }
 
-.metric-card.highlight {
-  background: var(--highlight-bg);
-  border-color: #99f6e4;
-}
-
-.highlight-text {
-  color: var(--primary) !important;
-}
-
-/* Sección de Accesos Rápidos */
+/* --- SECCIÓN ACCESOS RÁPIDOS --- */
 .quick-actions-section {
-  background: var(--card-bg);
+  background: var(--md-surface);
   padding: 2rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: 24px;
+  box-shadow: var(--md-elevation-1);
 }
 
 .section-title {
   margin-top: 0;
-  color: var(--text-main);
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
+  color: var(--md-text-main);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
 }
 
 .action-buttons {
@@ -130,37 +159,37 @@
   flex-wrap: wrap;
 }
 
+/* Botones estilo MD3 */
 .btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.9rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 100px; /* Forma de píldora MD3 */
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
+  border: none;
 }
 
 .btn-primary {
-  background-color: var(--primary);
-  color: white;
-  border: 1px solid var(--primary);
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
-  border-color: var(--primary-hover);
+  background-color: #0f766e;
+  box-shadow: 0 4px 8px rgba(13, 148, 136, 0.3);
 }
 
 .btn-outline {
-  background-color: transparent;
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
+  background-color: var(--md-surface-variant);
+  color: var(--md-text-main);
 }
 
 .btn-outline:hover {
-  background-color: #f1f5f9;
-  border-color: #cbd5e1;
+  background-color: var(--md-outline);
 }

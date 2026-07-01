@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdminService {
   private apiUrlOdontologos = 'http://localhost:8080/api/odontologos';
@@ -13,47 +13,38 @@ export class AdminService {
 
   constructor(private http: HttpClient) {}
 
-  // --- CRUD Odontólogos ---
   getOdontologos(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrlOdontologos);
   }
 
   crearOdontologo(odontologo: any): Observable<any> {
-    // Agregado /registrar
-    return this.http.post<any>(`${this.apiUrlOdontologos}/registrar`, odontologo); 
+    return this.http.post<any>(`${this.apiUrlOdontologos}/registrar`, odontologo);
   }
 
   actualizarOdontologo(id: number, odontologo: any): Observable<any> {
-    // Agregado /actualizar/
     return this.http.put<any>(`${this.apiUrlOdontologos}/actualizar/${id}`, odontologo);
   }
 
   eliminarOdontologo(id: number): Observable<any> {
-    // Agregado /eliminar/
     return this.http.delete<any>(`${this.apiUrlOdontologos}/eliminar/${id}`);
   }
 
-  // --- CRUD Pacientes ---
   getPacientes(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrlPacientes);
   }
 
   crearPaciente(paciente: any): Observable<any> {
-    // Agregado /registrar
     return this.http.post<any>(`${this.apiUrlPacientes}/registrar`, paciente);
   }
 
   actualizarPaciente(id: number, paciente: any): Observable<any> {
-    // Agregado /actualizar/
     return this.http.put<any>(`${this.apiUrlPacientes}/actualizar/${id}`, paciente);
   }
 
   eliminarPaciente(id: number): Observable<any> {
-    // Agregado /eliminar/
     return this.http.delete<any>(`${this.apiUrlPacientes}/eliminar/${id}`);
   }
 
-  // --- CRUD Turnos / Horarios ---
   getTurnosVigentes(odontologoId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrlTurnos}/vigentes/${odontologoId}`);
   }
@@ -70,7 +61,6 @@ export class AdminService {
     return this.http.delete<any>(`${this.apiUrlTurnos}/eliminar/${turnoId}`);
   }
 
-  // ... (tu código anterior)
 
   // HISTORIAL DE CITAS :D
   getHistorialCitas(): Observable<any[]> {
@@ -81,15 +71,20 @@ export class AdminService {
     return this.http.post<any>(`${this.apiUrlCitas}/registrar`, cita);
   }
 
-  // 👇 AGREGA ESTAS DOS FUNCIONES 👇
 
   actualizarCita(id: number, cita: any): Observable<any> {
-    // Coincide con @PutMapping("/actualizar/{id}")
     return this.http.put<any>(`${this.apiUrlCitas}/actualizar/${id}`, cita);
   }
 
   eliminarCita(id: number): Observable<any> {
-    // Coincide con @DeleteMapping("/eliminar/{id}")
     return this.http.delete<any>(`${this.apiUrlCitas}/eliminar/${id}`);
+  }
+
+  getDisponibilidad(odontologoId: number, fecha: string): Observable<string[]> {
+    const params = new HttpParams()
+      .set('odontologoId', odontologoId.toString())
+      .set('fecha', fecha);
+
+    return this.http.get<string[]>(`${this.apiUrlCitas}/disponibilidad`, { params });
   }
 }
