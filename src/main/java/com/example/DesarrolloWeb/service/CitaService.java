@@ -9,12 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.scheduling.annotation.Scheduled; // 👈 IMPORTACIÓN AÑADIDA PARA EL AUTOMATIZADOR
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Set;
 
 @Service
 public class CitaService {
@@ -29,12 +33,11 @@ public class CitaService {
     @Transactional
     public Cita crearCita(Cita nuevaCita) {
 
-        // === NUEVA VALIDACIÓN PARA EL ADMINISTRADOR ===
         if (nuevaCita.getFechaHora() != null && nuevaCita.getFechaHora().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("No puedes programar una cita en el pasado");
         }
 
-        validarDisponibilidad(nuevaCita); // Llamamos al método ayudante
+        validarDisponibilidad(nuevaCita);
         return citaRepository.save(nuevaCita);
     }
 
@@ -44,62 +47,56 @@ public class CitaService {
         Cita citaExistente = citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
-        // ¿El Administrador está reprogramando la cita?
-        if ((datosActualizados.getFechaHora() != null && !citaExistente.getFechaHora().equals(datosActualizados.getFechaHora())) ||
-            (datosActualizados.getOdontologo() != null && datosActualizados.getOdontologo().getId() != null && 
-            !citaExistente.getOdontologo().getId().equals(datosActualizados.getOdontologo().getId()))) {
+        if ((datosActualizados.getFechaHora() != null
+                && !citaExistente.getFechaHora().equals(datosActualizados.getFechaHora())) ||
+                (datosActualizados.getOdontologo() != null && datosActualizados.getOdontologo().getId() != null &&
+                        !citaExistente.getOdontologo().getId().equals(datosActualizados.getOdontologo().getId()))) {
 
-            // Si el admin cambia la fecha a una nueva, también validamos que no sea en el pasado
             if (datosActualizados.getFechaHora().isBefore(LocalDateTime.now())) {
                 throw new RuntimeException("No puedes reprogramar una cita al pasado");
             }
 
-            validarDisponibilidad(datosActualizados); 
+            validarDisponibilidad(datosActualizados);
 
             citaExistente.setFechaHora(datosActualizados.getFechaHora());
             citaExistente.setOdontologo(datosActualizados.getOdontologo());
         }
 
-        // ¿El Doctor está atendiendo la cita?
         if (datosActualizados.getEstado() != null) {
             citaExistente.setEstado(datosActualizados.getEstado());
         }
-        
-        citaExistente.setObservaciones(datosActualizados.getObservaciones()); 
+
+        citaExistente.setObservaciones(datosActualizados.getObservaciones());
 
         return citaRepository.save(citaExistente);
     }
 
-    // ELIMINAR CITA
     @Transactional
     public void eliminarCita(Long id) {
         citaRepository.deleteById(id);
     }
 
-    // VER CITAS POR PACIENTE
     public List<Cita> obtenerCitasPorPaciente(Long pacienteId) {
         return citaRepository.findByPacienteId(pacienteId);
     }
 
-    // VER CITAS POR ODONTÓLOGO
     public List<Cita> obtenerCitasPorOdontologo(Long odontologoId) {
         return citaRepository.findByOdontologoId(odontologoId);
     }
 
     public List<Cita> obtenerCitasPorDia(LocalDate fecha) {
-        // Como la base de datos guarda Fecha y Hora, buscamos desde las 00:00 hasta las 23:59 de ese día
         LocalDateTime inicioDelDia = fecha.atStartOfDay();
         LocalDateTime finDelDia = fecha.atTime(LocalTime.MAX);
 
         return citaRepository.findByFechaHoraBetween(inicioDelDia, finDelDia);
     }
 
-    //VER TODAS LAS CITAS
+    // VER TODAS LAS CITAS
     public List<Cita> obtenerTodas() {
         return citaRepository.findAll();
     }
 
-    // MÉTODO PRIVADO AYUDANTE (Reutilizable)
+    // MÉTODO PRIVADO AYUDANTE
     private void validarDisponibilidad(Cita cita) {
 
         if (cita.getOdontologo() == null || cita.getOdontologo().getId() == null) {
@@ -111,30 +108,62 @@ public class CitaService {
         LocalDate fechaSolicitada = fechaHoraSolicitada.toLocalDate();
         LocalTime horaSolicitada = fechaHoraSolicitada.toLocalTime();
 
-        // 1. VALIDACIÓN ESTRICTA: El doctor debe tener turno ese día y a esa hora
-        List<TurnoOdontologo> turnosDelDia = turnoRepository.findByOdontologoIdAndFecha(idDoctor, fechaSolicitada);
+        // 1. VALIDACIÓN: Buscar turnos del día de la cita Y del día anterior (por
+        // turnos nocturnos)
+        List<TurnoOdontologo> turnos = turnoRepository.findByOdontologoIdAndFecha(idDoctor, fechaSolicitada);
+        List<TurnoOdontologo> turnosAyer = turnoRepository.findByOdontologoIdAndFecha(idDoctor,
+                fechaSolicitada.minusDays(1));
 
-        if (turnosDelDia.isEmpty()) {
-            throw new RuntimeException("El doctor no tiene turnos programados para este día.");
-        } else {
-            boolean horaValida = false;
-            for (TurnoOdontologo turno : turnosDelDia) {
-                if (!horaSolicitada.isBefore(turno.getHoraInicio()) && !horaSolicitada.isAfter(turno.getHoraFin())) {
+        // Unimos ambas listas para analizarlas juntas
+        turnos.addAll(turnosAyer);
+
+        if (turnos.isEmpty()) {
+            throw new RuntimeException("El doctor no tiene turnos programados cercanos a esta fecha.");
+        }
+
+        boolean horaValida = false;
+
+        for (TurnoOdontologo turno : turnos) {
+            LocalTime inicio = turno.getHoraInicio();
+            LocalTime fin = turno.getHoraFin();
+            LocalDate fechaTurno = turno.getFecha();
+
+            if (inicio.isBefore(fin)) {
+                // CASO A: TURNO NORMAL DE DÍA (Ej: 08:00 a 14:00)
+                if (fechaTurno.equals(fechaSolicitada) &&
+                        !horaSolicitada.isBefore(inicio) &&
+                        !horaSolicitada.isAfter(fin)) {
                     horaValida = true;
                     break;
                 }
+            } else {
+                // CASO B: TURNO NOCTURNO QUE CRUZA LA MEDIANOCHE (Ej: 21:00 a 01:00)
+                if (fechaTurno.equals(fechaSolicitada)) {
+                    // Parte de la noche (Ej: la cita es a las 22:00 del mismo día)
+                    if (!horaSolicitada.isBefore(inicio)) {
+                        horaValida = true;
+                        break;
+                    }
+                } else if (fechaTurno.equals(fechaSolicitada.minusDays(1))) {
+                    // Parte de la madrugada (Ej: la cita es a las 00:00 del día siguiente al turno)
+                    if (!horaSolicitada.isAfter(fin)) {
+                        horaValida = true;
+                        break;
+                    }
+                }
             }
-            if (!horaValida) {
-                throw new RuntimeException("La hora seleccionada (" + horaSolicitada + ") está fuera del horario de atención del doctor.");
-            }
+        }
+
+        if (!horaValida) {
+            throw new RuntimeException(
+                    "La hora seleccionada (" + horaSolicitada + ") está fuera del horario de atención del doctor.");
         }
 
         // 2. EVITAR CRUCES: El doctor no puede tener dos citas al mismo tiempo
         boolean doctorOcupado = citaRepository.existsByOdontologoIdAndFechaHoraAndEstado(
                 idDoctor,
                 fechaHoraSolicitada,
-                EstadoCita.PENDIENTE
-        );
+                EstadoCita.PENDIENTE);
 
         if (doctorOcupado) {
             throw new RuntimeException("El doctor ya tiene una cita reservada en ese horario exacto.");
@@ -151,21 +180,85 @@ public class CitaService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 300000) 
+    @Scheduled(fixedRate = 300000)
     public void marcarCitasPasadasComoRealizadas() {
-        
+
         LocalDateTime haceDosHoras = LocalDateTime.now().minusHours(2);
 
         List<Cita> citasVencidas = citaRepository.findByEstadoAndFechaHoraBefore(EstadoCita.PENDIENTE, haceDosHoras);
 
         if (!citasVencidas.isEmpty()) {
-            
+
             for (Cita cita : citasVencidas) {
-                cita.setEstado(EstadoCita.ATENDIDA); 
+                cita.setEstado(EstadoCita.ATENDIDA);
             }
 
             citaRepository.saveAll(citasVencidas);
-            System.out.println("Automatización: Se cambiaron a ATENDIDA " + citasVencidas.size() + " citas pasadas hace más de 2 horas.");
+            System.out.println("Automatización: Se cambiaron a ATENDIDA " + citasVencidas.size()
+                    + " citas pasadas hace más de 2 horas.");
         }
+    }
+
+    public List<String> obtenerHorariosDisponibles(Long odontologoId, LocalDate fecha) {
+
+        List<TurnoOdontologo> turnos = turnoRepository.findByOdontologoIdAndFecha(odontologoId, fecha);
+
+        if (turnos.isEmpty()) {
+            return new ArrayList<>(); // El doctor no trabaja ese día
+        }
+
+        LocalDateTime inicioDia = fecha.atStartOfDay();
+        LocalDateTime finDia = fecha.atTime(LocalTime.MAX);
+        List<Cita> citasDelDia = citaRepository.findByOdontologoIdAndFechaHoraBetween(odontologoId, inicioDia, finDia);
+
+        Set<LocalTime> horasOcupadas = citasDelDia.stream()
+                .map(cita -> cita.getFechaHora().toLocalTime())
+                .collect(Collectors.toSet());
+
+        List<String> horariosDisponibles = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        for (TurnoOdontologo turno : turnos) {
+            LocalTime horaActual = turno.getHoraInicio();
+            LocalTime horaFin = turno.getHoraFin();
+
+            // 🌟 NUEVO: Calculamos los minutos totales para soportar turnos nocturnos
+            long minutosTotales;
+            if (horaActual.isBefore(horaFin)) {
+                minutosTotales = java.time.Duration.between(horaActual, horaFin).toMinutes();
+            } else {
+                // El turno cruza la medianoche (Ej: de 21:00 a 01:00)
+                minutosTotales = (24 * 60) - (horaActual.getHour() * 60 + horaActual.getMinute()) +
+                        (horaFin.getHour() * 60 + horaFin.getMinute());
+            }
+
+            long minutosRecorridos = 0;
+
+            while (minutosRecorridos < minutosTotales) {
+
+                boolean estaOcupada = horasOcupadas.contains(horaActual);
+                boolean esHoy = fecha.isEqual(LocalDate.now());
+
+                // Si la hora generada es de madrugada (ej. 00:00 < 21:00), ya pertenece al día
+                // siguiente
+                boolean esMadrugadaDelDiaSiguiente = horaActual.isBefore(turno.getHoraInicio());
+
+                // Solo ocultamos la hora si ya pasó HOY. Si es la madrugada de mañana, siempre
+                // se muestra.
+                boolean yaPaso = false;
+                if (esHoy && !esMadrugadaDelDiaSiguiente) {
+                    yaPaso = horaActual.isBefore(LocalTime.now());
+                }
+
+                if (!estaOcupada && !yaPaso) {
+                    horariosDisponibles.add(horaActual.format(formatter));
+                }
+
+                horaActual = horaActual.plusMinutes(60);
+                minutosRecorridos += 60;
+            }
+        }
+
+        return horariosDisponibles;
     }
 }

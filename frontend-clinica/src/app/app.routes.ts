@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { noAuthGuard } from './core/guards/no-auth.guard';
 import { DashboardComponent } from './features/dashboard/dashboard';
 import { CitasComponent } from './features/citas/citas';
 import { LoginComponent } from './features/auth/login/login.component';
@@ -10,57 +11,65 @@ import { OdontoPacientesComponent } from './features/odonto-pacientes/odonto-pac
 // Importamos los nuevos componentes del administrador
 import { AdminMedicosComponent } from './features/admin-medicos/admin-medicos';
 import { AdminPacientesComponent } from './features/admin-pacientes/admin-pacientes';
-
 import { AdminTurnosComponent } from './features/admin-turnos/admin-turnos';
-
 import { AdminHistorialCitasComponent } from './features/admin-historial-citas/admin-historial-citas';
 
 export const routes: Routes = [
-  // Dejamos las rutas libres por ahora para probar la UI
-
+  
+  // --- RUTA PÚBLICA / INVERSA ---
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [noAuthGuard] // 👈 Si ya hay sesión activa, bloquea el acceso al login y lo redirige a su panel
   },
+
+  // --- RUTAS PROTEGIDAS (Requieren Token) ---
   { 
     path: 'dashboard', 
-    component: DashboardComponent 
+    component: DashboardComponent,
+    canActivate: [authGuard] 
   },
   {
     path: 'odonDashboard',
-    component: OdontoDashboardComponent
+    component: OdontoDashboardComponent,
+    canActivate: [authGuard]
   },
   { 
     path: 'citas', 
-    component: CitasComponent 
+    component: CitasComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'odonAgenda',
-    component: OdontoAgendaComponent
+    component: OdontoAgendaComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'odonPacientes',
-    component: OdontoPacientesComponent
+    component: OdontoPacientesComponent,
+    canActivate: [authGuard]
   },
   
-  // --- Nuevas rutas del Administrador ---
+  // --- Nuevas rutas del Administrador (Protegidas) ---
   {
     path: 'admin-medicos',
-    component: AdminMedicosComponent
+    component: AdminMedicosComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'admin-pacientes',
-    component: AdminPacientesComponent
+    component: AdminPacientesComponent,
+    canActivate: [authGuard]
   },
-
   {
     path: 'admin-turnos',
-    component: AdminTurnosComponent
+    component: AdminTurnosComponent,
+    canActivate: [authGuard]
   },
-
   {
     path: 'admin-historial-citas',
-    component: AdminHistorialCitasComponent
+    component: AdminHistorialCitasComponent,
+    canActivate: [authGuard]
   },
 
   // Las redirecciones por defecto y el comodín siempre deben ir al final

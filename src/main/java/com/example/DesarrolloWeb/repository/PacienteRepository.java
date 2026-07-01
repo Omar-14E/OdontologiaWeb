@@ -11,7 +11,10 @@ import java.util.List;
 
 @Repository
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
+    
     Optional<Paciente> findByDni(String dni);
+
+    boolean existsByDni(String dni);
 
     @Query("SELECT DISTINCT c.paciente FROM Cita c WHERE c.odontologo.usuario.username = :username")
     List<Paciente> findPacientesByOdontologoUsername(@Param("username") String username);

@@ -4,7 +4,7 @@
   --text-main: #1e293b;
   --text-muted: #64748b;
   --border-color: #e2e8f0;
-  --primary: #69b9aa; 
+  --primary: #69b9aa;
   --primary-hover: #58a396;
 }
 
@@ -15,34 +15,49 @@
   min-height: 100vh;
 }
 
-.dash-header { margin-bottom: 2rem; }
-.greeting { margin: 0; color: var(--text-main); font-size: 1.6rem; font-weight: 700; }
-.subtitle { color: var(--text-muted); margin-top: 0.3rem; font-size: 0.95rem; }
+.dash-header {
+  margin-bottom: 2rem;
+}
+
+.greeting {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+  font-size: 0.95rem;
+}
 
 /* =========================================
    LAYOUT GRIDS SIMÉTRICOS
    ========================================= */
 .citas-layout {
   display: grid;
-  grid-template-columns: 340px 1fr; 
+  grid-template-columns: 340px 1fr;
   gap: 1.5rem;
   align-items: stretch;
 }
 
 @media (max-width: 1024px) {
-  .citas-layout { grid-template-columns: 1fr; }
+  .citas-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .admin-card {
   background: var(--card-bg);
   border-radius: 12px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
 }
 
-.side-form-card { 
-  padding: 1.5rem; 
+.side-form-card {
+  padding: 1.5rem;
   height: 100%;
 }
 
@@ -50,7 +65,7 @@
 .frame-layout-fixed {
   display: flex;
   flex-direction: column;
-  height: 480px; 
+  height: 480px;
 }
 
 .section-title {
@@ -72,8 +87,17 @@
   gap: 1.1rem;
 }
 
-.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-.form-label { color: var(--text-main); font-size: 0.85rem; font-weight: 600; }
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
 
 .form-control {
   padding: 0.6rem 0.8rem;
@@ -86,18 +110,41 @@
   transition: border-color 0.2s;
   width: 100%;
   box-sizing: border-box;
-  height: 42px; 
+  height: 42px;
   font-family: 'Inter', sans-serif;
 }
 
-.form-control:focus { border-color: var(--primary); }
-.form-control:disabled { background-color: #f8fafc; color: #94a3b8; }
+.form-control:focus {
+  border-color: var(--primary);
+}
 
-.date-time-inputs { display: flex; gap: 0.75rem; align-items: center; width: 100%; }
-.date-time-inputs .form-control { flex: 1; margin: 0; }
-.help-text { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
+.form-control:disabled {
+  background-color: #f8fafc;
+  color: #94a3b8;
+}
 
-.w-100 { width: 100%; }
+.date-time-inputs {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+}
+
+.date-time-inputs .form-control {
+  flex: 1;
+  margin: 0;
+}
+
+.help-text {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+.w-100 {
+  width: 100%;
+}
+
 .btn-primary {
   background-color: var(--primary);
   color: white;
@@ -110,8 +157,15 @@
   transition: background-color 0.2s;
   font-family: 'Inter', sans-serif;
 }
-.btn-primary:hover:not(:disabled) { background-color: var(--primary-hover); }
-.btn-primary:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
 
 /* =========================================
    TABLA CON SCROLL INTERNO
@@ -135,15 +189,28 @@
 
 .scrollable-body {
   flex: 1;
-  overflow-y: auto; 
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
-.scrollable-body::-webkit-scrollbar { width: 6px; }
-.scrollable-body::-webkit-scrollbar-track { background: transparent; }
-.scrollable-body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+.scrollable-body::-webkit-scrollbar {
+  width: 6px;
+}
 
-.custom-table { width: 100%; border-collapse: collapse; }
+.scrollable-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollable-body::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
 .custom-table th {
   color: var(--text-muted);
   font-size: 0.75rem;
@@ -151,32 +218,104 @@
   text-transform: uppercase;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
-  position: sticky; 
+  position: sticky;
   top: 0;
   background: var(--card-bg);
   z-index: 2;
 }
-.custom-table td { padding: 1rem 1.5rem; border-bottom: 1px solid #f8fafc; font-size: 0.9rem; }
-.empty-state { text-align: center; padding: 3rem !important; color: var(--text-muted); font-style: italic; }
 
-.date-text { display: flex; align-items: center; gap: 0.4rem; color: var(--text-main); font-weight: 500; }
-.patient-cell { display: flex; align-items: center; gap: 0.7rem; color: var(--text-main); font-weight: 500; }
-.avatar-sm {
-  width: 28px; height: 28px; border-radius: 50%;
-  background-color: #e0f2fe; color: #0369a1;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; font-weight: 700;
+.custom-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f8fafc;
+  font-size: 0.9rem;
 }
 
-.status-badge { padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
-.status-pending { background: #fef3c7; color: #b45309; }
-.status-success { background: #dcfce7; color: #166534; }
-.status-danger { background: #fee2e2; color: #b91c1c; }
+.empty-state {
+  text-align: center;
+  padding: 3rem !important;
+  color: var(--text-muted);
+  font-style: italic;
+}
 
-.action-buttons { display: flex; gap: 0.5rem; }
-.icon-btn { background: transparent; border: none; cursor: pointer; padding: 0.4rem; border-radius: 6px; }
-.edit-btn { color: #3b82f6; } .edit-btn:hover { background-color: #eff6ff; }
-.delete-btn { color: #ef4444; } .delete-btn:hover { background-color: #fef2f2; }
+.date-text {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.avatar-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.status-badge {
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 6px;
+}
+
+.edit-btn {
+  color: #3b82f6;
+}
+
+.edit-btn:hover {
+  background-color: #eff6ff;
+}
+
+.delete-btn {
+  color: #ef4444;
+}
+
+.delete-btn:hover {
+  background-color: #fef2f2;
+}
 
 /* =========================================
    ESTILOS PREMIUM HOMOLOGADOS PARA SWEETALERT2
@@ -202,8 +341,17 @@ body .custom-swal-title {
   text-align: left;
 }
 
-.swal-input-group { display: flex; flex-direction: column; gap: 0.4rem; }
-.swal-label { font-size: 0.85rem; font-weight: 600; color: #1e293b; }
+.swal-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.swal-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e293b;
+}
 
 .swal-input-field {
   padding: 0.6rem 0.8rem;
@@ -218,7 +366,10 @@ body .custom-swal-title {
   font-family: 'Inter', sans-serif;
   transition: border-color 0.2s;
 }
-.swal-input-field:focus { border-color: #69b9aa; }
+
+.swal-input-field:focus {
+  border-color: #69b9aa;
+}
 
 body .custom-swal-confirm {
   background-color: #69b9aa !important;
@@ -231,7 +382,10 @@ body .custom-swal-confirm {
   font-family: 'Inter', sans-serif !important;
   margin-left: 0.5rem;
 }
-body .custom-swal-confirm:hover { background-color: #58a396 !important; }
+
+body .custom-swal-confirm:hover {
+  background-color: #58a396 !important;
+}
 
 body .custom-swal-cancel {
   background-color: #64748b !important;
@@ -243,4 +397,33 @@ body .custom-swal-cancel {
   cursor: pointer;
   font-family: 'Inter', sans-serif !important;
 }
-body .custom-swal-cancel:hover { background-color: #475569 !important; }
+
+body .custom-swal-cancel:hover {
+  background-color: #475569 !important;
+}
+
+/* Estilo para el botón de nuevo paciente */
+.btn-nuevo-paciente {
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-nuevo-paciente:hover {
+  background-color: #f8fafc;
+  border-color: #69b9aa;
+  /* Color principal de tu app */
+  color: #69b9aa;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-nuevo-paciente:active {
+  transform: scale(0.95);
+}

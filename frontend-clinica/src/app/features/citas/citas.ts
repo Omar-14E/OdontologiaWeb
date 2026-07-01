@@ -9,60 +9,66 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './citas.html',
-  styleUrls: ['./citas.css']
+  styleUrls: ['./citas.css'],
 })
 export class CitasComponent implements OnInit {
-  
-  // Señales de las bases de datos
   pacientes = signal<any[]>([]);
   odontologos = signal<any[]>([]);
   citasAgendadas = signal<any[]>([]);
-  
-  // Señal DINÁMICA que solo contiene los médicos de la especialidad elegida
+
   odontologosFiltrados = signal<any[]>([]);
 
+  horariosDisponibles = signal<string[]>([]);
+  buscandoHorarios = signal<boolean>(false);
+
   especialidadesEnum = [
-    'GENERAL', 'ORTODONCIA', 'ENDODONCIA', 
-    'PERIODONCIA', 'CIRUGIA', 'ODONTOPEDIATRIA'
+    'GENERAL',
+    'ORTODONCIA',
+    'ENDODONCIA',
+    'PERIODONCIA',
+    'CIRUGIA',
+    'ODONTOPEDIATRIA',
   ];
 
   citaForm: FormGroup;
-  
-  // Variable para controlar si estamos en modo edición
+
   idCitaEdicion: number | null = null;
 
-  constructor(private adminService: AdminService, private fb: FormBuilder) {
-    // Formulario limpio
+  constructor(
+    private adminService: AdminService,
+    private fb: FormBuilder,
+  ) {
     this.citaForm = this.fb.group({
       pacienteId: ['', Validators.required],
       especialidad: ['', Validators.required],
-      odontologoId: [{value: '', disabled: true}, Validators.required], 
+      odontologoId: [{ value: '', disabled: true }, Validators.required],
       fecha: ['', Validators.required],
-      hora: ['', Validators.required]
+      hora: ['', Validators.required],
     });
 
-    // 🌟 INTERCEPTOR REACTIVO: Escucha si seleccionan la opción especial de agregar paciente
-    this.citaForm.get('pacienteId')?.valueChanges.subscribe(pacienteId => {
-      if (pacienteId === 'NUEVO_PACIENTE') {
-        this.abrirModalPaciente();
-      }
-    });
-
-    // 🌟 MAGIA REACTIVA: Escuchar los cambios en el select de Especialidad
-    this.citaForm.get('especialidad')?.valueChanges.subscribe(especialidadSeleccionada => {
+    this.citaForm.get('especialidad')?.valueChanges.subscribe((especialidadSeleccionada) => {
       if (especialidadSeleccionada) {
-        const filtrados = this.odontologos().filter(medico => medico.especialidad === especialidadSeleccionada);
+        const filtrados = this.odontologos().filter(
+          (medico) => medico.especialidad === especialidadSeleccionada,
+        );
         this.odontologosFiltrados.set(filtrados);
         this.citaForm.get('odontologoId')?.enable();
-        
-        // Solo limpiamos si el valor no coincide con los filtrados (útil en modo edición)
+
         const currentOdontologo = this.citaForm.get('odontologoId')?.value;
-        if (!filtrados.find(m => m.id === currentOdontologo)) {
-           this.citaForm.get('odontologoId')?.setValue('');
+        if (!filtrados.find((m) => m.id === currentOdontologo)) {
+          this.citaForm.get('odontologoId')?.setValue('');
         }
       } else {
         this.citaForm.get('odontologoId')?.disable();
         this.odontologosFiltrados.set([]);
+      }
+    });
+
+    this.citaForm.valueChanges.subscribe((valores) => {
+      if (valores.odontologoId && valores.fecha) {
+        this.buscarHorariosDisponibles(valores.odontologoId, valores.fecha);
+      } else {
+        this.horariosDisponibles.set([]); 
       }
     });
   }
@@ -73,8 +79,8 @@ export class CitasComponent implements OnInit {
   }
 
   cargarCatalogos(): void {
-    this.adminService.getPacientes().subscribe(data => this.pacientes.set(data));
-    this.adminService.getOdontologos().subscribe(data => this.odontologos.set(data));
+    this.adminService.getPacientes().subscribe((data) => this.pacientes.set(data));
+    this.adminService.getOdontologos().subscribe((data) => this.odontologos.set(data));
   }
 
   cargarCitas(): void {
@@ -82,22 +88,21 @@ export class CitasComponent implements OnInit {
       next: (data) => {
         const { inicio, fin } = this.obtenerLimitesSemana();
 
-        const citasDeEstaSemana = data.filter(cita => {
+        const citasDeEstaSemana = data.filter((cita) => {
           const fechaCita = new Date(cita.fechaHora);
           return fechaCita >= inicio && fechaCita <= fin;
         });
 
-        const citasRecientes = citasDeEstaSemana.sort((a, b) => 
-          new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime()
+        const citasRecientes = citasDeEstaSemana.sort(
+          (a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime(),
         );
-        
+
         this.citasAgendadas.set(citasRecientes);
       },
-      error: (err) => console.error('Error cargando citas', err)
+      error: (err) => console.error('Error cargando citas', err),
     });
   }
 
-  // 🚀 METODO MODAL INTERACTIVO
   abrirModalPaciente(): void {
     Swal.fire({
       title: 'Registrar Nuevo Paciente',
@@ -129,9 +134,13 @@ export class CitasComponent implements OnInit {
       `,
       preConfirm: () => {
         const nombre = (document.getElementById('swal-nombre') as HTMLInputElement).value.trim();
-        const apellido = (document.getElementById('swal-apellido') as HTMLInputElement).value.trim();
+        const apellido = (
+          document.getElementById('swal-apellido') as HTMLInputElement
+        ).value.trim();
         const dni = (document.getElementById('swal-dni') as HTMLInputElement).value.trim();
-        const telefono = (document.getElementById('swal-telefono') as HTMLInputElement).value.trim();
+        const telefono = (
+          document.getElementById('swal-telefono') as HTMLInputElement
+        ).value.trim();
 
         if (!nombre || !apellido || !dni || !telefono) {
           Swal.showValidationMessage('Todos los campos son obligatorios');
@@ -155,7 +164,7 @@ export class CitasComponent implements OnInit {
         }
 
         return { nombre, apellido, dni, telefono };
-      }
+      },
     }).then((result) => {
       if (result.isConfirmed && result.value) {
         this.adminService.crearPaciente(result.value).subscribe({
@@ -164,24 +173,25 @@ export class CitasComponent implements OnInit {
               title: '¡Registrado!',
               text: 'El paciente ha sido guardado exitosamente.',
               icon: 'success',
-              confirmButtonColor: '#69b9aa'
+              confirmButtonColor: '#69b9aa',
             });
-            
-            this.adminService.getPacientes().subscribe(data => {
+
+            this.adminService.getPacientes().subscribe((data) => {
               this.pacientes.set(data);
               this.citaForm.get('pacienteId')?.setValue(pacienteCreado.id, { emitEvent: false });
             });
           },
           error: (err) => {
-            const mensajeBackend = err.error?.message || err.error || 'Ocurrió un problema de duplicidad o conexión.';
+            const mensajeBackend =
+              err.error?.message || err.error || 'Ocurrió un problema de duplicidad o conexión.';
             Swal.fire({
               title: 'Error al guardar',
               text: mensajeBackend,
               icon: 'error',
-              confirmButtonColor: '#ef4444'
+              confirmButtonColor: '#ef4444',
             });
             this.citaForm.get('pacienteId')?.setValue('');
-          }
+          },
         });
       } else {
         this.citaForm.get('pacienteId')?.setValue('');
@@ -189,24 +199,55 @@ export class CitasComponent implements OnInit {
     });
   }
 
-  // --------------------------------------------------
+  buscarHorariosDisponibles(odontologoId: number, fecha: string): void {
+    this.buscandoHorarios.set(true);
+    this.adminService.getDisponibilidad(odontologoId, fecha).subscribe({
+      next: (horas: string[]) => {
+        this.horariosDisponibles.set(horas);
+        this.buscandoHorarios.set(false);
+      },
+      error: (err) => {
+        console.error('Error al buscar horarios', err);
+        this.horariosDisponibles.set([]);
+        this.buscandoHorarios.set(false);
+      },
+    });
+  }
+
+  seleccionarHora(horaSeleccionada: string): void {
+    this.citaForm.patchValue({ hora: horaSeleccionada });
+  }
+
   // GUARDAR O ACTUALIZAR CITA
-  // --------------------------------------------------
   guardarCita(): void {
     if (this.citaForm.invalid) {
-      Swal.fire('Faltan Datos', 'Por favor completa todos los campos obligatorios.', 'warning');
+      Swal.fire('Faltan Datos', 'Por favor selecciona la fecha y una hora disponible.', 'warning');
       return;
     }
 
     const val = this.citaForm.value;
-    const fechaHoraFormateada = `${val.fecha}T${val.hora}:00`;
+
+    let fechaReal = new Date(`${val.fecha}T00:00:00`);
+    let horaNumerica = parseInt(val.hora.substring(0, 2));
+
+    // Si elige una hora de madrugada (00:00, 01:00), le sumamos 1 día automáticamente
+    if (horaNumerica >= 0 && horaNumerica < 6) {
+      fechaReal.setDate(fechaReal.getDate() + 1);
+    }
+
+    // Volvemos a extraer la fecha ya corregida en formato YYYY-MM-DD
+    const mes = String(fechaReal.getMonth() + 1).padStart(2, '0');
+    const dia = String(fechaReal.getDate()).padStart(2, '0');
+    const fechaCorregida = `${fechaReal.getFullYear()}-${mes}-${dia}`;
+    
+    const fechaHoraFormateada = `${fechaCorregida}T${val.hora}:00`;
 
     const datosCita = {
       fechaHora: fechaHoraFormateada,
       estado: 'PENDIENTE',
-      observaciones: '', 
+      observaciones: '',
       paciente: { id: val.pacienteId },
-      odontologo: { id: val.odontologoId }
+      odontologo: { id: val.odontologoId },
     };
 
     if (this.idCitaEdicion) {
@@ -216,11 +257,11 @@ export class CitasComponent implements OnInit {
             title: '¡Actualizada!',
             text: 'La cita ha sido modificada con éxito.',
             icon: 'success',
-            confirmButtonColor: '#69b9aa'
+            confirmButtonColor: '#69b9aa',
           });
           this.resetearFormulario();
         },
-        error: (err) => this.mostrarErrorCita(err)
+        error: (err) => this.mostrarErrorCita(err),
       });
     } else {
       this.adminService.crearCita(datosCita).subscribe({
@@ -229,31 +270,29 @@ export class CitasComponent implements OnInit {
             title: '¡Agendada!',
             text: 'La cita ha sido registrada con éxito en la agenda del doctor.',
             icon: 'success',
-            confirmButtonColor: '#69b9aa'
+            confirmButtonColor: '#69b9aa',
           });
           this.resetearFormulario();
         },
-        error: (err) => this.mostrarErrorCita(err)
+        error: (err) => this.mostrarErrorCita(err),
       });
     }
   }
 
-  // --------------------------------------------------
   // EDITAR CITA
-  // --------------------------------------------------
   editarCita(cita: any): void {
     this.idCitaEdicion = cita.id;
-    
+
     const [fechaCita, horaCompleta] = cita.fechaHora.split('T');
     const horaCita = horaCompleta.substring(0, 5);
 
-    const odontologoSeleccionado = this.odontologos().find(med => med.id === cita.odontologo.id);
+    const odontologoSeleccionado = this.odontologos().find((med) => med.id === cita.odontologo.id);
 
     this.citaForm.patchValue({
       pacienteId: cita.paciente.id,
       especialidad: odontologoSeleccionado ? odontologoSeleccionado.especialidad : '',
       fecha: fechaCita,
-      hora: horaCita
+      hora: horaCita,
     });
 
     setTimeout(() => {
@@ -261,19 +300,17 @@ export class CitasComponent implements OnInit {
     });
   }
 
-  // --------------------------------------------------
   // ELIMINAR CITA
-  // --------------------------------------------------
   eliminarCita(id: number): void {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: "Se cancelará y eliminará esta cita del sistema.",
+      text: 'Se cancelará y eliminará esta cita del sistema.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#ef4444',
       cancelButtonColor: '#64748b',
       confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
         this.adminService.eliminarCita(id).subscribe({
@@ -284,61 +321,76 @@ export class CitasComponent implements OnInit {
           error: (err) => {
             Swal.fire('Error', 'No se pudo eliminar la cita.', 'error');
             console.error(err);
-          }
+          },
         });
       }
     });
   }
 
-  // --------------------------------------------------
   // MÉTODOS AUXILIARES
-  // --------------------------------------------------
   resetearFormulario() {
     this.cargarCitas();
     this.idCitaEdicion = null;
-    this.citaForm.reset({ pacienteId: '', especialidad: '', odontologoId: '', fecha: '', hora: '' });
+    this.citaForm.reset({
+      pacienteId: '',
+      especialidad: '',
+      odontologoId: '',
+      fecha: '',
+      hora: '',
+    });
     this.citaForm.get('odontologoId')?.disable();
   }
 
   mostrarErrorCita(err: any) {
-    const mensajeBackend = err.error?.message || err.error || 'El doctor no tiene disponibilidad o está fuera de su horario.';
+    const mensajeBackend =
+      err.error?.message ||
+      err.error ||
+      'El doctor no tiene disponibilidad o está fuera de su horario.';
     Swal.fire({
       title: 'No se puede procesar',
-      text: typeof mensajeBackend === 'string' ? mensajeBackend : 'Conflicto de horario o indisponibilidad.',
+      text:
+        typeof mensajeBackend === 'string'
+          ? mensajeBackend
+          : 'Conflicto de horario o indisponibilidad.',
       icon: 'error',
-      confirmButtonColor: '#ef4444'
+      confirmButtonColor: '#ef4444',
     });
   }
 
-  formatearFechaHora(fechaHoraISO: string): { fecha: string, hora: string } {
+  formatearFechaHora(fechaHoraISO: string): { fecha: string; hora: string } {
     if (!fechaHoraISO) return { fecha: '-', hora: '-' };
     const dateObj = new Date(fechaHoraISO);
     return {
-      fecha: dateObj.toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-      hora: dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+      fecha: dateObj.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }),
+      hora: dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
     };
   }
 
   getFechaMinimaActual(): string {
-    return new Date().toISOString().split('T')[0];
+    const hoy = new Date();
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+    return hoy.toISOString().split('T')[0];
   }
 
   // FILTRO DE SEMANA ACTUAL
-  obtenerLimitesSemana(): { inicio: Date, fin: Date } {
+  obtenerLimitesSemana(): { inicio: Date; fin: Date } {
     const hoy = new Date();
-    const diaSemana = hoy.getDay(); 
-    
+    const diaSemana = hoy.getDay();
+
     const distanciaLunes = diaSemana === 0 ? -6 : 1 - diaSemana;
 
     const lunes = new Date(hoy);
     lunes.setDate(hoy.getDate() + distanciaLunes);
-    lunes.setHours(0, 0, 0, 0); 
+    lunes.setHours(0, 0, 0, 0);
 
     const domingo = new Date(lunes);
     domingo.setDate(lunes.getDate() + 6);
-    domingo.setHours(23, 59, 59, 999); 
+    domingo.setHours(23, 59, 59, 999);
 
     return { inicio: lunes, fin: domingo };
   }
-
 }

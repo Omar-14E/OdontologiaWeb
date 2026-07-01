@@ -26,12 +26,12 @@ public class PacienteService {
     private PasswordEncoder passwordEncoder;
 
     // AGREGAR NUEVO PACIENTE
-    @Transactional // Esto asegura que si falla la creación del paciente, tampoco se guarde el usuario (todo o nada)
+    @Transactional
     public Paciente agregarPaciente(Paciente nuevoPaciente) {
         
-        // 1. Validar DNI de forma optimizada (sin traer toda la lista de la BD)
-        if (pacienteRepository.findByDni(nuevoPaciente.getDni()).isPresent()) {
-            throw new RuntimeException("Error: Ya existe un paciente registrado con el DNI " + nuevoPaciente.getDni());
+        // 🌟 CAMBIO AQUÍ: Usamos existsByDni que acabamos de crear en el Repositorio
+        if (pacienteRepository.existsByDni(nuevoPaciente.getDni())) {
+            throw new RuntimeException("El DNI " + nuevoPaciente.getDni() + " ya se encuentra registrado en el sistema.");
         }
 
         // 2. Extraer y procesar el Usuario (si el frontend envía datos de login)
@@ -61,6 +61,11 @@ public class PacienteService {
     public Paciente editarPaciente(Long id, Paciente datosActualizados) {
         Paciente pacienteExistente = pacienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado en el sistema"));
+
+        if (!pacienteExistente.getDni().equals(datosActualizados.getDni()) && 
+            pacienteRepository.existsByDni(datosActualizados.getDni())) {
+            throw new RuntimeException("El DNI " + datosActualizados.getDni() + " ya pertenece a otro paciente.");
+        }
 
         pacienteExistente.setNombre(datosActualizados.getNombre());
         pacienteExistente.setApellido(datosActualizados.getApellido());

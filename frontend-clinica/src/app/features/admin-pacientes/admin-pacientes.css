@@ -381,10 +381,6 @@
   }
 }
 
-/* -----------------------------------------
-   BOTONES DE ICONO PARA LA TABLA
-   (Si no los tenías, asegúrate de añadirlos)
-   ----------------------------------------- */
 .icon-btn {
   background: transparent;
   border: none;
@@ -398,3 +394,7 @@
 .edit-btn:hover { background-color: #eff6ff; }
 .delete-btn { color: var(--danger); }
 .delete-btn:hover { background-color: #fef2f2; }
+
+.swal2-container {
+  z-index: 999999 !important;
+}

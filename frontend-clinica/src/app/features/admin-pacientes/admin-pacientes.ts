@@ -2,30 +2,32 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../core/services/admin.service';
+import Swal from 'sweetalert2'; // 👈 IMPORTACIÓN AÑADIDA PARA LAS ALERTAS
 
 @Component({
   selector: 'app-admin-pacientes',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-pacientes.html',
-  styleUrls: ['./admin-pacientes.css']
+  styleUrls: ['./admin-pacientes.css'],
 })
 export class AdminPacientesComponent implements OnInit {
-  
   pacientes = signal<any[]>([]);
-  
+
   pacienteForm: FormGroup;
   modoEdicion: boolean = false;
   pacienteSeleccionadoId: number | null = null;
   mostrarFormulario: boolean = false;
 
-  constructor(private adminService: AdminService, private fb: FormBuilder) {
-    // Hemos removido el email y añadido las regex exactas de tu Spring Boot
+  constructor(
+    private adminService: AdminService,
+    private fb: FormBuilder,
+  ) {
     this.pacienteForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
       apellido: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
       dni: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
-      telefono: ['', [Validators.required, Validators.pattern(/^9[0-9]{8}$/)]]
+      telefono: ['', [Validators.required, Validators.pattern(/^9[0-9]{8}$/)]],
     });
   }
 
@@ -36,7 +38,7 @@ export class AdminPacientesComponent implements OnInit {
   cargarPacientes(): void {
     this.adminService.getPacientes().subscribe({
       next: (data) => this.pacientes.set(data),
-      error: (err) => console.error('Error cargando pacientes:', err)
+      error: (err) => console.error('Error cargando pacientes:', err),
     });
   }
 
@@ -58,29 +60,91 @@ export class AdminPacientesComponent implements OnInit {
     this.pacienteForm.reset();
   }
 
+  // 🌟 MÉTODO MODIFICADO CON ALERTAS Y MANEJO DE ERRORES 🌟
   guardarPaciente(): void {
-    if (this.pacienteForm.invalid) return;
+    if (this.pacienteForm.invalid) {
+      Swal.fire(
+        'Campos inválidos',
+        'Revisa que todos los datos estén correctos antes de guardar.',
+        'warning',
+      );
+      return;
+    }
+
+    const datosPaciente = this.pacienteForm.value;
 
     if (this.modoEdicion && this.pacienteSeleccionadoId) {
-      this.adminService.actualizarPaciente(this.pacienteSeleccionadoId, this.pacienteForm.value)
-        .subscribe(() => {
+      this.adminService.actualizarPaciente(this.pacienteSeleccionadoId, datosPaciente).subscribe({
+        next: () => {
+          Swal.fire('¡Actualizado!', 'El paciente se actualizó correctamente.', 'success');
           this.cargarPacientes();
           this.cerrarFormulario();
-        });
+        },
+        error: (err: any) => {
+          const mensajeBackend = err.error?.message || err.error || 'Ocurrió un problema.';
+          Swal.fire({
+            title: 'No se pudo actualizar',
+            text: typeof mensajeBackend === 'string' ? mensajeBackend : 'El DNI ya está en uso.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+          });
+        },
+      });
     } else {
-      this.adminService.crearPaciente(this.pacienteForm.value)
-        .subscribe(() => {
+      this.adminService.crearPaciente(datosPaciente).subscribe({
+        next: () => {
+          Swal.fire('¡Registrado!', 'El paciente se guardó con éxito.', 'success');
           this.cargarPacientes();
           this.cerrarFormulario();
-        });
+        },
+        error: (err: any) => {
+          const mensajeBackend = err.error?.message || err.error || 'Ocurrió un problema.';
+          Swal.fire({
+            title: 'No se pudo actualizar', // O 'DNI Duplicado' en el otro bloque
+            text: typeof mensajeBackend === 'string' ? mensajeBackend : 'El DNI ya está en uso.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            // 👇 ESTA ES LA SOLUCIÓN INFALIBLE 👇
+            didOpen: () => {
+              const swalContainer = document.querySelector('.swal2-container') as HTMLElement;
+              if (swalContainer) {
+                swalContainer.style.zIndex = '9999999'; // Forzamos la capa más alta mediante JavaScript
+              }
+            },
+          });
+        },
+      });
     }
   }
 
+  // 🌟 ELIMINACIÓN MEJORADA CON SWEETALERT EN LUGAR DE CONFIRM NATIVO 🌟
   eliminarPaciente(id: number): void {
-    if (confirm('¿Estás seguro de eliminar este paciente?')) {
-      this.adminService.eliminarPaciente(id).subscribe(() => {
-        this.cargarPacientes();
-      });
-    }
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Se eliminará permanentemente a este paciente del sistema.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.eliminarPaciente(id).subscribe({
+          next: () => {
+            Swal.fire('¡Eliminado!', 'El paciente ha sido borrado.', 'success');
+            this.cargarPacientes();
+          },
+          error: (err) => {
+            Swal.fire(
+              'Error',
+              'No se pudo eliminar al paciente (es posible que tenga citas registradas).',
+              'error',
+            );
+            console.error(err);
+          },
+        });
+      }
+    });
   }
 }

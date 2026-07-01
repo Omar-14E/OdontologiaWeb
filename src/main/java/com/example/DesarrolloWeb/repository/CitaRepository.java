@@ -40,7 +40,6 @@ public interface CitaRepository extends JpaRepository<Cita, Long> {
     @Query("SELECT c FROM Cita c WHERE c.paciente.id = :pacienteId AND c.odontologo.usuario.username = :username ORDER BY c.fechaHora DESC")
     List<Cita> findHistorialClinicoPaciente(@Param("pacienteId") Long pacienteId, @Param("username") String username);
 
-
     List<Cita> findByEstadoAndFechaHoraBefore(EstadoCita estado, LocalDateTime fechaHora);
 
 }

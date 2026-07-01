@@ -26,21 +26,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credenciales) {
-        String username = credenciales.get("username");
-        String password = credenciales.get("password");
 
-        Usuario usuario = usuarioRepository.findByUsernameOrGmail(username, username) //busca usuarioo o correo
+        String username = credenciales.get("username").trim().toLowerCase();
+        String password = credenciales.get("password").trim();
+
+        Usuario usuario = usuarioRepository.findByUsernameOrGmail(username, username) // busca usuario o correo
                 .orElse(null);
 
-        // Validamos usuario y contraseña encriptada
         if (usuario != null && passwordEncoder.matches(password, usuario.getPassword())) {
             String token = jwtUtil.generarToken(usuario.getUsername(), usuario.getRol().name());
 
             return ResponseEntity.ok(Map.of(
                     "token", token,
                     "rol", usuario.getRol().name(),
-                    "username", usuario.getUsername()
-            ));
+                    "username", usuario.getUsername()));
         }
 
         return ResponseEntity.status(401).body(Map.of("error", "Credenciales incorrectas"));
