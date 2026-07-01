@@ -2,14 +2,19 @@ package com.example.DesarrolloWeb.controllers;
 
 import com.example.DesarrolloWeb.dto.DashboardOdontologoDTO;
 import com.example.DesarrolloWeb.dto.AgendaOdontoDTO;
+import com.example.DesarrolloWeb.dto.PerfilOdontoDTO;
 import com.example.DesarrolloWeb.models.Cita;
 import com.example.DesarrolloWeb.models.Odontologo;
 import com.example.DesarrolloWeb.models.Paciente;
+import com.example.DesarrolloWeb.models.Usuario;
 import com.example.DesarrolloWeb.repository.CitaRepository;
+import com.example.DesarrolloWeb.repository.UsuarioRepository;
 import com.example.DesarrolloWeb.service.OdontologoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -17,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,11 +36,16 @@ public class OdontologoPerfilController {
     @Autowired
     private OdontologoService odontologoService;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // =========================================================================
-    // 🌟 PANTALLA NUEVA: DASHBOARD (MÉTRICAS GENERALES)
+    // 🌟 PANTALLA: DASHBOARD (MÉTRICAS GENERALES)
     // =========================================================================
     
-    // 👈 Cambiado el nombre de la ruta a la raíz "/" tal como lo solicitaste
     @GetMapping("") 
     public ResponseEntity<DashboardOdontologoDTO> getDashboardOdontologo(Principal principal) {
         String username = principal.getName();
@@ -44,7 +55,6 @@ public class OdontologoPerfilController {
 
         List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
 
-        // Métricas de HOY
         long misCitasHoy = todasMisCitas.stream()
             .filter(c -> !c.getFechaHora().isBefore(inicioHoy) && !c.getFechaHora().isAfter(finHoy))
             .count();
@@ -55,7 +65,6 @@ public class OdontologoPerfilController {
             .distinct()
             .count();
 
-        // Total de pacientes únicos en el historial total de la vida del doctor
         long totalPacientesHistoricos = todasMisCitas.stream()
             .map(Cita::getPaciente)
             .distinct()
@@ -74,12 +83,13 @@ public class OdontologoPerfilController {
         return ResponseEntity.ok(dto);
     }
 
-    // Sirve para renderizar las tarjetas internas con scroll en el Dashboard
+    // Sirve para renderizar las tarjetas internas con scroll en el Dashboard y la Vista Semanal
     @GetMapping("/citas")
     public ResponseEntity<AgendaOdontoDTO> getMisCitas(Principal principal) {
         String username = principal.getName();
         List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
         
+        // 1. Límites exactos para HOY (Sin datos simulados artificialmente)
         LocalDateTime inicioHoy = LocalDate.now().atStartOfDay();
         LocalDateTime finHoy = LocalDate.now().atTime(LocalTime.MAX);
         
@@ -87,19 +97,21 @@ public class OdontologoPerfilController {
             .filter(c -> !c.getFechaHora().isBefore(inicioHoy) && !c.getFechaHora().isAfter(finHoy))
             .collect(Collectors.toList());
 
-        // Fallback local por si estás testeando y la lista está vacía
-        if (citasDeHoy.isEmpty() && !todasMisCitas.isEmpty()) {
-            citasDeHoy = todasMisCitas.stream().limit(2).collect(Collectors.toList());
-        }
-
         List<Paciente> pacientesDeHoy = citasDeHoy.stream()
             .map(Cita::getPaciente)
             .distinct()
             .collect(Collectors.toList());
 
-        LocalDateTime finSemana = inicioHoy.plusDays(7);
+        // 2. Límites para la SEMANA COMPLETA (Lunes a Domingo históricos)
+        LocalDate hoy = LocalDate.now();
+        LocalDate lunesDeEstaSemana = hoy.minusDays(hoy.getDayOfWeek().getValue() - 1);
+        LocalDate domingoDeEstaSemana = lunesDeEstaSemana.plusDays(6);
+
+        LocalDateTime inicioDeSemana = lunesDeEstaSemana.atStartOfDay();
+        LocalDateTime finDeSemana = domingoDeEstaSemana.atTime(LocalTime.MAX);
+
         List<Cita> citasDeLaSemana = todasMisCitas.stream()
-            .filter(c -> !c.getFechaHora().isBefore(inicioHoy) && c.getFechaHora().isBefore(finSemana))
+            .filter(c -> !c.getFechaHora().isBefore(inicioDeSemana) && !c.getFechaHora().isAfter(finDeSemana))
             .collect(Collectors.toList());
 
         AgendaOdontoDTO agenda = new AgendaOdontoDTO(citasDeHoy, pacientesDeHoy, citasDeLaSemana);
@@ -107,7 +119,7 @@ public class OdontologoPerfilController {
     }
 
     // =========================================================================
-    // 👥 PANTALLA VIEJA: REGISTRO Y EXPEDIENTE DE PACIENTES
+    // 👥 PANTALLA: REGISTRO Y EXPEDIENTE DE PACIENTES (RESTAURADO)
     // =========================================================================
 
     // 1. Carga inicial: Pacientes que alguna vez en la vida se han atendido con el doctor
@@ -116,7 +128,6 @@ public class OdontologoPerfilController {
         String username = principal.getName();
         List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
         
-        // Extraemos todos los pacientes únicos sin duplicados de toda la historia
         List<Paciente> pacientesHistoricos = todasMisCitas.stream()
             .map(Cita::getPaciente)
             .distinct()
@@ -125,17 +136,62 @@ public class OdontologoPerfilController {
         return ResponseEntity.ok(pacientesHistoricos);
     }
 
-    // 2. Vista detalle: Historial de TODAS las citas de un paciente con fecha, hora, estado y observación
+    // 2. Vista detalle: Historial de TODAS las citas de un paciente
     @GetMapping("/historial-paciente/{id}")
     public ResponseEntity<List<Cita>> getHistorialPaciente(@PathVariable Long id, Principal principal) {
         String username = principal.getName();
         List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
         
-        // Filtramos para retornar todas las citas históricas del paciente seleccionado
         List<Cita> historialPaciente = todasMisCitas.stream()
             .filter(c -> c.getPaciente().getId().equals(id))
             .collect(Collectors.toList());
             
         return ResponseEntity.ok(historialPaciente);
+    }
+
+    // =========================================================================
+    // 🛠️ MÉTODOS GESTIÓN DE PERFIL INTERACTIVO
+    // =========================================================================
+
+    @GetMapping("/detalles")
+    public ResponseEntity<PerfilOdontoDTO> getPerfilDetallado(Principal principal) {
+        String username = principal.getName();
+        Odontologo odontologo = odontologoService.obtenerPorUsername(username);
+        
+        PerfilOdontoDTO dto = new PerfilOdontoDTO(
+            odontologo.getNombre(),
+            odontologo.getApellido(),
+            odontologo.getTelefono(),
+            odontologo.getEspecialidad(),
+            odontologo.getUsuario().getUsername(),
+            odontologo.getUsuario().getGmail()
+        );
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/actualizar")
+    @Transactional
+    public ResponseEntity<?> actualizarMisDatos(@RequestBody Map<String, String> datos, Principal principal) {
+        String username = principal.getName();
+        Odontologo odontologo = odontologoService.obtenerPorUsername(username);
+
+        String nuevoTelefono = datos.get("telefono");
+        if (nuevoTelefono == null || !nuevoTelefono.matches("^9[0-9]{8}$")) {
+            return ResponseEntity.badRequest().body("El teléfono debe empezar con 9 y tener exactamente 9 dígitos.");
+        }
+        odontologo.setTelefono(nuevoTelefono);
+        odontologoService.actualizarOdontologo(odontologo.getId(), odontologo);
+
+        String nuevoPassword = datos.get("password");
+        if (nuevoPassword != null && !nuevoPassword.trim().isEmpty()) {
+            if (nuevoPassword.length() < 8) {
+                return ResponseEntity.badRequest().body("La nueva contraseña debe tener al menos 8 caracteres.");
+            }
+            Usuario usuario = odontologo.getUsuario();
+            usuario.setPassword(passwordEncoder.encode(nuevoPassword.trim()));
+            usuarioRepository.save(usuario);
+        }
+
+        return ResponseEntity.ok().body(Map.of("message", "Perfil actualizado con éxito"));
     }
 }

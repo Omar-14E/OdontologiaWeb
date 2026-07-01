@@ -1,0 +1,239 @@
+:host {
+  --bg-color: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --primary: #0d9488; 
+  --primary-hover: #0f766e;
+}
+
+.perfil-wrapper {
+  padding: 2.5rem;
+  background-color: var(--bg-color);
+  min-height: calc(100vh - 70px);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+}
+
+.perfil-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.page-main-title {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.btn-back-dashboard {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.btn-back-dashboard:hover {
+  color: var(--primary-hover);
+}
+
+.perfil-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.perfil-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1.5rem;
+}
+
+.user-block {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* 🌟 CELESTE SUTIL EN LAS INICIALES (Mismo estilo que tus pacientes) */
+.avatar-circle {
+  width: 68px;
+  height: 68px;
+  background: #e0f2fe; /* Celeste sutil */
+  color: #0369a1;    /* Azul clínico contrastante */
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doctor-title {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.perfil-grid-content {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 992px) {
+  .perfil-grid-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel-inside-title {
+  margin: 0 0 1.25rem 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-box-panel, .auth-box-panel {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.panel-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 576px) {
+  .panel-fields-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.auth-fields-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.data-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.data-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* RECUADROS LIGERAMENTE REDONDEADOS Y SUTILES */
+.static-card-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-main);
+  padding: 0.65rem 0.85rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem; /* Separación interna entre icono y texto */
+}
+
+/* 🌟 ESTILOS PARA LOS ICONOS VECTORIALES MINIMALISTAS */
+.field-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.text-primary {
+  color: var(--primary) !important;
+}
+
+.highlight-user {
+  color: var(--primary);
+  font-weight: 600;
+  background-color: #f0fdfa;
+  border-color: #b9f6e4;
+}
+
+.password-masked {
+  color: var(--text-main);
+}
+
+.password-masked .field-icon {
+  color: var(--text-muted);
+}
+
+/* BOTÓN CORPORATIVO DENSALUD */
+.btn-change-password {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background-color: var(--primary);
+  color: #ffffff;
+  border: 1px solid var(--primary);
+  font-family: inherit;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-change-password:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+/* Especialidades */
+.especialidad-badge {
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+  letter-spacing: 0.03em;
+}
+
+.badge-general { background-color: #e0f2fe; color: #0284c7; }
+.badge-ortodoncia { background-color: #f3e8ff; color: #6b21a8; }
+.badge-endodoncia { background-color: #fef2f2; color: #ef4444; }
+.badge-periodoncia { background-color: #d1fae5; color: #065f46; }
+.badge-cirugia { background-color: #fff7ed; color: #ea580c; }
+.badge-odontopediatria { background-color: #fdf2f8; color: #db2777; }

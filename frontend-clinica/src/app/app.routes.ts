@@ -7,12 +7,14 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { OdontoDashboardComponent } from './features/odonto-dashboard/odonto-dashboard';
 import { OdontoAgendaComponent } from './features/odonto-agenda/odonto-agenda';
 import { OdontoPacientesComponent } from './features/odonto-pacientes/odonto-pacientes';
+import { OdontoPerfilComponent } from './features/odonto-perfil/odonto-perfil';
 
 // Importamos los nuevos componentes del administrador
 import { AdminMedicosComponent } from './features/admin-medicos/admin-medicos';
 import { AdminPacientesComponent } from './features/admin-pacientes/admin-pacientes';
 import { AdminTurnosComponent } from './features/admin-turnos/admin-turnos';
 import { AdminHistorialCitasComponent } from './features/admin-historial-citas/admin-historial-citas';
+import { OdontoHorarioComponent } from './features/odonto-horario/odonto-horario';
 
 export const routes: Routes = [
   
@@ -48,6 +50,17 @@ export const routes: Routes = [
     path: 'odonPacientes',
     component: OdontoPacientesComponent,
     canActivate: [authGuard]
+  },
+  {
+    path: 'odonHorario',
+    component: OdontoHorarioComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'odonPerfil',
+    component: OdontoPerfilComponent,
+    canActivate: [authGuard]
+
   },
   
   // --- Nuevas rutas del Administrador (Protegidas) ---
