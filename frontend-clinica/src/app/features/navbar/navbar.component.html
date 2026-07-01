@@ -31,6 +31,7 @@
       <a routerLink="/odonAgenda" (click)="toggleMenu()" class="sidebar-item">Citas Programadas</a>
       <a routerLink="/odonPacientes" (click)="toggleMenu()" class="sidebar-item">Registro de Pacientes</a>
       <a routerLink="/pacientes" (click)="toggleMenu()" class="sidebar-item">Mi Horario</a>
+      <a routerLink="/odonPerfil" (click)="toggleMenu()" class="sidebar-item">Mi Perfil</a>
     </ng-container>
 
     <ng-container *ngIf="usuarioRol() === 'ADMIN'">

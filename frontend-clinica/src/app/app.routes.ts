@@ -7,6 +7,7 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { OdontoDashboardComponent } from './features/odonto-dashboard/odonto-dashboard';
 import { OdontoAgendaComponent } from './features/odonto-agenda/odonto-agenda';
 import { OdontoPacientesComponent } from './features/odonto-pacientes/odonto-pacientes';
+import { OdontoPerfilComponent } from './features/odonto-perfil/odonto-perfil';
 
 // Importamos los nuevos componentes del administrador
 import { AdminMedicosComponent } from './features/admin-medicos/admin-medicos';
@@ -48,6 +49,12 @@ export const routes: Routes = [
     path: 'odonPacientes',
     component: OdontoPacientesComponent,
     canActivate: [authGuard]
+  },
+  {
+    path: 'odonPerfil',
+    component: OdontoPerfilComponent,
+    canActivate: [authGuard]
+
   },
   
   // --- Nuevas rutas del Administrador (Protegidas) ---

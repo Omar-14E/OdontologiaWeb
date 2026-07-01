@@ -436,7 +436,7 @@
    ========================================================================== */
 .action-buttons-row {
   display: flex;
-  justify-content: space-between; /* Separa el selector a la izquierda y los botones a la derecha */
+  justify-content: space-between; 
   align-items: flex-end;
   gap: 1rem;
   margin-top: 1.5rem;
@@ -477,4 +477,34 @@
 .buttons-group {
   display: flex;
   gap: 1rem;
+}
+
+/* ==========================================================================
+   🌟 INTEGRACIÓN ESTÉTICA PARA MODALES SWEETALERT2 (INYECTADOS)
+   ========================================================================== */
+:host ::ng-deep .swal-custom-font {
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 14px !important;
+  padding: 2rem !important;
+}
+
+:host ::ng-deep .swal-custom-font .swal2-title {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin-bottom: 0.5rem !important;
+}
+
+:host ::ng-deep .swal-custom-font .swal2-html-container {
+  font-size: 0.95rem !important;
+  color: #475569 !important;
+  line-height: 1.5 !important;
+}
+
+:host ::ng-deep .swal-custom-font .swal2-styled {
+  padding: 0.7rem 2rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  letter-spacing: 0.2px !important;
 }
