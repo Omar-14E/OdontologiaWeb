@@ -9,7 +9,7 @@ import { CommonModule } from "@angular/common";
     standalone: true,
     imports: [ReactiveFormsModule, CommonModule],
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.css']
+    styleUrls: ['./login.component.scss']
 })
 
 export class LoginComponent{

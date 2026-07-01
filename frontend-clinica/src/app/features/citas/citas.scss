@@ -17,19 +17,20 @@
 
 .dash-header {
   margin-bottom: 2rem;
-}
 
-.greeting {
-  margin: 0;
-  color: var(--text-main);
-  font-size: 1.6rem;
-  font-weight: 700;
-}
+  /* SCSS: Agrupamos los textos de la cabecera */
+  .greeting {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
 
-.subtitle {
-  color: var(--text-muted);
-  margin-top: 0.3rem;
-  font-size: 0.95rem;
+  .subtitle {
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
+  }
 }
 
 /* =========================================
@@ -40,10 +41,9 @@
   grid-template-columns: 340px 1fr;
   gap: 1.5rem;
   align-items: stretch;
-}
 
-@media (max-width: 1024px) {
-  .citas-layout {
+  /* SCSS: El Media Query anidado mantiene el responsive justo donde pertenece */
+  @media (max-width: 1024px) {
     grid-template-columns: 1fr;
   }
 }
@@ -112,15 +112,16 @@
   box-sizing: border-box;
   height: 42px;
   font-family: 'Inter', sans-serif;
-}
 
-.form-control:focus {
-  border-color: var(--primary);
-}
+  /* SCSS: Estados anidados del input */
+  &:focus {
+    border-color: var(--primary);
+  }
 
-.form-control:disabled {
-  background-color: #f8fafc;
-  color: #94a3b8;
+  &:disabled {
+    background-color: #f8fafc;
+    color: #94a3b8;
+  }
 }
 
 .date-time-inputs {
@@ -128,11 +129,12 @@
   gap: 0.75rem;
   align-items: center;
   width: 100%;
-}
 
-.date-time-inputs .form-control {
-  flex: 1;
-  margin: 0;
+  /* SCSS: Modifica el form-control solo cuando está dentro de este grupo */
+  .form-control {
+    flex: 1;
+    margin: 0;
+  }
 }
 
 .help-text {
@@ -141,10 +143,11 @@
   margin-top: 0.1rem;
 }
 
-.w-100 {
-  width: 100%;
-}
+.w-100 { width: 100%; }
 
+/* =========================================
+   BOTONES
+   ========================================= */
 .btn-primary {
   background-color: var(--primary);
   color: white;
@@ -156,15 +159,39 @@
   height: 42px;
   transition: background-color 0.2s;
   font-family: 'Inter', sans-serif;
+
+  &:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+  }
+
+  &:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+  }
 }
 
-.btn-primary:hover:not(:disabled) {
-  background-color: var(--primary-hover);
-}
+.btn-nuevo-paciente {
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-.btn-primary:disabled {
-  background-color: #94a3b8;
-  cursor: not-allowed;
+  &:hover {
+    background-color: #f8fafc;
+    border-color: #69b9aa;
+    color: #69b9aa;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 /* =========================================
@@ -191,43 +218,44 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-}
 
-.scrollable-body::-webkit-scrollbar {
-  width: 6px;
-}
+  /* SCSS: Estilos de la barra de scroll anidados limpiamente */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
 
-.scrollable-body::-webkit-scrollbar-track {
-  background: transparent;
-}
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-.scrollable-body::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 20px;
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+  }
 }
 
 .custom-table {
   width: 100%;
   border-collapse: collapse;
-}
 
-.custom-table th {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 0;
-  background: var(--card-bg);
-  z-index: 2;
-}
+  th {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    background: var(--card-bg);
+    z-index: 2;
+  }
 
-.custom-table td {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f8fafc;
-  font-size: 0.9rem;
+  td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f8fafc;
+    font-size: 0.9rem;
+  }
 }
 
 .empty-state {
@@ -237,103 +265,102 @@
   font-style: italic;
 }
 
-.date-text {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--text-main);
-  font-weight: 500;
-}
-
-.patient-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  color: var(--text-main);
-  font-weight: 500;
-}
+/* =========================================
+   CELDAS DE TABLA Y ESTADOS
+   ========================================= */
+.date-text { display: flex; align-items: center; gap: 0.4rem; color: var(--text-main); font-weight: 500; }
+.patient-cell { display: flex; align-items: center; gap: 0.7rem; color: var(--text-main); font-weight: 500; }
 
 .avatar-sm {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: #e0f2fe;
-  color: #0369a1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
+  width: 28px; height: 28px; border-radius: 50%;
+  background-color: #e0f2fe; color: #0369a1;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700;
 }
 
-.status-badge {
-  padding: 0.3rem 0.7rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
+/* SCSS: Badges de estado agrupados usando el ampersand */
+.status {
+  &-badge {
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  &-pending { background: #fef3c7; color: #b45309; }
+  &-success { background: #dcfce7; color: #166534; }
+  &-danger { background: #fee2e2; color: #b91c1c; }
 }
 
-.status-pending {
-  background: #fef3c7;
-  color: #b45309;
-}
+.action-buttons { display: flex; gap: 0.5rem; }
 
-.status-success {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.status-danger {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
+/* SCSS: Botones de íconos con sus hovers anidados */
 .icon-btn {
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0.4rem;
   border-radius: 6px;
-}
 
-.edit-btn {
-  color: #3b82f6;
-}
+  &.edit-btn {
+    color: #3b82f6;
+    &:hover { background-color: #eff6ff; }
+  }
 
-.edit-btn:hover {
-  background-color: #eff6ff;
-}
-
-.delete-btn {
-  color: #ef4444;
-}
-
-.delete-btn:hover {
-  background-color: #fef2f2;
+  &.delete-btn {
+    color: #ef4444;
+    &:hover { background-color: #fef2f2; }
+  }
 }
 
 /* =========================================
    ESTILOS PREMIUM HOMOLOGADOS PARA SWEETALERT2
    ========================================= */
-body .custom-swal-popup {
-  font-family: 'Inter', -apple-system, sans-serif !important;
-  border-radius: 12px !important;
-  padding: 2rem !important;
-  width: 400px !important;
+/* SCSS: Anidamos dentro de 'body' para aislar y forzar especificidad */
+body {
+  .custom-swal-popup {
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    border-radius: 12px !important;
+    padding: 2rem !important;
+    width: 400px !important;
+  }
+
+  .custom-swal-title {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .custom-swal-confirm {
+    background-color: #69b9aa !important;
+    color: white !important;
+    padding: 0.7rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif !important;
+    margin-left: 0.5rem;
+
+    &:hover { background-color: #58a396 !important; }
+  }
+
+  .custom-swal-cancel {
+    background-color: #64748b !important;
+    color: white !important;
+    padding: 0.7rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif !important;
+
+    &:hover { background-color: #475569 !important; }
+  }
 }
 
-body .custom-swal-title {
-  font-size: 1.3rem !important;
-  font-weight: 700 !important;
-  color: #1e293b !important;
-  margin-bottom: 1.5rem !important;
-}
-
+/* Estilos internos del formulario de SweetAlert (no necesitan 'body') */
 .swal-form-body {
   display: flex;
   flex-direction: column;
@@ -365,65 +392,8 @@ body .custom-swal-title {
   height: 42px;
   font-family: 'Inter', sans-serif;
   transition: border-color 0.2s;
-}
 
-.swal-input-field:focus {
-  border-color: #69b9aa;
-}
-
-body .custom-swal-confirm {
-  background-color: #69b9aa !important;
-  color: white !important;
-  padding: 0.7rem 1.5rem !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  font-size: 0.9rem !important;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif !important;
-  margin-left: 0.5rem;
-}
-
-body .custom-swal-confirm:hover {
-  background-color: #58a396 !important;
-}
-
-body .custom-swal-cancel {
-  background-color: #64748b !important;
-  color: white !important;
-  padding: 0.7rem 1.5rem !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  font-size: 0.9rem !important;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif !important;
-}
-
-body .custom-swal-cancel:hover {
-  background-color: #475569 !important;
-}
-
-/* Estilo para el botón de nuevo paciente */
-.btn-nuevo-paciente {
-  background-color: #ffffff;
-  border: 2px solid #e2e8f0;
-  color: #64748b;
-  padding: 0.5rem 0.8rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-nuevo-paciente:hover {
-  background-color: #f8fafc;
-  border-color: #69b9aa;
-  /* Color principal de tu app */
-  color: #69b9aa;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.btn-nuevo-paciente:active {
-  transform: scale(0.95);
+  &:focus {
+    border-color: #69b9aa;
+  }
 }

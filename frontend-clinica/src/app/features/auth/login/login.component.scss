@@ -1,0 +1,295 @@
+/* =========================================
+   VARIABLES LOCALES DEL LOGIN
+   ========================================= */
+$color-bg-page: #f1f5f9; /* Gris slate claro */
+$color-primario: #0284c7;
+$color-primario-hover: #0369a1;
+$color-texto-main: #0f172a;
+$color-texto-muted: #64748b;
+$color-borde: #cbd5e1;
+
+/* ANIMACIONES */
+@keyframes fadeInPage {
+  from { opacity: 0; transform: scale(0.99); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* =========================================
+   HOST Y CONTENEDOR PRINCIPAL
+   ========================================= */
+/* EL TRUCO: Esto elimina por completo los bordes blancos del navegador y quita el scroll */
+:host {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+/* Contenedor de la página con un azul clínico más claro y amigable */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: $color-bg-page; 
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* =========================================
+   ESTRUCTURA DE LA TARJETA LOGIN
+   ========================================= */
+/* Optimizada para ser más ancha que alta */
+.login-wrapper {
+  display: flex;
+  width: 85vw;          /* Ajuste dinámico basado en el ancho de la pantalla */
+  max-width: 1060px;    /* Límite horizontal máximo */
+  height: 520px;        /* Reducción de altura para lograr el formato rectangular perfecto */
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  animation: fadeInPage 0.5s ease-out forwards;
+
+  /* SCSS: Media query anidado para la tarjeta entera */
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+  }
+}
+
+/* =========================================
+   LADO IZQUIERDO (IMAGEN LIMPIA)
+   ========================================= */
+.login-visual {
+  position: relative;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px;
+  box-sizing: border-box;
+  color: #ffffff;
+
+  /* SCSS: Ocultamos la imagen en móviles directamente desde aquí */
+  @media (max-width: 768px) {
+    display: none;
+  }
+
+  .bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  /* Sutil sombreado inferior para que las letras blancas resalten */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45%;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0) 100%);
+    z-index: 2;
+  }
+
+  .visual-content {
+    position: relative;
+    z-index: 3;
+
+    h1 {
+      font-size: 38px;
+      font-weight: 800;
+      margin: 0 0 4px 0;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    p {
+      font-size: 15px;
+      color: #f1f5f9;
+      opacity: 0.95;
+      margin: 0;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+/* =========================================
+   LADO DERECHO (FORMULARIO ENDEREZADO)
+   ========================================= */
+.login-form-container {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 50px;
+  box-sizing: border-box;
+  background: #ffffff;
+
+  /* SCSS: Media query anidado para el contenedor del formulario */
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 40px 20px;
+  }
+
+  /* Caja contenedora */
+  .form-box {
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-header {
+    margin-bottom: 25px;
+
+    h2 {
+      font-size: 26px;
+      color: $color-texto-main;
+      font-weight: 700;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.5px;
+    }
+
+    p {
+      font-size: 14px;
+      color: $color-texto-muted;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* Grupos de inputs */
+  .form-group {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+
+    label {
+      position: absolute;
+      left: 14px;
+      top: 15px;
+      color: #94a3b8;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* SCSS: Toda la magia de los inputs interactivos anidada */
+    input {
+      width: 100%;
+      padding: 20px 14px 8px 14px;
+      border: 1.5px solid $color-borde;
+      border-radius: 10px;
+      font-size: 15px;
+      color: $color-texto-main;
+      background: #ffffff;
+      box-sizing: border-box;
+      outline: none;
+      display: block;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+
+      /* ANIMACIÓN 1: Hover */
+      &:hover {
+        border-color: #626e7e;
+        transform: scale(1.03);
+      }
+
+      /* ANIMACIÓN 2: Focus */
+      &:focus {
+        border-color: $color-primario;
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(2, 132, 199, 0.08);
+      }
+
+      /* Control de la etiqueta flotante (Hermano adyacente ~) */
+      &:focus ~ label,
+      &:not(:placeholder-shown) ~ label {
+        top: 4px;
+        font-size: 11px;
+        color: $color-primario;
+        font-weight: 600;
+      }
+
+      /* Mantiene su tamaño original cuando no está enfocado pero tiene texto */
+      &:not(:placeholder-shown):not(:focus) {
+        transform: scale(1);
+      }
+    }
+  }
+
+  /* Errores y Validaciones */
+  .error-msg {
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .server-error-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #b91c1c;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+
+  /* Botón de ingreso */
+  button {
+    width: 100%;
+    padding: 14px;
+    background-color: $color-primario;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-sizing: border-box;
+    display: block;
+    transition: all 0.2s ease;
+    margin-top: 4px;
+
+    /* Estados del botón */
+    &:hover:not([disabled]) {
+      background-color: $color-primario-hover;
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.15);
+    }
+
+    &:disabled {
+      background-color: #e2e8f0;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+  }
+}

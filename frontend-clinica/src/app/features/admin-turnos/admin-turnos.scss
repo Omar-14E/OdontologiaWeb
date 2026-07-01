@@ -33,18 +33,20 @@
   gap: 1rem;
 }
 
-.header-info .greeting {
-  margin: 0;
-  color: var(--text-main);
-  font-size: 1.85rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
+.header-info {
+  .greeting {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 1.85rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
 
-.header-info .subtitle {
-  color: var(--text-muted);
-  margin-top: 0.4rem;
-  font-size: 1rem;
+  .subtitle {
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    font-size: 1rem;
+  }
 }
 
 .section-title {
@@ -69,10 +71,10 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   margin-bottom: 2rem;
   transition: box-shadow 0.3s ease;
-}
 
-.admin-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  &:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  }
 }
 
 /* =========================================
@@ -104,17 +106,17 @@
   cursor: pointer;
   width: 100%;
   transition: all 0.2s ease;
-  appearance: none; /* Quita la flecha por defecto en algunos navegadores */
+  appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230d9488'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 1.2rem;
   padding-right: 3rem;
-}
 
-.select-profesional:focus {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.2);
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.2);
+  }
 }
 
 /* =========================================
@@ -164,12 +166,12 @@
   font-size: 0.95rem;
   color: var(--text-main);
   transition: all 0.2s ease;
-}
 
-.form-control:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15);
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15);
+  }
 }
 
 /* =========================================
@@ -199,41 +201,41 @@
   background-color: var(--primary);
   color: white;
   box-shadow: 0 2px 4px rgba(13, 148, 136, 0.3);
-}
 
-.btn-primary:hover:not(:disabled) {
-  background-color: var(--primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(13, 148, 136, 0.4);
-}
+  &:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(13, 148, 136, 0.4);
+  }
 
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  box-shadow: none;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
 }
 
 .btn-outline {
   background-color: transparent;
   color: var(--text-muted);
   border: 1px solid var(--border-color);
-}
 
-.btn-outline:hover {
-  background-color: #f1f5f9;
-  color: var(--text-main);
+  &:hover {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+  }
 }
 
 .btn-danger-outline {
   background-color: #fef2f2;
   color: var(--danger);
   border: 1px solid #fecaca;
-}
 
-.btn-danger-outline:hover {
-  background-color: var(--danger);
-  color: white;
-  border-color: var(--danger);
+  &:hover {
+    background-color: var(--danger);
+    color: white;
+    border-color: var(--danger);
+  }
 }
 
 .btn-sm {
@@ -254,30 +256,30 @@
   border-collapse: separate;
   border-spacing: 0;
   text-align: left;
-}
 
-.custom-table th {
-  background-color: transparent;
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 1rem 1.2rem;
-  border-bottom: 2px solid var(--border-color);
-}
+  th {
+    background-color: transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.2rem;
+    border-bottom: 2px solid var(--border-color);
+  }
 
-.custom-table td {
-  color: var(--text-main);
-  font-size: 0.95rem;
-  vertical-align: middle;
-  padding: 1.2rem;
-  border-bottom: 1px solid #f1f5f9;
-  transition: background-color 0.2s ease;
-}
+  td {
+    color: var(--text-main);
+    font-size: 0.95rem;
+    vertical-align: middle;
+    padding: 1.2rem;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s ease;
+  }
 
-.custom-table tbody tr:hover td {
-  background-color: var(--highlight-bg);
+  tbody tr:hover td {
+    background-color: var(--highlight-bg);
+  }
 }
 
 /* =========================================
@@ -288,10 +290,10 @@
   align-items: center;
   gap: 0.6rem;
   color: var(--text-main);
-}
 
-.date-badge svg {
-  color: var(--primary);
+  svg {
+    color: var(--primary);
+  }
 }
 
 .time-range {
@@ -318,15 +320,18 @@
   font-weight: 500;
 }
 
-.status-badge.active {
-  background: #dcfce7;
-  color: #166534;
-  border: 1px solid #bbf7d0;
-  padding: 0.4rem 0.85rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  display: inline-block;
+.status-badge {
+  /* Anidamos el estado ".active" usando el ampersand */
+  &.active {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-block;
+  }
 }
 
 /* =========================================
@@ -339,20 +344,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
 
-.empty-state-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem auto;
+  &-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem auto;
+  }
 }
 
 /* =========================================
-   SELECTOR DE DÍAS (PÍLDORAS)
+   SELECTOR DE DÍAS (PÍLDORAS) - ¡La magia de SCSS!
    ========================================= */
 .dias-selector {
   display: flex;
@@ -364,37 +369,36 @@
 .dia-pill {
   cursor: pointer;
   user-select: none;
-}
 
-/* Ocultar el checkbox nativo */
-.dia-pill input[type="checkbox"] {
-  display: none;
-}
+  /* Todo lo relacionado a la píldora queda anidado aquí */
+  input[type="checkbox"] {
+    display: none;
 
-/* Diseño de la píldora desmarcada */
-.dia-pill span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.55rem 1.1rem;
-  border-radius: 12px;
-  background-color: #e2e8f0;
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
-}
+    /* Cuando el input oculto está marcado, cambia el diseño del span hermano (+) */
+    &:checked + span {
+      background-color: var(--primary);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.4);
+      transform: translateY(-1px);
+    }
+  }
 
-/* Animación al pasar el mouse */
-.dia-pill:hover span {
-  background-color: #cbd5e1;
-}
+  span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 1.1rem;
+    border-radius: 12px;
+    background-color: #e2e8f0;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+  }
 
-/* Diseño de la píldora MARCADA */
-.dia-pill input:checked + span {
-  background-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.4);
-  transform: translateY(-1px);
+  /* Efecto hover sobre el span */
+  &:hover span {
+    background-color: #cbd5e1;
+  }
 }
