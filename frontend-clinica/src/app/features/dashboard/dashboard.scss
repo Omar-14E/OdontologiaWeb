@@ -34,21 +34,21 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-}
 
-.greeting {
-  margin: 0;
-  color: var(--md-text-main);
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
+  .greeting {
+    margin: 0;
+    color: var(--md-text-main);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
 
-.subtitle {
-  color: var(--md-text-muted);
-  margin-top: 0.5rem;
-  font-size: 1rem;
-  font-weight: 400;
+  .subtitle {
+    color: var(--md-text-muted);
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: 400;
+  }
 }
 
 /* --- GRID DE MÉTRICAS --- */
@@ -61,7 +61,7 @@
 
 .metric-card {
   background: var(--md-surface);
-  border-radius: 24px; /* Estilo MD3 */
+  border-radius: 24px;
   padding: 1.75rem;
   display: flex;
   align-items: center;
@@ -69,11 +69,55 @@
   box-shadow: var(--md-elevation-1);
   transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1);
   border: 1px solid rgba(0,0,0,0.01);
-}
 
-.metric-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--md-elevation-2);
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--md-elevation-2);
+  }
+
+  /* Los datos y textos de las tarjetas quedan agrupados */
+  .card-data {
+    display: flex;
+    flex-direction: column;
+
+    .label {
+      color: var(--md-text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .value {
+      color: var(--md-text-main);
+      font-size: 2rem;
+      font-weight: 800;
+      margin-top: 0.2rem;
+      line-height: 1;
+    }
+  }
+
+  /* Variantes de la tarjeta principal (ej. Destacada) */
+  &.highlight {
+    background: var(--md-primary-container);
+    color: var(--md-on-primary-container);
+
+    .card-icon {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+    }
+
+    /* Sobreescribimos sutilmente los colores de los textos para la destacada */
+    .card-data {
+      .label {
+        color: var(--md-on-primary-container);
+        opacity: 0.8;
+      }
+      .value {
+        color: var(--md-on-primary-container);
+      }
+    }
+  }
 }
 
 .card-icon {
@@ -83,58 +127,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
 
-.card-icon svg {
-  width: 28px;
-  height: 28px;
-}
+  svg {
+    width: 28px;
+    height: 28px;
+  }
 
-/* Colores sutiles para los iconos */
-.patient-icon { background: #eff6ff; color: #3b82f6; }
-.doctor-icon { background: #f3e8ff; color: #a855f7; }
-.date-icon { background: #fff7ed; color: #f97316; }
-
-/* Tarjeta Destacada (Citas del Día) */
-.metric-card.highlight {
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
-}
-
-.metric-card.highlight .card-icon {
-  background: var(--md-primary);
-  color: var(--md-on-primary);
-}
-
-.metric-card.highlight .card-data .label {
-  color: var(--md-on-primary-container);
-  opacity: 0.8;
-}
-
-.metric-card.highlight .card-data .value {
-  color: var(--md-on-primary-container);
-}
-
-/* Textos de las tarjetas */
-.card-data {
-  display: flex;
-  flex-direction: column;
-}
-
-.card-data .label {
-  color: var(--md-text-muted);
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.card-data .value {
-  color: var(--md-text-main);
-  font-size: 2rem;
-  font-weight: 800;
-  margin-top: 0.2rem;
-  line-height: 1;
+  /* Concatenamos clases de íconos específicos a su contenedor */
+  &.patient-icon { background: #eff6ff; color: #3b82f6; }
+  &.doctor-icon { background: #f3e8ff; color: #a855f7; }
+  &.date-icon { background: #fff7ed; color: #f97316; }
 }
 
 /* --- SECCIÓN ACCESOS RÁPIDOS --- */
@@ -143,14 +145,14 @@
   padding: 2rem;
   border-radius: 24px;
   box-shadow: var(--md-elevation-1);
-}
 
-.section-title {
-  margin-top: 0;
-  color: var(--md-text-main);
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
+  .section-title {
+    margin-top: 0;
+    color: var(--md-text-main);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
 }
 
 .action-buttons {
@@ -159,37 +161,39 @@
   flex-wrap: wrap;
 }
 
-/* Botones estilo MD3 */
+/* Botones estilo MD3 con concatenación de clases */
 .btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border-radius: 100px; /* Forma de píldora MD3 */
+  border-radius: 100px;
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
   border: none;
-}
 
-.btn-primary {
-  background-color: var(--md-primary);
-  color: var(--md-on-primary);
-  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
-}
+  /* SCSS mágico: '&-primary' compila como '.btn-primary' */
+  &-primary {
+    background-color: var(--md-primary);
+    color: var(--md-on-primary);
+    box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
 
-.btn-primary:hover {
-  background-color: #0f766e;
-  box-shadow: 0 4px 8px rgba(13, 148, 136, 0.3);
-}
+    &:hover {
+      background-color: #0f766e;
+      box-shadow: 0 4px 8px rgba(13, 148, 136, 0.3);
+    }
+  }
 
-.btn-outline {
-  background-color: var(--md-surface-variant);
-  color: var(--md-text-main);
-}
+  /* '&-outline' compila como '.btn-outline' */
+  &-outline {
+    background-color: var(--md-surface-variant);
+    color: var(--md-text-main);
 
-.btn-outline:hover {
-  background-color: var(--md-outline);
+    &:hover {
+      background-color: var(--md-outline);
+    }
+  }
 }

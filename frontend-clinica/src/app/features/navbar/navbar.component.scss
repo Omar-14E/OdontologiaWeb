@@ -1,3 +1,11 @@
+/* SCSS: Definición de variables locales para este componente. 
+   Te ahorra estar buscando códigos hexadecimales por todo el archivo. */
+$color-primario: #0d9488;
+$color-texto: #0f172a;
+$color-texto-muted: #64748b;
+$color-borde: #e2e8f0;
+$color-peligro: #ef4444;
+
 /* FUENTE UNIFICADA CON EL DASHBOARD */
 .navbar, .sidebar-menu {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -16,7 +24,9 @@ app-navbar {
   isolation: isolate !important; 
 }
 
-/* TOP NAVBAR */
+/* =========================================
+   TOP NAVBAR
+   ========================================= */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -24,42 +34,48 @@ app-navbar {
   align-items: center;
   background-color: #ffffff;
   padding: 0.85rem 2.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid $color-borde;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   height: 65px;
   position: relative;
   z-index: 999;
+
+  /* SCSS: Anidamos los elementos hijos directamente dentro de su contenedor padre (.navbar) */
+  .logo-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: $color-texto;
+
+    .logo-text { color: $color-primario; }
+  }
+
+  .btn-menu-trigger {
+    background: none;
+    border: none;
+    color: $color-texto-muted;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    /* SCSS: Estado Hover unido directamente al botón */
+    &:hover {
+      background-color: #f1f5f9;
+      color: $color-primario;
+    }
+  }
 }
 
-.logo-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-.logo-text { color: #0d9488; }
-
-.btn-menu-trigger {
-  background: none;
-  border: none;
-  color: #64748b;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-.btn-menu-trigger:hover {
-  background-color: #f1f5f9;
-  color: #0d9488;
-}
-
-/* SIDEBAR (MENÚ LATERAL DERECHO) */
+/* =========================================
+   SIDEBAR (MENÚ LATERAL DERECHO)
+   ========================================= */
 .sidebar-menu {
   position: fixed;
   top: 0;
@@ -67,98 +83,105 @@ app-navbar {
   width: 280px;
   height: 100vh;
   background-color: #ffffff;
-  border-left: 1px solid #e2e8f0; /* Borde al lado izquierdo del menú */
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05); /* Sombra proyectada a la izquierda */
+  border-left: 1px solid $color-borde;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
   z-index: 10000;
   display: flex;
   flex-direction: column;
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Desplazamiento suave desde la derecha */
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 1.5rem 0;
+
+  /* SCSS: El ampersand (&) une la clase dinámica con la base.
+     Esto se compila como ".sidebar-menu.sidebar-open" */
+  &.sidebar-open {
+    right: 0; /* 👈 Entra a la pantalla fijándose a la derecha */
+  }
+
+  /* SCSS: TODO el interior del menú lateral queda encapsulado aquí */
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem 0.5rem 1.5rem;
+    flex-direction: row-reverse;
+  }
+
+  .rol-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background-color: #f0fdfa;
+    color: $color-primario;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-close-sidebar {
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+
+    &:hover { color: #334155; }
+  }
+
+  .sidebar-divider {
+    border: 0;
+    border-top: 1px solid #f1f5f9;
+    margin: 1rem 0;
+  }
+
+  .sidebar-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0 0.75rem;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #f0fdfa;
+      color: $color-primario;
+      font-weight: 600;
+    }
+  }
+
+  .sidebar-footer {
+    padding: 0 0.75rem;
+  }
+
+  .logout-btn {
+    color: $color-peligro;
+
+    &:hover {
+      background-color: #fef2f2;
+      color: #dc2626;
+    }
+  }
 }
 
-/* Clase dinámica que activa Angular al abrir el menú */
-.sidebar-open {
-  right: 0; /* 👈 CAMBIO CLAVE: Entra a la pantalla fijándose a la derecha */
-}
-
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 1.5rem 0.5rem 1.5rem;
-  flex-direction: row-reverse; /* Mueve la 'X' de cierre al borde derecho interno */
-}
-
-.rol-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  background-color: #f0fdfa;
-  color: #0d9488;
-  padding: 0.25rem 0.6rem;
-  border-radius: 6px;
-  letter-spacing: 0.05em;
-}
-
-.btn-close-sidebar {
-  background: none;
-  border: none;
-  font-size: 1.75rem;
-  color: #94a3b8;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0;
-}
-.btn-close-sidebar:hover { color: #334155; }
-
-.sidebar-divider {
-  border: 0;
-  border-top: 1px solid #f1f5f9;
-  margin: 1rem 0;
-}
-
-.sidebar-links {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 0 0.75rem;
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  padding: 0.85rem 1rem;
-  text-decoration: none;
-  color: #475569;
-  font-size: 0.95rem;
-  font-weight: 500;
-  border-radius: 8px;
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.sidebar-item:hover {
-  background-color: #f0fdfa;
-  color: #0d9488;
-  font-weight: 600;
-}
-
-.sidebar-footer {
-  padding: 0 0.75rem;
-}
-
-.logout-btn {
-  color: #ef4444;
-}
-.logout-btn:hover {
-  background-color: #fef2f2;
-  color: #dc2626;
-}
-
-/* BACKDROP OSCURO (Versión ultra-compatible sin bugs) */
+/* =========================================
+   BACKDROP OSCURO
+   ========================================= */
 .sidebar-backdrop {
   position: fixed;
   top: 0;
