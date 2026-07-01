@@ -14,6 +14,7 @@ import { AdminMedicosComponent } from './features/admin-medicos/admin-medicos';
 import { AdminPacientesComponent } from './features/admin-pacientes/admin-pacientes';
 import { AdminTurnosComponent } from './features/admin-turnos/admin-turnos';
 import { AdminHistorialCitasComponent } from './features/admin-historial-citas/admin-historial-citas';
+import { OdontoHorarioComponent } from './features/odonto-horario/odonto-horario';
 
 export const routes: Routes = [
   
@@ -48,6 +49,11 @@ export const routes: Routes = [
   {
     path: 'odonPacientes',
     component: OdontoPacientesComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'odonHorario',
+    component: OdontoHorarioComponent,
     canActivate: [authGuard]
   },
   {
