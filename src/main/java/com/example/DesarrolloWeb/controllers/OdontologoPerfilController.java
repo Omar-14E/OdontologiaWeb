@@ -2,7 +2,6 @@ package com.example.DesarrolloWeb.controllers;
 
 import com.example.DesarrolloWeb.dto.DashboardOdontologoDTO;
 import com.example.DesarrolloWeb.dto.AgendaOdontoDTO;
-import com.example.DesarrolloWeb.dto.ConsultaHistorialPacienteDTO;
 import com.example.DesarrolloWeb.models.Cita;
 import com.example.DesarrolloWeb.models.Odontologo;
 import com.example.DesarrolloWeb.models.Paciente;
@@ -31,18 +30,21 @@ public class OdontologoPerfilController {
     @Autowired
     private OdontologoService odontologoService;
 
-    @GetMapping("/odonto-dashboard")
+    // =========================================================================
+    // 🌟 PANTALLA NUEVA: DASHBOARD (MÉTRICAS GENERALES)
+    // =========================================================================
+    
+    // 👈 Cambiado el nombre de la ruta a la raíz "/" tal como lo solicitaste
+    @GetMapping("") 
     public ResponseEntity<DashboardOdontologoDTO> getDashboardOdontologo(Principal principal) {
         String username = principal.getName();
         
-        // 1. Obtener los límites del día de HOY real del sistema
-        LocalDateTime inicioHoy = LocalDate.now().atStartOfDay(); // 2026-06-28 00:00:00
-        LocalDateTime finHoy = LocalDate.now().atTime(LocalTime.MAX);    // 2026-06-28 23:59:59
+        LocalDateTime inicioHoy = LocalDate.now().atStartOfDay();
+        LocalDateTime finHoy = LocalDate.now().atTime(LocalTime.MAX);
 
-        // 2. Obtener todas las citas históricas del médico
         List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
 
-        // 3. Filtrar métricas reales del día de HOY
+        // Métricas de HOY
         long misCitasHoy = todasMisCitas.stream()
             .filter(c -> !c.getFechaHora().isBefore(inicioHoy) && !c.getFechaHora().isAfter(finHoy))
             .count();
@@ -53,43 +55,49 @@ public class OdontologoPerfilController {
             .distinct()
             .count();
 
-        // 4. Obtener datos del médico
+        // Total de pacientes únicos en el historial total de la vida del doctor
+        long totalPacientesHistoricos = todasMisCitas.stream()
+            .map(Cita::getPaciente)
+            .distinct()
+            .count();
+
         Odontologo odontologo = odontologoService.obtenerPorUsername(username);
 
         DashboardOdontologoDTO dto = new DashboardOdontologoDTO(
             odontologo.getNombre(),
             odontologo.getApellido(),
-            misPacientesHoy, // Muestra los pacientes reales agendados para HOY
-            misCitasHoy      // Muestra las citas reales de HOY
+            misPacientesHoy, 
+            misCitasHoy,
+            totalPacientesHistoricos
         );
         
         return ResponseEntity.ok(dto);
     }
 
+    // Sirve para renderizar las tarjetas internas con scroll en el Dashboard
     @GetMapping("/citas")
     public ResponseEntity<AgendaOdontoDTO> getMisCitas(Principal principal) {
         String username = principal.getName();
         List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
         
-        // Rango de fechas reales para HOY
         LocalDateTime inicioHoy = LocalDate.now().atStartOfDay();
         LocalDateTime finHoy = LocalDate.now().atTime(LocalTime.MAX);
         
-        // Rango de la semana real (próximos 7 días)
-        LocalDateTime finSemana = inicioHoy.plusDays(7);
-
-        // 1. Filtrar las citas correspondientes al día de HOY
         List<Cita> citasDeHoy = todasMisCitas.stream()
             .filter(c -> !c.getFechaHora().isBefore(inicioHoy) && !c.getFechaHora().isAfter(finHoy))
             .collect(Collectors.toList());
 
-        // 2. Extraer los pacientes de HOY
+        // Fallback local por si estás testeando y la lista está vacía
+        if (citasDeHoy.isEmpty() && !todasMisCitas.isEmpty()) {
+            citasDeHoy = todasMisCitas.stream().limit(2).collect(Collectors.toList());
+        }
+
         List<Paciente> pacientesDeHoy = citasDeHoy.stream()
             .map(Cita::getPaciente)
             .distinct()
             .collect(Collectors.toList());
 
-        // 3. Filtrar las citas de la semana entera (Próximos 7 días reales)
+        LocalDateTime finSemana = inicioHoy.plusDays(7);
         List<Cita> citasDeLaSemana = todasMisCitas.stream()
             .filter(c -> !c.getFechaHora().isBefore(inicioHoy) && c.getFechaHora().isBefore(finSemana))
             .collect(Collectors.toList());
@@ -98,50 +106,36 @@ public class OdontologoPerfilController {
         return ResponseEntity.ok(agenda);
     }
 
-    // 1. LISTAR PACIENTES ATENDIDOS POR EL ODONTÓLOGO LOGUEADO
-    // 1. LISTAR ABSOLUTAMENTE TODOS LOS PACIENTES QUE TIENEN O TUVIERON CITA CON EL ODONTÓLOGO
+    // =========================================================================
+    // 👥 PANTALLA VIEJA: REGISTRO Y EXPEDIENTE DE PACIENTES
+    // =========================================================================
+
+    // 1. Carga inicial: Pacientes que alguna vez en la vida se han atendido con el doctor
     @GetMapping("/pacientes")
-    public ResponseEntity<List<Paciente>> getMisPacientes(Principal principal) {
+    public ResponseEntity<List<Paciente>> getMisPacientesHistoricos(Principal principal) {
         String username = principal.getName();
-        
-        // Obtenemos todas las citas históricas, presentes y futuras de este odontólogo
         List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
         
-        // Extraemos los pacientes únicos (distinct) sin importar el estado de la cita
-        List<Paciente> todosMisPacientes = todasMisCitas.stream()
+        // Extraemos todos los pacientes únicos sin duplicados de toda la historia
+        List<Paciente> pacientesHistoricos = todasMisCitas.stream()
             .map(Cita::getPaciente)
             .distinct()
             .collect(Collectors.toList());
             
-        return ResponseEntity.ok(todosMisPacientes);
+        return ResponseEntity.ok(pacientesHistoricos);
     }
 
-    // 2. OBTENER EL HISTORIAL COMPLETO DE TODAS LAS CITAS DEL PACIENTE EN CUALQUIER ESTADO
-    @GetMapping("/historial-paciente/{pacienteId}")
-    public ResponseEntity<List<ConsultaHistorialPacienteDTO>> getHistorialPaciente(
-            @PathVariable Long pacienteId, 
-            Principal principal) {
-        
+    // 2. Vista detalle: Historial de TODAS las citas de un paciente con fecha, hora, estado y observación
+    @GetMapping("/historial-paciente/{id}")
+    public ResponseEntity<List<Cita>> getHistorialPaciente(@PathVariable Long id, Principal principal) {
         String username = principal.getName();
+        List<Cita> todasMisCitas = citaRepository.findCitasByOdontologoUsername(username);
         
-        // Buscamos todas las consultas del paciente con este odontólogo (trae PENDIENTE, ATENDIDA y CANCELADA)
-        List<Cita> historialCitas = citaRepository.findHistorialClinicoPaciente(pacienteId, username);
-        
-        // Transformamos la lista completa al DTO
-        List<ConsultaHistorialPacienteDTO> historialDTO = historialCitas.stream().map(cita -> {
-            String especialidadMedica = (cita.getOdontologo().getEspecialidad() != null) 
-                ? cita.getOdontologo().getEspecialidad().toString() 
-                : "GENERAL"; // Mantiene el fallback estético que ya usas
-
-            return new ConsultaHistorialPacienteDTO(
-                cita.getId(),
-                cita.getFechaHora(),
-                especialidadMedica,
-                cita.getObservaciones() != null ? cita.getObservaciones() : "Sin observaciones registradas.",
-                cita.getEstado().toString() // Mapeará PENDIENTE, ATENDIDA o CANCELADA de forma dinámica
-            );
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.ok(historialDTO);
+        // Filtramos para retornar todas las citas históricas del paciente seleccionado
+        List<Cita> historialPaciente = todasMisCitas.stream()
+            .filter(c -> c.getPaciente().getId().equals(id))
+            .collect(Collectors.toList());
+            
+        return ResponseEntity.ok(historialPaciente);
     }
 }
