@@ -1,3 +1,5 @@
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css');
+
 /* ==========================================================================
    ESTILOS BASE E IMPORTACIONES VISUALES
    ========================================================================== */
@@ -71,7 +73,9 @@
   position: absolute;
   right: 1.25rem;
   color: #cbd5e1;
-  font-size: 1rem;
+  font-size: 1.35rem; /* Tamaño optimizado para el icono corto */
+  display: flex;
+  align-items: center;
   transition: color 0.2s;
 }
 .paciente-full-card:hover .card-arrow-indicator { color: #0d9488; }
@@ -161,6 +165,8 @@
   font-size: 0.9rem;
   font-weight: 700;
   color: #0d9488;
+  display: inline-flex;
+  align-items: center;
 }
 
 .timeline-card {
@@ -184,6 +190,8 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: #334155;
+  display: inline-flex;
+  align-items: center;
 }
 
 .timeline-card-body h5 {
@@ -203,4 +211,34 @@
   padding: 0.75rem 1rem;
   border-radius: 6px;
   border: 1px solid #f1f5f9;
+}
+
+/* ==========================================================================
+   AJUSTES EXCLUSIVOS PARA ICONOS MINIMALISTAS
+   ========================================================================== */
+.icon-spacer {
+  margin-right: 6px;
+  display: inline-block;
+  vertical-align: -0.1em;
+}
+
+.icon-spacer-sm {
+  margin-right: 4px;
+  display: inline-block;
+  vertical-align: -0.05em;
+}
+
+.header-icon {
+  color: #0d9488; 
+  font-size: 1.1em;
+}
+
+.field-icon {
+  color: #94a3b8; 
+  font-size: 1em;
+}
+
+.tag-icon {
+  color: #475569;
+  font-size: 0.95em;
 }

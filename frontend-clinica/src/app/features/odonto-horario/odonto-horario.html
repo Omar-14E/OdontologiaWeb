@@ -1,0 +1,46 @@
+<div class="horario-container">
+  
+  <div class="horario-top-bar">
+    <div class="horario-header">
+      <h2>Organiza tu horario semanal</h2>
+      <p class="subtitulo">Visualiza tus bloques de disponibilidad y atención para la semana en curso.</p>
+    </div>
+    <a routerLink="/odonDashboard" class="back-link">← Volver al Dashboard</a>
+  </div>
+
+  <hr class="divisor">
+
+  <div *ngIf="cargando()" class="loader-container">
+    <p>Cargando cronograma médico...</p>
+  </div>
+
+  <div *ngIf="!cargando()" class="horario-grid">
+    
+    <div *ngFor="let dia of diasSemana()" class="columna-dia">
+      <div class="dia-titulo">
+        <span class="nombre-dia">{{ dia.nombre }}</span>
+        <span class="fecha-dia">{{ dia.fechaFormateada }}</span>
+      </div>
+
+      <div class="bloques-wrapper">
+        <div *ngFor="let turno of dia.turnos" class="bloque-turno bloque-activo">
+          <div class="bloque-contenido">
+            <div class="reloj-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="info-turno">
+              <span class="titulo-servicio">Atención Médica</span>
+              <span class="horas">{{ turno.horaInicio }} - {{ turno.horaFin }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="dia.turnos.length === 0" class="bloque-vacio">
+          <span>Sin turnos</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
