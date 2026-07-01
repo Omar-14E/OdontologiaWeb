@@ -10,55 +10,91 @@
     </button>
   </header>
 
-  <div class="admin-card table-card" style="padding: 0;">
+  <div class="admin-card filter-section">
+    <div class="filter-header">
+      <div class="filter-title-area">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <h4 style="margin:0; font-size:1.1rem; color: var(--text-main);">Buscar Paciente</h4>
+      </div>
+      <button class="btn btn-reset" (click)="limpiarFiltros()" [disabled]="!filtroTexto()">
+        Limpiar Búsqueda
+      </button>
+    </div>
+
+    <div class="filter-grid single-search">
+      <div class="form-group search-group">
+        <div class="search-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" class="form-control input-large" [value]="filtroTexto()" (input)="onBuscarTexto($event)" placeholder="Ingresa el DNI, nombre o apellido del paciente...">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-card table-wrapper-card">
     <div class="table-container">
       <table class="custom-table">
         <thead>
           <tr>
             <th>Paciente</th>
+            <th>Documento (DNI)</th>
             <th>Teléfono</th>
             <th style="text-align: right;">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let paciente of pacientes()">
+          <tr *ngFor="let paciente of pacientesFiltrados()">
+            
             <td>
-              <div class="patient-profile">
-                <div class="avatar">
+              <div class="profile-cell">
+                <div class="avatar bg-indigo">
                   {{ paciente.nombre.charAt(0) | uppercase }}{{ paciente.apellido.charAt(0) | uppercase }}
                 </div>
-                <div class="patient-info">
-                  <span class="patient-name">{{ paciente.nombre }} {{ paciente.apellido }}</span>
-                  <span class="patient-dni">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    DNI: {{ paciente.dni }}
-                  </span>
+                <div class="profile-info">
+                  <span class="profile-name">{{ paciente.nombre }} {{ paciente.apellido }}</span>
                 </div>
               </div>
             </td>
-            <td style="color: var(--text-muted); font-weight: 500;">
-              {{ paciente.telefono }}
+            
+            <td>
+              <span class="dni-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                {{ paciente.dni }}
+              </span>
             </td>
+
+            <td>
+              <div class="contact-info">
+                <span class="contact-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  {{ paciente.telefono }}
+                </span>
+              </div>
+            </td>
+
             <td>
               <div class="action-buttons" style="justify-content: flex-end;">
-                <button class="icon-btn edit-btn" (click)="abrirFormulario(paciente)" title="Editar">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <button class="btn btn-outline" (click)="abrirFormulario(paciente)" title="Editar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  Editar
                 </button>
-                <button class="icon-btn delete-btn" (click)="eliminarPaciente(paciente.id)" title="Eliminar">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <button class="btn btn-danger-outline" (click)="eliminarPaciente(paciente.id)" title="Eliminar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  Eliminar
                 </button>
               </div>
             </td>
           </tr>
-          <tr *ngIf="pacientes().length === 0">
-            <td colspan="3">
+
+          <tr *ngIf="pacientesFiltrados().length === 0" class="no-hover">
+            <td colspan="4">
               <div class="empty-state">
-                <div class="empty-state-icon">
+                <div class="empty-state-icon" style="color: #6366f1; background: #e0e7ff;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 </div>
-                <h4 style="color: var(--text-main); margin-bottom: 0.5rem; font-size: 1.1rem;">Aún no hay pacientes registrados</h4>
+                <h4 style="color: var(--text-main); font-weight: 600; margin-bottom: 0.5rem;">No se encontraron pacientes</h4>
                 <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 400px; margin: 0 auto;">
-                  Comienza agregando pacientes al directorio para que puedan ser agendados.
+                  {{ filtroTexto() ? 'Ningún registro coincide con tu búsqueda.' : 'Aún no hay pacientes registrados en el sistema.' }}
                 </p>
               </div>
             </td>
