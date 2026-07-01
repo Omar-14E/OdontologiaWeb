@@ -75,17 +75,27 @@
           </div>
         </ng-container>
 
-        <div class="form-grid" style="border-top: 1px dashed #99f6e4; padding-top: 1.5rem;">
+        <div class="form-grid" style="border-top: 1px dashed #99f6e4; padding-top: 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          
           <div class="form-group">
-            <label class="form-label">Hora de Inicio General</label>
+            <label class="form-label">Hora de Inicio</label>
             <input type="time" class="form-control" formControlName="horaInicio">
           </div>
-          <div class="form-group">
-            <label class="form-label">Hora de Fin General</label>
-            <input type="time" class="form-control" formControlName="horaFin">
-          </div>
-        </div>
 
+          <div class="form-group">
+            <label class="form-label">Tipo de Turno</label>
+            <select class="form-control" formControlName="tipoTurno">
+              <option [ngValue]="4">Medio Turno (4 horas)</option>
+              <option [ngValue]="8">Turno Completo (8 horas)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hora de Fin <span style="font-size: 0.8em; color: var(--text-muted); font-weight: normal;">(Calculada)</span></label>
+            <input type="time" class="form-control" formControlName="horaFin" readonly style="background-color: #f8fafc; color: #94a3b8; cursor: not-allowed; border-color: #e2e8f0;">
+          </div>
+          
+        </div>
         <div class="action-buttons" style="margin-top: 1.5rem;">
           <button type="submit" class="btn btn-primary">
             {{ modoEdicion ? 'Actualizar Excepción' : 'Generar Turnos' }}

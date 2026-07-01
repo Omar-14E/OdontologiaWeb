@@ -2,13 +2,14 @@ import { Component, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // <--- IMPORTANTE: Agrega FormsModule para el [(ngModel)]
+import { FormsModule } from '@angular/forms'; 
 import { AuthService } from '../auth/services/auth.service';
+import Swal from 'sweetalert2'; // 👈 IMPORTACIÓN DE SWEETALERT2 AGREGADA
 
 @Component({
   selector: 'app-odonto-agenda',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule], // <--- Agregado FormsModule aquí
+  imports: [CommonModule, RouterModule, FormsModule], 
   templateUrl: './odonto-agenda.html',
   styleUrls: ['./odonto-agenda.css']
 })
@@ -21,10 +22,7 @@ export class OdontoAgendaComponent implements OnInit {
   });
 
   pestanaActiva = signal<string>('hoy');
-  
-  // NUEVO: Almacena la cita que el doctor está atendiendo o editando actualmente
   citaSeleccionada = signal<any | null>(null); 
-  
   diasDeLaSemana: { nombre: string, fecha: Date }[] = [];
 
   constructor(
@@ -56,31 +54,51 @@ export class OdontoAgendaComponent implements OnInit {
     });
   }
 
-  // NUEVO: Selecciona una cita y clona el objeto para manejar la edición localmente
   seleccionarCita(cita: any) {
     this.citaSeleccionada.set({ ...cita });
   }
 
-  // NUEVO: Limpia la selección para regresar al panel de control de citas
   volverALaAgenda() {
     this.citaSeleccionada.set(null);
-    this.cargarAgendaMedica(); // Recarga los datos para reflejar los cambios guardados
+    this.cargarAgendaMedica(); 
   }
 
-  // NUEVO: Envía la cita modificada con la observación al backend
+  // 🌟 MÉTODO OPTIMIZADO CON SWEETALERT2 ESTÉTICO 🌟
   guardarObservacion() {
     const cita = this.citaSeleccionada();
     if (!cita) return;
 
-    // Ahora el estado de la cita se maneja dinámicamente mediante el [(ngModel)] del select
     this.http.put<any>(`http://localhost:8080/api/citas/actualizar/${cita.id}`, cita).subscribe({
       next: (res) => {
-        alert(`Cita actualizada a estado [${cita.estado}] con éxito.`);
-        this.volverALaAgenda();
+        // Modal de éxito personalizado con la misma estética del consultorio médico
+        Swal.fire({
+          title: '¡Guardado Exitoso!',
+          text: `La cita ha sido actualizada al estado [${cita.estado}] y se registraron las observaciones clínicas correctamente.`,
+          icon: 'success',
+          confirmButtonColor: '#0d9488',
+          customClass: {
+            popup: 'swal-custom-font'
+          }
+        }).then(() => {
+          this.volverALaAgenda();
+        });
       },
       error: (err) => {
         console.error('Error al guardar la observación:', err);
-        alert('Hubo un error al guardar los datos en el servidor.');
+        
+        // Captura el mensaje dinámico enviado por el Backend o usa uno por defecto
+        const mensajeError = err.error || 'Hubo un error al guardar los datos en el servidor.';
+
+        // Modal de error personalizado
+        Swal.fire({
+          title: 'No se pudo guardar',
+          text: mensajeError,
+          icon: 'error',
+          confirmButtonColor: '#ef4444',
+          customClass: {
+            popup: 'swal-custom-font'
+          }
+        });
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../core/services/admin.service';
@@ -22,12 +22,23 @@ export class AdminMedicosComponent implements OnInit {
     'ODONTOPEDIATRIA',
   ];
 
+  // 🌟 NUEVO: Signals para el filtro de Especialidad 🌟
+  filtroEspecialidad = signal<string>('');
+
+  // 🌟 NUEVO: Computed para filtrar la lista en tiempo real 🌟
+  odontologosFiltrados = computed(() => {
+    const esp = this.filtroEspecialidad();
+    const lista = this.odontologos();
+
+    if (!esp) return lista;
+    return lista.filter(medico => medico.especialidad === esp);
+  });
+
   medicoForm: FormGroup;
   modoEdicion: boolean = false;
   medicoSeleccionadoId: number | null = null;
   mostrarFormulario: boolean = false;
 
-  // NUEVAS VARIABLES PARA CREDENCIALES
   mostrarCredenciales: boolean = false;
   medicoRecienCreado: any = null;
 
@@ -36,8 +47,8 @@ export class AdminMedicosComponent implements OnInit {
     private fb: FormBuilder,
   ) {
     this.medicoForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
-      apellido: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+      apellido: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
       especialidad: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^9[0-9]{8}$/)]],
     });
@@ -52,6 +63,15 @@ export class AdminMedicosComponent implements OnInit {
       next: (data) => this.odontologos.set(data),
       error: (err) => console.error('Error cargando médicos:', err),
     });
+  }
+
+  // 🌟 NUEVO: Métodos para manejar el filtro 🌟
+  onFiltrarEspecialidad(event: any): void {
+    this.filtroEspecialidad.set(event.target.value);
+  }
+
+  limpiarFiltros(): void {
+    this.filtroEspecialidad.set('');
   }
 
   abrirFormulario(medico?: any): void {
@@ -89,7 +109,7 @@ export class AdminMedicosComponent implements OnInit {
         });
     } else {
       this.adminService.crearOdontologo(this.medicoForm.value).subscribe((response: any) => {
-        console.log('ESTO LLEGA DE JAVA:', response); // <--- AÑADE ESTO
+        console.log('ESTO LLEGA DE JAVA:', response); 
 
         this.cargarOdontologos();
         this.cerrarFormulario();

@@ -1,0 +1,102 @@
+<div class="perfil-wrapper">
+  
+  <!-- Encabezado con título y botón de retorno -->
+  <header class="perfil-header-section">
+    <div class="header-info">
+      <h2 class="page-main-title">Mi Perfil Profesional</h2>
+      <p class="page-subtitle">Gestione sus credenciales de seguridad e información de contacto médico.</p>
+    </div>
+    <a routerLink="/odontoDashboard" class="btn-back-dashboard">← Volver al Dashboard</a>
+  </header>
+
+  <div class="perfil-card">
+    
+    <!-- Fila Superior: Avatar, Nombre y Especialidad -->
+    <div class="perfil-top-row">
+      <div class="user-block">
+        <div class="avatar-circle">
+          {{ getIniciales() }}
+        </div>
+        <h2 class="doctor-title">Dr. {{ perfil().nombre }} {{ perfil().apellido }}</h2>
+      </div>
+      
+      <div class="badge-block">
+        <span class="especialidad-badge" [ngClass]="getEspecialidadClase()">
+          {{ perfil().especialidad || 'GENERAL' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Fila Inferior: Distribución en recuadros redondeados sutiles -->
+    <div class="perfil-grid-content">
+      
+      <!-- Bloque Izquierdo: Información Personal -->
+      <div class="info-box-panel">
+        <h3 class="panel-inside-title">Información del Médico</h3>
+        
+        <div class="panel-fields-grid">
+          <div class="data-field">
+            <label>Nombre</label>
+            <div class="static-card-value">
+              <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              {{ perfil().nombre }}
+            </div>
+          </div>
+          
+          <div class="data-field">
+            <label>Teléfono</label>
+            <div class="static-card-value">
+              <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              {{ perfil().telefono }}
+            </div>
+          </div>
+
+          <div class="data-field">
+            <label>Apellido</label>
+            <div class="static-card-value">
+              <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              {{ perfil().apellido }}
+            </div>
+          </div>
+
+          <div class="data-field">
+            <label>Correo Electrónico</label>
+            <div class="static-card-value">
+              <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              {{ perfil().gmail }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloque Derecho: Credenciales de Acceso -->
+      <div class="auth-box-panel">
+        <h3 class="panel-inside-title">Seguridad de la Cuenta</h3>
+        
+        <div class="auth-fields-stack">
+          <div class="data-field">
+            <label>Usuario del Sistema</label>
+            <div class="static-card-value highlight-user">
+              <svg class="field-icon text-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>
+              @{{ perfil().username }}
+            </div>
+          </div>
+
+          <div class="data-field">
+            <label>Contraseña</label>
+            <div class="static-card-value password-masked">
+              <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              ••••••••
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-change-password" (click)="abrirModalContrasena()">
+          Cambiar Contraseña
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
