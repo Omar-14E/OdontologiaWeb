@@ -9,7 +9,7 @@ import { AuthService } from '../auth/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css']
+  styleUrls: ['./dashboard.scss']
 })
 export class DashboardComponent implements OnInit {
   

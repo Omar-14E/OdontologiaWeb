@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './odonto-perfil.html',
-  styleUrls: ['./odonto-perfil.css']
+  styleUrls: ['./odonto-perfil.scss']
 })
 export class OdontoPerfilComponent implements OnInit {
   

@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './admin-pacientes.html',
-  styleUrls: ['./admin-pacientes.css'],
+  styleUrls: ['./admin-pacientes.scss'],
 })
 export class AdminPacientesComponent implements OnInit {
   

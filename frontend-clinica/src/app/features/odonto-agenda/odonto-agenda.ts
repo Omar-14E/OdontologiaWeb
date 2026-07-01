@@ -11,7 +11,7 @@ import Swal from 'sweetalert2'; // 👈 IMPORTACIÓN DE SWEETALERT2 AGREGADA
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule], 
   templateUrl: './odonto-agenda.html',
-  styleUrls: ['./odonto-agenda.css']
+  styleUrls: ['./odonto-agenda.scss']
 })
 export class OdontoAgendaComponent implements OnInit {
 

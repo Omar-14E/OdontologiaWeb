@@ -9,7 +9,7 @@ import { AuthService } from '../auth/services/auth.service'; // <--- IMPORTACIÓ
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './odonto-pacientes.html',
-  styleUrls: ['./odonto-pacientes.css']
+  styleUrls: ['./odonto-pacientes.scss']
 })
 export class OdontoPacientesComponent implements OnInit {
 

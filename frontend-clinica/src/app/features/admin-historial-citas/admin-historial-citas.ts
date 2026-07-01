@@ -7,7 +7,7 @@ import { AdminService } from '../../core/services/admin.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './admin-historial-citas.html',
-  styleUrls: ['./admin-historial-citas.css']
+  styleUrls: ['./admin-historial-citas.scss']
 })
 export class AdminHistorialCitasComponent implements OnInit {
   

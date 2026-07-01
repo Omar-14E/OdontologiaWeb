@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-medicos.html',
-  styleUrls: ['./admin-medicos.css'],
+  styleUrls: ['./admin-medicos.scss'],
 })
 export class AdminMedicosComponent implements OnInit {
   odontologos = signal<any[]>([]);

@@ -21,7 +21,7 @@ interface DiaSemana {
     standalone: true,
     imports: [CommonModule, RouterModule],
     templateUrl: './odonto-horario.html', // 👈 Cambia esto si tu archivo tiene ".component"
-    styleUrls: ['./odonto-horario.css']    // 👈 Revisa si tu CSS también lo necesita
+    styleUrls: ['./odonto-horario.scss']    // 👈 Revisa si tu CSS también lo necesita
 })
 export class OdontoHorarioComponent implements OnInit {
     

@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-turnos.html',
-  styleUrls: ['./admin-turnos.css']
+  styleUrls: ['./admin-turnos.scss']
 })
 export class AdminTurnosComponent implements OnInit {
   

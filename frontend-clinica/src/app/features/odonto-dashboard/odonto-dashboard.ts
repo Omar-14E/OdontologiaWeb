@@ -9,7 +9,7 @@ import { AuthService } from '../auth/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './odonto-dashboard.html',
-  styleUrls: ['./odonto-dashboard.css']
+  styleUrls: ['./odonto-dashboard.scss']
 })
 export class OdontoDashboardComponent implements OnInit {
   

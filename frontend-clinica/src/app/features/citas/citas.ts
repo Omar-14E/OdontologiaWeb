@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './citas.html',
-  styleUrls: ['./citas.css'],
+  styleUrls: ['./citas.scss'],
 })
 export class CitasComponent implements OnInit {
   pacientes = signal<any[]>([]);
