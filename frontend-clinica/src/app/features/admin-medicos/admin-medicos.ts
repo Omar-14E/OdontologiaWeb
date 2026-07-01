@@ -47,8 +47,8 @@ export class AdminMedicosComponent implements OnInit {
     private fb: FormBuilder,
   ) {
     this.medicoForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
-      apellido: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+      apellido: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
       especialidad: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^9[0-9]{8}$/)]],
     });

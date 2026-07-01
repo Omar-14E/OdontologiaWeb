@@ -2,12 +2,13 @@ import { Component, OnInit, signal, computed } from '@angular/core'; // 👈 Se 
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../core/services/admin.service';
+import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2'; 
 
 @Component({
   selector: 'app-admin-pacientes',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './admin-pacientes.html',
   styleUrls: ['./admin-pacientes.css'],
 })
@@ -42,8 +43,8 @@ export class AdminPacientesComponent implements OnInit {
     private fb: FormBuilder,
   ) {
     this.pacienteForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
-      apellido: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+      apellido: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
       dni: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
       telefono: ['', [Validators.required, Validators.pattern(/^9[0-9]{8}$/)]],
     });

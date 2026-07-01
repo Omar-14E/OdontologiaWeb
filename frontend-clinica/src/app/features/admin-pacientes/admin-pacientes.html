@@ -1,14 +1,22 @@
 <div class="dashboard-wrapper">
+
   <header class="dash-header">
-    <div class="header-info">
-      <h2 class="greeting">Directorio de Pacientes</h2>
-      <p class="subtitle">Gestión y control del registro general de pacientes de la clínica</p>
-    </div>
+  <div class="header-info">
+    <h2 class="greeting">Directorio de Pacientes</h2>
+    <p class="subtitle">Gestión y control del registro general de pacientes de la clínica</p>
+  </div>
+  
+  <div style="display: flex; align-items: center; gap: 1.5rem;">
+    
+    <a routerLink="/dashboard" class="btn-back-dashboard">← Volver al Dashboard</a>
+    
     <button class="btn btn-primary" (click)="abrirFormulario()">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
       Añadir Paciente
     </button>
-  </header>
+    
+  </div>
+</header>
 
   <div class="admin-card filter-section">
     <div class="filter-header">
@@ -126,12 +134,14 @@
           <label class="form-label">Nombres</label>
           <input type="text" class="form-control" formControlName="nombre" placeholder="Ej. Ana María">
           <small *ngIf="pacienteForm.get('nombre')?.hasError('pattern') && pacienteForm.get('nombre')?.touched" class="text-danger">Solo letras.</small>
+          <small *ngIf="pacienteForm.get('nombre')?.hasError('minlength') && pacienteForm.get('nombre')?.touched" class="text-danger">Mínimo 3 caracteres.</small>
         </div>
         
         <div class="form-group">
           <label class="form-label">Apellidos</label>
           <input type="text" class="form-control" formControlName="apellido" placeholder="Ej. López Silva">
           <small *ngIf="pacienteForm.get('apellido')?.hasError('pattern') && pacienteForm.get('apellido')?.touched" class="text-danger">Solo letras.</small>
+          <small *ngIf="pacienteForm.get('apellido')?.hasError('minlength') && pacienteForm.get('apellido')?.touched" class="text-danger">Mínimo 3 caracteres.</small>
         </div>
         
         <div class="form-group">

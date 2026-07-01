@@ -239,7 +239,7 @@
 }
 
 .btn-expand:hover {
-  background-color: var(--highlight-bg);
+  background-color: #f1f5f9;
   color: var(--primary-hover);
 }
 
@@ -293,36 +293,6 @@
   letter-spacing: 0.5px;
 }
 
-.search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-icon {
-  position: absolute;
-  left: 1rem;
-  color: var(--text-muted);
-  pointer-events: none;
-}
-
-.search-box .form-control {
-  padding-left: 2.8rem;
-}
-
-.date-filter-box {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 280px;
-}
-
-.date-separator {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
 .select-clean {
   cursor: pointer;
   appearance: none;
@@ -331,29 +301,6 @@
   background-position: right 1rem center;
   background-size: 1.1rem;
   padding-right: 2.5rem;
-}
-
-.btn-reset {
-  background-color: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-color);
-  font-weight: 600;
-  cursor: pointer;
-  height: 38px;
-  border-radius: 8px;
-  transition: all 0.2s;
-  padding: 0 1.2rem;
-  font-size: 0.85rem;
-}
-
-.btn-reset:hover:not(:disabled) {
-  background-color: #f1f5f9;
-  color: var(--text-main);
-}
-
-.btn-reset:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 /* Resaltado de filas en la tabla (Hover) */

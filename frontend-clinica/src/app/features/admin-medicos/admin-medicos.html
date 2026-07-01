@@ -120,12 +120,14 @@
               <label class="form-label">Nombre</label>
               <input type="text" class="form-control" formControlName="nombre" placeholder="Ej. Carlos">
               <small *ngIf="medicoForm.get('nombre')?.hasError('pattern') && medicoForm.get('nombre')?.touched" class="text-danger" style="font-size: 0.8rem; color: var(--danger);">Solo letras.</small>
+              <small *ngIf="medicoForm.get('nombre')?.hasError('minlength') && medicoForm.get('nombre')?.touched" class="text-danger" style="font-size: 0.8rem; color: var(--danger);">Mínimo 3 caracteres.</small>
             </div>
 
             <div class="form-group">
               <label class="form-label">Apellido</label>
               <input type="text" class="form-control" formControlName="apellido" placeholder="Ej. Mendoza">
               <small *ngIf="medicoForm.get('apellido')?.hasError('pattern') && medicoForm.get('apellido')?.touched" class="text-danger" style="font-size: 0.8rem; color: var(--danger);">Solo letras.</small>
+              <small *ngIf="medicoForm.get('apellido')?.hasError('minlength') && medicoForm.get('apellido')?.touched" class="text-danger" style="font-size: 0.8rem; color: var(--danger);">Mínimo 3 caracteres.</small>
             </div>
 
             <div class="form-group">

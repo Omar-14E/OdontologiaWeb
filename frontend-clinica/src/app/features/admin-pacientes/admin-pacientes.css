@@ -144,21 +144,15 @@
 }
 
 .btn-outline {
-  background-color: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-color);
-}
+   background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; font-size: 0.85rem;}
 
 .btn-outline:hover {
   background-color: #f1f5f9;
   color: var(--text-main);
 }
 
-.btn-danger-outline {
-  background-color: #fef2f2;
-  color: var(--danger);
-  border: 1px solid #fecaca;
-}
+.btn-danger-outline { background-color: transparent; color: var(--danger); border: 1px solid #fecaca; padding: 0.5rem 1rem; font-size: 0.85rem;}
+
 
 .btn-danger-outline:hover {
   background-color: var(--danger);
@@ -172,10 +166,6 @@
   border-radius: 8px;
 }
 
-/* Tablas Modernas */
-.table-container {
-  overflow-x: auto;
-}
 
 .custom-table {
   width: 100%;
@@ -251,22 +241,10 @@
 }
 
 /* Estado Vacío (Empty State) */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-}
+.empty-state { text-align: center; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; }
 
-.empty-state-icon {
-  background: #eff6ff;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem auto;
-  color: #3b82f6;
-}   
+.empty-state-icon { width: 72px; height: 72px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 1.5rem; }
+   
 
 /* =========================================
    SISTEMA DE MODAL FLOTANTE (POP-UP)
@@ -399,44 +377,6 @@
   z-index: 999999 !important;
 }
 
-:host {
-  --bg-color: #f8fafc;
-  --card-bg: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --primary: #0d9488;
-  --primary-hover: #0f766e;
-  --danger: #ef4444;
-}
-
-.dashboard-wrapper {
-  padding: 2.5rem;
-  font-family: 'Inter', -apple-system, sans-serif;
-  background-color: var(--bg-color);
-  min-height: 100vh;
-}
-
-.dash-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 2rem;
-}
-
-.greeting {
-  margin: 0;
-  color: var(--text-main);
-  font-size: 1.85rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-.subtitle {
-  color: var(--text-muted);
-  margin-top: 0.4rem;
-  font-size: 1rem;
-}
 
 /* -------------------------------------
    PANEL DE BÚSQUEDA
@@ -517,24 +457,6 @@
 }
 
 .table-container { overflow-x: auto; }
-.custom-table { width: 100%; border-collapse: collapse; }
-.custom-table th {
-  background-color: #f8fafc;
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  padding: 1rem 1.5rem;
-  border-bottom: 2px solid var(--border-color);
-  text-align: left;
-  letter-spacing: 0.5px;
-}
-.custom-table td { 
-  padding: 1.2rem 1.5rem; 
-  border-bottom: 1px solid #f1f5f9; 
-  vertical-align: middle; 
-  transition: background-color 0.2s;
-}
 
 .custom-table tbody tr:not(.no-hover):hover td {
   background-color: #f8fafc;
@@ -542,7 +464,6 @@
 
 /* Perfil (Avatar + Info) */
 .profile-cell { display: flex; align-items: center; gap: 1rem; }
-.avatar { width: 42px; height: 42px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
 .bg-indigo { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
 
 .profile-info { display: flex; flex-direction: column; }
@@ -581,31 +502,11 @@
 
 .text-muted { color: var(--text-muted); font-weight: 400; }
 
-/* -------------------------------------
-   BOTONES Y ESTADOS
-   ------------------------------------- */
-.action-buttons { display: flex; gap: 0.5rem; align-items: center; }
 
-.btn {
-  font-family: inherit;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-.btn-primary { background-color: var(--primary); color: white; padding: 0.7rem 1.2rem; }
 .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
 
-.btn-outline { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; font-size: 0.85rem;}
 .btn-outline:hover { background-color: #f1f5f9; }
 
-.btn-danger-outline { background-color: transparent; color: var(--danger); border: 1px solid #fecaca; padding: 0.5rem 1rem; font-size: 0.85rem;}
 .btn-danger-outline:hover { background-color: #fef2f2; }
 
 .btn-reset {
@@ -618,5 +519,20 @@
 .btn-reset:hover:not(:disabled) { background-color: #f1f5f9; color: var(--text-main); }
 .btn-reset:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.empty-state { text-align: center; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; }
-.empty-state-icon { width: 72px; height: 72px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 1.5rem; }
+
+
+/* =========================================
+   ENLACE VOLVER AL DASHBOARD
+   ========================================= */
+.btn-back-dashboard {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.btn-back-dashboard:hover {
+  color: var(--primary-hover);
+} 
+
