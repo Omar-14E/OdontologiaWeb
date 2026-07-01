@@ -48,7 +48,7 @@
             </div>
             <div class="contact-details">
               <h4>{{ cita.paciente?.nombre || 'Paciente' }} {{ cita.paciente?.apellido || '' }}</h4>
-              <p>🪪 DNI: {{ cita.paciente?.dni || 'No registrado' }}</p>
+              <p> DNI: {{ cita.paciente?.dni || 'No registrado' }}</p>
               </div>
             <div class="status-badge" [ngClass]="cita.estado ? cita.estado.toLowerCase() : 'pendiente'">
               {{ cita.estado || 'PENDIENTE' }}

@@ -1,3 +1,6 @@
+// ==========================================
+// CONFIGURACIÓN DE VARIABLES NATIVAS & HOST
+// ==========================================
 :host {
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
@@ -11,6 +14,9 @@
   --danger-text: #ef4444;
 }
 
+// ==========================================
+// CONTENEDOR GENERAL DEL DASHBOARD
+// ==========================================
 .dashboard-wrapper {
   padding: 2.5rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -18,24 +24,43 @@
   min-height: calc(100vh - 70px);
 }
 
-.dash-header { margin-bottom: 2rem; }
-.greeting { margin: 0; color: var(--text-main); font-size: 1.75rem; font-weight: 700; letter-spacing: -0.025em; }
-.subtitle { color: var(--text-muted); margin-top: 0.25rem; font-size: 0.95rem; }
+// ==========================================
+// CABECERA
+// ==========================================
+.dash-header { 
+  margin-bottom: 2rem; 
 
-/* RECONSTRUCCIÓN CON 2 COLUMNAS PRINCIPALES */
+  .greeting { 
+    margin: 0; 
+    color: var(--text-main); 
+    font-size: 1.75rem; 
+    font-weight: 700; 
+    letter-spacing: -0.025em; 
+  }
+
+  .subtitle { 
+    color: var(--text-muted); 
+    margin-top: 0.25rem; 
+    font-size: 0.95rem; 
+  }
+}
+
+// ==========================================
+// ESTRUCTURA PRINCIPAL (GRID)
+// ==========================================
 .metrics-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 1.5rem;
   margin-bottom: 3rem;
   align-items: stretch;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
 }
 
-@media (max-width: 1024px) {
-  .metrics-grid { grid-template-columns: 1fr; }
-}
-
-/* Sub-Grid interna de la izquierda */
+/* Sub-Grids e internidades de columnas */
 .left-cards-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -47,7 +72,9 @@
   height: 100%;
 }
 
-/* Tarjetas individuales base */
+// ==========================================
+// COMPONENTE: TARJETAS DE MÉTRICAS (BASE)
+// ==========================================
 .metric-card {
   background: var(--card-bg);
   border-radius: 12px;
@@ -57,21 +84,65 @@
   gap: 1.25rem;
   border: 1px solid var(--border-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  .card-icon { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 10px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    flex-shrink: 0; 
+
+    svg { 
+      width: 24px; 
+      height: 24px; 
+    }
+
+    &.patient-icon { 
+      background: #eff6ff; 
+      color: #3b82f6; 
+    }
+
+    &.active-icon { 
+      background: #ccfbf1; 
+      color: var(--primary); 
+    }
+  }
+
+  .card-data { 
+    display: flex; 
+    flex-direction: column; 
+    width: 100%; 
+
+    .label { 
+      color: var(--text-muted); 
+      font-size: 0.85rem; 
+      font-weight: 600; 
+    }
+
+    .value { 
+      color: var(--text-main); 
+      font-size: 1.5rem; 
+      font-weight: 700; 
+      margin-top: 0.25rem; 
+    }
+  }
+
+  /* Variación: Highlight */
+  &.highlight { 
+    background: var(--highlight-bg); 
+    border-color: #99f6e4; 
+  }
 }
 
-.card-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.card-icon svg { width: 24px; height: 24px; }
-.patient-icon { background: #eff6ff; color: #3b82f6; }
-.active-icon { background: #ccfbf1; color: var(--primary); }
+.highlight-text { 
+  color: var(--primary) !important; 
+}
 
-.card-data { display: flex; flex-direction: column; width: 100%; }
-.card-data .label { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
-.card-data .value { color: var(--text-main); font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; }
-
-.metric-card.highlight { background: var(--highlight-bg); border-color: #99f6e4; }
-.highlight-text { color: var(--primary) !important; }
-
-/* 📦 CONTENEDOR DE LA LISTA DE CONTACTOS */
+// ==========================================
+// COMPONENTE: LISTA DE CONTACTOS (HOY)
+// ==========================================
 .patients-scroll-container {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -80,19 +151,31 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-}
-.inside-title { margin: 0 0 1rem 0; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
 
-/* Ajuste del alto para tarjetas reducidas */
-.scroll-wrapper {
-  max-height: 145px; 
-  overflow-y: auto;
-  padding-right: 0.5rem;
-}
-.scroll-wrapper::-webkit-scrollbar { width: 6px; }
-.scroll-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  .inside-title { 
+    margin: 0 0 1rem 0; 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    color: var(--text-muted); 
+    text-transform: uppercase; 
+  }
 
-/* Tarjeta interna compactada */
+  .scroll-wrapper {
+    max-height: 145px; 
+    overflow-y: auto;
+    padding-right: 0.5rem;
+
+    &::-webkit-scrollbar { 
+      width: 6px; 
+    }
+    &::-webkit-scrollbar-thumb { 
+      background: #cbd5e1; 
+      border-radius: 4px; 
+    }
+  }
+}
+
+/* Tarjeta interna compactada de paciente */
 .patient-contact-card {
   display: flex;
   align-items: center;
@@ -103,33 +186,85 @@
   margin-bottom: 0.5rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
   position: relative;
-}
-.avatar-circle {
-  width: 34px;
-  height: 34px;
-  background: #e0f2fe;
-  color: #0369a1;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.8rem;
-  margin-right: 0.75rem;
-}
-.contact-details h4 { margin: 0 0 0.05rem 0; font-size: 0.9rem; color: var(--text-main); font-weight: 600; }
-.contact-details p { margin: 0; font-size: 0.75rem; color: var(--text-muted); line-height: 1.2; }
-.status-badge { position: absolute; top: 50%; transform: translateY(-50%); right: 12px; font-size: 0.62rem; padding: 0.15rem 0.45rem; border-radius: 20px; font-weight: 600; text-transform: uppercase;}
-.status-badge.pendiente { background: #fef3c7; color: #d97706; }
-.status-badge.atendida { background: #d1fae5; color: #065f46; }
 
-/* ⏳ CARD DE CITAS FALTANTES - AJUSTADO MÁS ARRIBA Y NÚMERO MÁS GRANDE */
+  .avatar-circle {
+    width: 34px;
+    height: 34px;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    margin-right: 0.75rem;
+  }
+
+  .contact-details {
+    h4 { 
+      margin: 0 0 0.05rem 0; 
+      font-size: 0.9rem; 
+      color: var(--text-main); 
+      font-weight: 600; 
+    }
+    p { 
+      margin: 0; 
+      font-size: 0.75rem; 
+      color: var(--text-muted); 
+      line-height: 1.2; 
+    }
+  }
+
+  .status-badge { 
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    right: 12px; 
+    font-size: 0.62rem; 
+    padding: 0.15rem 0.45rem; 
+    border-radius: 20px; 
+    font-weight: 600; 
+    text-transform: uppercase;
+
+    &.pendiente { 
+      background: #fef3c7; 
+      color: #d97706; 
+    }
+    &.atendida { 
+      background: #d1fae5; 
+      color: #065f46; 
+    }
+  }
+}
+
+// ==========================================
+// COMPONENTE: CITAS FALTANTES (COUNTDOWN)
+// ==========================================
 .countdown-card { 
   border-left: 4px solid var(--danger-text); 
   background: var(--danger-accent); 
   display: flex;
   align-items: center;
   padding: 1rem 1.5rem; 
+
+  .label { 
+    font-size: 0.92rem; 
+    font-weight: 600; 
+    margin-top: -0.5rem; 
+    margin-bottom: 0.1rem;
+  }
+
+  /* Variación: Todo completado */
+  &.all-done { 
+    border-left: 4px solid #10b981; 
+    background: #f0fdf4; 
+
+    .countdown-icon { 
+      background: #d1fae5; 
+      color: #10b981; 
+    }
+  }
 }
 
 .spaced-vertical-data {
@@ -143,39 +278,36 @@
   box-sizing: border-box;
 }
 
-.text-center { text-align: center; }
-
-/* Título empujado ligeramente hacia arriba para asimilarse a los demás headers */
-.countdown-card .label { 
-  font-size: 0.92rem; 
-  font-weight: 600; 
-  margin-top: -0.5rem; /* 👈 Sube un poco el título en el recuadro */
-  margin-bottom: 0.1rem;
+.text-center { 
+  text-align: center; 
 }
 
-/* Mensaje de Estado */
 .counter-footer { 
   font-size: 1.05rem; 
   font-weight: 700; 
   margin-top: 0;
-  margin-bottom: 0.8rem; /* 👈 Genera una separación armónica con el número inferior */
-}
-.counter-footer.completed { color: #10b981; }
-.counter-footer.pending { color: var(--danger-text); }
+  margin-bottom: 0.8rem; 
 
-/* Número de Citas Faltantes aumentado para mayor jerarquía visual */
+  &.completed { color: #10b981; }
+  &.pending { color: var(--danger-text); }
+}
+
 .big-value-spaced {
-  font-size: 2.8rem; /* 👈 Aumentado de 2.4rem para que se vea más grande y centrado */
+  font-size: 2.8rem; 
   font-weight: 800; 
   line-height: 1;
   margin: 0;
 }
 
-.countdown-icon { background: #fee2e2; color: var(--danger-text); transition: all 0.2s ease; }
-.countdown-card.all-done { border-left: 4px solid #10b981; background: #f0fdf4; }
-.countdown-card.all-done .countdown-icon { background: #d1fae5; color: #10b981; }
+.countdown-icon { 
+  background: #fee2e2; 
+  color: var(--danger-text); 
+  transition: all 0.2s ease; 
+}
 
-/* 🕒 TARJETA HORARIO DE ATENCIÓN AJUSTADA AL COMPLETO */
+// ==========================================
+// COMPONENTE: HORARIO DE ATENCIÓN
+// ==========================================
 .schedule-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -187,25 +319,140 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-.schedule-header { display: flex; justify-content: space-between; align-items: center; }
-.schedule-header h3 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--text-main); }
-.live-badge { background: #e0f2fe; color: #0284c7; padding: 0.25rem 0.6rem; font-size: 0.75rem; font-weight: 600; border-radius: 6px; }
-.time-range { display: flex; align-items: center; justify-content: space-between; margin: 1.5rem 0; }
-.time-block { display: flex; flex-direction: column; }
-.t-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
-.t-value { font-size: 1.25rem; color: var(--text-main); font-weight: 700; }
-.time-divider { color: #cbd5e1; font-size: 1.2rem; }
-.progress-timeline { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem; }
-.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #2dd4bf); border-radius: 4px; }
-.timeline-desc { font-size: 0.75rem; color: var(--text-muted); margin: 0; }
 
-/* SECCIÓN INFERIOR ACCIONES HORIZONTALES */
-.quick-actions-section { background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); width: 100%; box-sizing: border-box;}
-.section-title { margin-top: 0; color: var(--text-main); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; }
-.action-buttons { display: flex; gap: 1rem; flex-wrap: wrap; flex-direction: row; }
-.btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; font-family: inherit; }
-.btn-primary { background-color: var(--primary); color: white; border: 1px solid var(--primary); }
-.btn-primary:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); }
-.btn-outline { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); }
-.disabled-btn { opacity: 0.5; cursor: not-allowed; background: #f1f5f9; }
+  .schedule-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+
+    h3 { 
+      margin: 0; 
+      font-size: 1rem; 
+      font-weight: 600; 
+      color: var(--text-main); 
+    }
+  }
+
+  .live-badge { 
+    background: #e0f2fe; 
+    color: #0284c7; 
+    padding: 0.25rem 0.6rem; 
+    font-size: 0.75rem; 
+    font-weight: 600; 
+    border-radius: 6px; 
+  }
+
+  .time-range { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    margin: 1.5rem 0; 
+  }
+
+  .time-block { 
+    display: flex; 
+    flex-direction: column; 
+  }
+
+  .t-label { 
+    font-size: 0.75rem; 
+    color: var(--text-muted); 
+    font-weight: 500; 
+  }
+
+  .t-value { 
+    font-size: 1.25rem; 
+    color: var(--text-main); 
+    font-weight: 700; 
+  }
+
+  .time-divider { 
+    color: #cbd5e1; 
+    font-size: 1.2rem; 
+  }
+
+  .progress-timeline { 
+    height: 8px; 
+    background: #e2e8f0; 
+    border-radius: 4px; 
+    overflow: hidden; 
+    margin-bottom: 0.5rem; 
+  }
+
+  .progress-bar-fill { 
+    height: 100%; 
+    background: linear-gradient(90deg, var(--primary), #2dd4bf); 
+    border-radius: 4px; 
+  }
+
+  .timeline-desc { 
+    font-size: 0.75rem; 
+    color: var(--text-muted); 
+    margin: 0; 
+  }
+}
+
+// ==========================================
+// COMPONENTE: SECCIÓN INFERIOR DE ACCIONES
+// ==========================================
+.quick-actions-section { 
+  background: var(--card-bg); 
+  padding: 2rem; 
+  border-radius: 12px; 
+  border: 1px solid var(--border-color); 
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); 
+  width: 100%; 
+  box-sizing: border-box;
+
+  .section-title { 
+    margin-top: 0; 
+    color: var(--text-main); 
+    font-size: 1.1rem; 
+    font-weight: 600; 
+    margin-bottom: 1.25rem; 
+  }
+}
+
+.action-buttons { 
+  display: flex; 
+  gap: 1rem; 
+  flex-wrap: wrap; 
+  flex-direction: row; 
+}
+
+/* Botonería general */
+.btn { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.5rem; 
+  padding: 0.6rem 1.2rem; 
+  border-radius: 8px; 
+  font-weight: 500; 
+  font-size: 0.9rem; 
+  cursor: pointer; 
+  transition: all 0.2s ease; 
+  font-family: inherit; 
+
+  &.btn-primary { 
+    background-color: var(--primary); 
+    color: white; 
+    border: 1px solid var(--primary); 
+
+    &:hover { 
+      background-color: var(--primary-hover); 
+      border-color: var(--primary-hover); 
+    }
+  }
+
+  &.btn-outline { 
+    background-color: transparent; 
+    color: var(--text-main); 
+    border: 1px solid var(--border-color); 
+  }
+
+  &.disabled-btn { 
+    opacity: 0.5; 
+    cursor: not-allowed; 
+    background: #f1f5f9; 
+  }
+}

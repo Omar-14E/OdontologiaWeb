@@ -9,6 +9,7 @@
   min-height: 100vh; 
   font-family: sans-serif; 
 }
+
 .subtitle { 
   color: #64748b; 
   margin-top: 0.5rem; 
@@ -26,12 +27,12 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-}
 
-.header-main-row h2 { 
-  margin: 0; 
-  font-size: 1.75rem; 
-  color: #0f172a; 
+  h2 { 
+    margin: 0; 
+    font-size: 1.75rem; 
+    color: #0f172a; 
+  }
 }
 
 .btn-back { 
@@ -43,10 +44,11 @@
   padding: 0; 
   font-size: 0.95rem; 
   margin: 0; 
-}
-.btn-back:hover { 
-  color: #0f766e; 
-  text-decoration: underline; 
+
+  &:hover { 
+    color: #0f766e; 
+    text-decoration: underline; 
+  }
 }
 
 /* Barra de pestañas */
@@ -55,23 +57,25 @@
   gap: 0.5rem; 
   border-bottom: 2px solid #e2e8f0; 
   margin-bottom: 2rem; 
-}
-.tabs-bar button { 
-  padding: 0.85rem 1.5rem; 
-  border: none; 
-  background: none; 
-  font-weight: 600; 
-  color: #64748b; 
-  cursor: pointer; 
-  font-size: 0.95rem; 
-  transition: all 0.2s; 
-  position: relative; 
-  bottom: -2px; 
-}
-.tabs-bar button.active { 
-  color: #0d9488; 
-  border-bottom: 3px solid #0d9488; 
-  font-weight: 700; 
+
+  button { 
+    padding: 0.85rem 1.5rem; 
+    border: none; 
+    background: none; 
+    font-weight: 600; 
+    color: #64748b; 
+    cursor: pointer; 
+    font-size: 0.95rem; 
+    transition: all 0.2s; 
+    position: relative; 
+    bottom: -2px; 
+
+    &.active { 
+      color: #0d9488; 
+      border-bottom: 3px solid #0d9488; 
+      font-weight: 700; 
+    }
+  }
 }
 
 /* Contenedor Principal */
@@ -82,6 +86,7 @@
   padding: 2rem; 
   box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
 }
+
 .panel-title { 
   margin-top: 0; 
   margin-bottom: 1.5rem; 
@@ -101,14 +106,16 @@
   background: #e2e8f0; 
   color: #475569; 
   display: inline-block; 
-}
-.status-badge.status-pendiente { 
-  background: #fef3c7; 
-  color: #d97706; 
-}
-.status-badge.status-atendida {
-  background-color: #d1fae5;
-  color: #065f46;
+
+  &.status-pendiente { 
+    background: #fef3c7; 
+    color: #d97706; 
+  }
+
+  &.status-atendida {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
 }
 
 /* ==========================================================================
@@ -118,6 +125,7 @@
   display: flex; 
   gap: 2rem; 
 }
+
 .split-main { 
   flex: 2; 
 }
@@ -135,6 +143,7 @@
   flex-direction: column; 
   gap: 0.75rem; 
 }
+
 .paciente-mini-card { 
   display: flex; 
   align-items: center; 
@@ -144,10 +153,12 @@
   border-radius: 8px; 
   background: #fff; 
   transition: background 0.2s; 
+
+  &:hover { 
+    background: #f8fafc; 
+  }
 }
-.paciente-mini-card:hover { 
-  background: #f8fafc; 
-}
+
 .card-avatar { 
   width: 36px; 
   height: 36px; 
@@ -161,50 +172,60 @@
   font-size: 0.85rem; 
   flex-shrink: 0; 
 }
-.card-info h4 { 
-  margin: 0; 
-  color: #0f172a; 
-  font-size: 0.9rem; 
-}
-.card-info p { 
-  margin: 0.15rem 0 0 0; 
-  color: #64748b; 
-  font-size: 0.8rem; 
+
+.card-info {
+  h4 { 
+    margin: 0; 
+    color: #0f172a; 
+    font-size: 0.9rem; 
+  }
+  p { 
+    margin: 0.15rem 0 0 0; 
+    color: #64748b; 
+    font-size: 0.8rem; 
+  }
 }
 
 /* Tabla compacta (Izquierda) */
 .table-container { 
   overflow-x: auto; 
 }
+
 .custom-table { 
   width: 100%; 
   border-collapse: collapse; 
   text-align: left; 
+
+  th { 
+    padding: 0.75rem; 
+    color: #64748b; 
+    font-weight: 600; 
+    border-bottom: 2px solid #e2e8f0; 
+    font-size: 0.85rem; 
+  }
+
+  td { 
+    padding: 0.9rem 0.75rem; 
+    border-bottom: 1px solid #f1f5f9; 
+    color: #334155; 
+    font-size: 0.9rem; 
+  }
 }
-.custom-table th { 
-  padding: 0.75rem; 
-  color: #64748b; 
-  font-weight: 600; 
-  border-bottom: 2px solid #e2e8f0; 
-  font-size: 0.85rem; 
-}
-.custom-table td { 
-  padding: 0.9rem 0.75rem; 
-  border-bottom: 1px solid #f1f5f9; 
-  color: #334155; 
-  font-size: 0.9rem; 
-}
+
 .time-col { 
   color: #0d9488; 
 }
 
 /* Interactividad en filas */
-.table-clickable tbody tr {
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-.table-clickable tbody tr:hover {
-  background-color: #f1f5f9;
+.table-clickable {
+  tbody tr {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: #f1f5f9;
+    }
+  }
 }
 
 /* ==========================================================================
@@ -218,6 +239,7 @@
   padding: 1rem; 
   border-radius: 10px; 
 }
+
 .agenda-day-row { 
   display: flex; 
   background: #ffffff; 
@@ -237,21 +259,25 @@
   border-right: 1px solid #e2e8f0; 
   padding: 0.5rem; 
   flex-shrink: 0; 
+
+  &.is-today { 
+    background: #e0f2fe; 
+    border-right-color: #bae6fd; 
+
+    .day-name { 
+      color: #0369a1; 
+      font-weight: 700; 
+    }
+  }
 }
-.day-indicator.is-today { 
-  background: #e0f2fe; 
-  border-right-color: #bae6fd; 
-}
-.day-indicator.is-today .day-name { 
-  color: #0369a1; 
-  font-weight: 700; 
-}
+
 .day-name { 
   font-size: 0.85rem; 
   font-weight: 600; 
   color: #475569; 
   text-transform: uppercase; 
 }
+
 .day-date { 
   font-size: 0.95rem; 
   font-weight: 700; 
@@ -284,11 +310,12 @@
 .appt-clickable {
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.appt-clickable:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  background-color: #f1f5f9;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    background-color: #f1f5f9;
+  }
 }
 
 .appt-info { 
@@ -348,25 +375,27 @@
   border: 1px solid #e2e8f0;
 }
 
-.dato-item label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  margin-bottom: 0.25rem;
-}
+.dato-item {
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
 
-.dato-item p {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #1e293b;
-}
+  p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1e293b;
+  }
 
-.dato-item .highlight-text {
-  color: #0d9488;
-  font-weight: 700;
+  .highlight-text {
+    color: #0d9488;
+    font-weight: 700;
+  }
 }
 
 .input-instruction {
@@ -387,19 +416,22 @@
   resize: vertical;
   background-color: #ffffff;
   transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+  }
 }
 
-.custom-textarea:focus {
-  outline: none;
-  border-color: #0d9488;
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
-}
-
+/* Bloque unificado y optimizado de Action Buttons Row */
 .action-buttons-row {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between; 
+  align-items: flex-end;
   gap: 1rem;
   margin-top: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .btn-guardar {
@@ -412,9 +444,10 @@
   font-size: 0.95rem;
   cursor: pointer;
   transition: background-color 0.2s;
-}
-.btn-guardar:hover {
-  background-color: #0f766e;
+
+  &:hover {
+    background-color: #0f766e;
+  }
 }
 
 .btn-cancelar {
@@ -427,24 +460,16 @@
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s;
-}
-.btn-cancelar:hover {
-  background-color: #f1f5f9;
-  color: #334155;
+
+  &:hover {
+    background-color: #f1f5f9;
+    color: #334155;
+  }
 }
 
 /* ==========================================================================
    ELEMENTOS DE CAMBIO DE ESTADO (MÓDULO MÉDICO)
    ========================================================================== */
-.action-buttons-row {
-  display: flex;
-  justify-content: space-between; 
-  align-items: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  flex-wrap: wrap;
-}
-
 .status-selector-box {
   display: flex;
   flex-direction: column;
@@ -469,11 +494,11 @@
   cursor: pointer;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
-}
 
-.custom-select:focus {
-  border-color: #0d9488;
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+  &:focus {
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+  }
 }
 
 .buttons-group {
@@ -482,33 +507,35 @@
 }
 
 /* ==========================================================================
-   🌟 INTEGRACIÓN ESTÉTICA PARA MODALES SWEETALERT2 (INYECTADOS)
+   🌟 INTEGRACIÓN ESTÉTICA PARA MODALES SWEETALERT2 (Angular ng-deep)
    ========================================================================== */
-:host ::ng-deep .swal-custom-font {
-  font-family: 'Inter', sans-serif !important;
-  border-radius: 14px !important;
-  padding: 2rem !important;
-}
+:host ::ng-deep {
+  .swal-custom-font {
+    font-family: 'Inter', sans-serif !important;
+    border-radius: 14px !important;
+    padding: 2rem !important;
 
-:host ::ng-deep .swal-custom-font .swal2-title {
-  font-size: 1.4rem !important;
-  font-weight: 700 !important;
-  color: #0f172a !important;
-  margin-bottom: 0.5rem !important;
-}
+    .swal2-title {
+      font-size: 1.4rem !important;
+      font-weight: 700 !important;
+      color: #0f172a !important;
+      margin-bottom: 0.5rem !important;
+    }
 
-:host ::ng-deep .swal-custom-font .swal2-html-container {
-  font-size: 0.95rem !important;
-  color: #475569 !important;
-  line-height: 1.5 !important;
-}
+    .swal2-html-container {
+      font-size: 0.95rem !important;
+      color: #475569 !important;
+      line-height: 1.5 !important;
+    }
 
-:host ::ng-deep .swal-custom-font .swal2-styled {
-  padding: 0.7rem 2rem !important;
-  font-size: 0.95rem !important;
-  font-weight: 600 !important;
-  border-radius: 6px !important;
-  letter-spacing: 0.2px !important;
+    .swal2-styled {
+      padding: 0.7rem 2rem !important;
+      font-size: 0.95rem !important;
+      font-weight: 600 !important;
+      border-radius: 6px !important;
+      letter-spacing: 0.2px !important;
+    }
+  }
 }
 
 /* ==========================================================================
@@ -528,6 +555,9 @@
   color: #64748b;
 }
 
-.time-col .icon-margin-sm, .highlight-text .icon-margin-sm {
-  color: #0d9488;
+.time-col, 
+.highlight-text {
+  .icon-margin-sm {
+    color: #0d9488;
+  }
 }
