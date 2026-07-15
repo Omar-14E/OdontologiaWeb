@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../core/services/admin.service';
@@ -48,6 +48,33 @@ export class CitasComponent implements OnInit {
 
     this.citaForm.get('especialidad')?.valueChanges.subscribe((especialidadSeleccionada) => {
       if (especialidadSeleccionada) {
+        // --- NUEVA LÓGICA DE PRECIO AUTOMÁTICO ---
+        switch (especialidadSeleccionada) {
+          case 'ORTODONCIA':
+            this.precioBase.set(100.0);
+            this.montoCita.set(100.0);
+            break;
+          case 'ENDODONCIA':
+            this.precioBase.set(150.0);
+            this.montoCita.set(150.0);
+            break;
+          case 'PERIODONCIA':
+            this.precioBase.set(120.0);
+            this.montoCita.set(120.0);
+            break;
+          case 'CIRUGIA':
+            this.precioBase.set(200.0);
+            this.montoCita.set(200.0);
+            break;
+          case 'ODONTOPEDIATRIA':
+            this.precioBase.set(80.0);
+            this.montoCita.set(80.0);
+            break;
+          default:
+            this.precioBase.set(50.0);
+            this.montoCita.set(50.0); // GENERAL, etc.
+        }
+
         const filtrados = this.odontologos().filter(
           (medico) => medico.especialidad === especialidadSeleccionada,
         );
@@ -226,28 +253,109 @@ export class CitasComponent implements OnInit {
     this.citaForm.patchValue({ hora: horaSeleccionada });
   }
 
-  // GUARDAR O ACTUALIZAR CITA
+  // ==========================================
+  // VARIABLES PARA LA PASARELA DE PAGO
+  // ==========================================
+  mostrarPasarela = signal<boolean>(false);
+  metodoSeleccionado = signal<'YAPE' | 'TARJETA' | 'EFECTIVO' | null>(null);
+  procesandoPago = signal<boolean>(false);
+  pagoExitoso = signal<boolean>(false);
+  pinIngresado = signal<string>('');
+  
+  // VARIABLES DE PRECIO Y COMPROBANTE
+  precioBase = signal<number>(50.00); 
+  montoCita = signal<number>(50.00); 
+  datosComprobante = signal<any>(null);
+  errorMonto = computed(() => this.montoCita() > (this.precioBase() + 100));
+
+  // ==========================================
+  // NUEVAS VARIABLES PARA LOS SIMULADORES (EFECTIVO Y POS)
+  // ==========================================
+  // Para Efectivo
+  montoRecibido = signal<number | null>(null);
+  vuelto = computed(() => {
+    const recibido = this.montoRecibido() || 0;
+    const total = this.montoCita();
+    return recibido >= total ? Number((recibido - total).toFixed(2)) : 0;
+  });
+
+  // Para Tarjeta (POS)
+  posEstado = signal<'ESPERANDO_TARJETA' | 'PIDIENDO_PIN'>('ESPERANDO_TARJETA');
+
+
+  // Permite modificar el monto manualmente desde la interfaz (Para YAPE)
+  actualizarMonto(event: Event): void {
+    const valorIngresado = (event.target as HTMLInputElement).value;
+    if (valorIngresado && !isNaN(Number(valorIngresado))) {
+      this.montoCita.set(Number(valorIngresado));
+    }
+  }
+
+  // ==========================================
+  // LÓGICA DE LA CITA Y PASARELA
+  // ==========================================
+
+  // 1. Botón del formulario: Abre la pasarela o actualiza directo si es edición
   guardarCita(): void {
     if (this.citaForm.invalid) {
       Swal.fire('Faltan Datos', 'Por favor selecciona la fecha y una hora disponible.', 'warning');
       return;
     }
 
+    if (this.idCitaEdicion) {
+      // Si estamos editando, saltamos el pago y guardamos directo
+      this.ejecutarGuardadoBackend('N/A', 'N/A');
+    } else {
+      // Si es una cita nueva, mostramos la pasarela de pago
+      this.mostrarPasarela.set(true);
+    }
+  }
+
+  // 2. Funciones del PIN Pad de Tarjeta
+  seleccionarMetodo(metodo: 'YAPE' | 'TARJETA' | 'EFECTIVO' | null): void {
+    this.metodoSeleccionado.set(metodo);
+  }
+
+  agregarPin(numero: string): void {
+    if (this.pinIngresado().length < 4) {
+      this.pinIngresado.set(this.pinIngresado() + numero);
+      this.reproducirBeep(); // Llamamos al sonido
+    }
+  }
+
+  borrarPin(): void {
+    this.pinIngresado.set(this.pinIngresado().slice(0, -1));
+  }
+
+  // 3. Simulación y guardado final
+  // 3. Simulación de pago
+  simularProcesoPago(): void {
+    this.procesandoPago.set(true);
+    
+    // Simulamos la validación del pago (2 segundos)
+    setTimeout(() => {
+      const metodo = this.metodoSeleccionado();
+      const estadoPago = metodo === 'EFECTIVO' ? 'PENDIENTE' : 'PAGADO';
+      
+      // Llamamos al backend para que guarde la cita REAL
+      this.ejecutarGuardadoBackend(metodo || 'EFECTIVO', estadoPago);
+    }, 2000);
+  }
+
+  // 4. Conexión con el Backend
+  ejecutarGuardadoBackend(metodoPago: string, estadoPago: string): void {
     const val = this.citaForm.value;
 
     let fechaReal = new Date(`${val.fecha}T00:00:00`);
     let horaNumerica = parseInt(val.hora.substring(0, 2));
 
-    // Si elige una hora de madrugada (00:00, 01:00), le sumamos 1 día automáticamente
     if (horaNumerica >= 0 && horaNumerica < 6) {
       fechaReal.setDate(fechaReal.getDate() + 1);
     }
 
-    // Volvemos a extraer la fecha ya corregida en formato YYYY-MM-DD
     const mes = String(fechaReal.getMonth() + 1).padStart(2, '0');
     const dia = String(fechaReal.getDate()).padStart(2, '0');
     const fechaCorregida = `${fechaReal.getFullYear()}-${mes}-${dia}`;
-    
     const fechaHoraFormateada = `${fechaCorregida}T${val.hora}:00`;
 
     const datosCita = {
@@ -256,17 +364,14 @@ export class CitasComponent implements OnInit {
       observaciones: '',
       paciente: { id: val.pacienteId },
       odontologo: { id: val.odontologoId },
+      metodoPago: metodoPago,
+      estadoPago: estadoPago
     };
 
     if (this.idCitaEdicion) {
       this.adminService.actualizarCita(this.idCitaEdicion, datosCita).subscribe({
         next: () => {
-          Swal.fire({
-            title: '¡Actualizada!',
-            text: 'La cita ha sido modificada con éxito.',
-            icon: 'success',
-            confirmButtonColor: '#69b9aa',
-          });
+          Swal.fire({ title: '¡Actualizada!', text: 'La cita ha sido modificada con éxito.', icon: 'success', confirmButtonColor: '#69b9aa' });
           this.resetearFormulario();
         },
         error: (err) => this.mostrarErrorCita(err),
@@ -274,18 +379,167 @@ export class CitasComponent implements OnInit {
     } else {
       this.adminService.crearCita(datosCita).subscribe({
         next: () => {
-          Swal.fire({
-            title: '¡Agendada!',
-            text: 'La cita ha sido registrada con éxito en la agenda del doctor.',
-            icon: 'success',
-            confirmButtonColor: '#69b9aa',
-          });
+          // 1. Generamos el comprobante con los datos del formulario
+          this.generarComprobante(metodoPago, val);
+          
+          // 2. Detenemos la carga y mostramos el ticket (YA NO SE CIERRA AUTOMÁTICAMENTE)
+          this.procesandoPago.set(false);
+          this.pagoExitoso.set(true);
+          
+          // 3. Limpiamos el formulario por detrás para que la tabla se actualice
           this.resetearFormulario();
         },
-        error: (err) => this.mostrarErrorCita(err),
+        error: (err) => {
+          this.procesandoPago.set(false);
+          this.cerrarPasarela();
+          this.mostrarErrorCita(err);
+        },
       });
     }
   }
+
+  // NUEVA FUNCIÓN: Genera el Ticket
+  generarComprobante(metodoPago: string, formValues: any): void {
+    // Buscamos los datos completos del paciente y doctor
+    const pacienteObj = this.pacientes().find(p => p.id == formValues.pacienteId);
+    const doctorObj = this.odontologosFiltrados().find(d => d.id == formValues.odontologoId);
+
+    const now = new Date();
+    // Generamos un número aleatorio de 6 dígitos
+    const numTransaccion = 'TXN-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+
+    // Seteamos todos los datos para mostrarlos en el HTML
+    this.datosComprobante.set({
+      transaccion: numTransaccion,
+      fechaTransaccion: now.toLocaleDateString('es-PE'),
+      horaTransaccion: now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }),
+      metodoPago: metodoPago === 'EFECTIVO' ? 'Efectivo en Clínica' : metodoPago,
+      pacienteNombre: pacienteObj ? `${pacienteObj.nombre} ${pacienteObj.apellido}` : 'Paciente',
+      especialidad: formValues.especialidad,
+      doctorNombre: doctorObj ? `Dr(a). ${doctorObj.nombre} ${doctorObj.apellido}` : 'Especialista',
+      fechaCita: formValues.fecha,
+      horaCita: formValues.hora,
+      total: this.montoCita()
+    });
+  }
+
+  cerrarPasarela(): void {
+    this.mostrarPasarela.set(false);
+    this.metodoSeleccionado.set(null);
+    this.pagoExitoso.set(false);
+    this.pinIngresado.set('');
+    this.montoRecibido.set(null); // Resetear
+    this.posEstado.set('ESPERANDO_TARJETA'); // Resetear
+  }
+
+  // --- MÉTODOS SIMULADOR EFECTIVO ---
+  seleccionarBillete(monto: number | 'EXACTO'): void {
+    this.reproducirBeep();
+    if (monto === 'EXACTO') {
+      this.montoRecibido.set(this.montoCita());
+    } else {
+      this.montoRecibido.set(monto);
+    }
+  }
+
+  actualizarMontoRecibido(event: Event): void {
+    const val = Number((event.target as HTMLInputElement).value);
+    this.montoRecibido.set(val);
+  }
+
+  // --- MÉTODOS SIMULADOR TARJETA (POS) ---
+  simularAproximar(): void {
+    this.reproducirBeep();
+    // Contactless no pide PIN, pasa directo a procesar
+    this.simularProcesoPago();
+  }
+
+  simularInsertar(): void {
+    this.reproducirBeep();
+    // Insertar chip pide PIN
+    this.posEstado.set('PIDIENDO_PIN');
+    this.pinIngresado.set('');
+  }
+
+  // --- SONIDO ---
+  reproducirBeep(): void {
+    const audio = new Audio('assets/beep.mp3'); 
+    audio.volume = 0.3;
+    audio.play().catch(err => console.log('Audio bloqueado', err));
+  }
+
+  
+  // NUEVA FUNCIÓN: Imprimir el Ticket
+  imprimirComprobante(): void {
+    const contenidoTicket = document.getElementById('ticket-imprimir')?.innerHTML;
+    
+    if (!contenidoTicket) return;
+
+    // Abrimos una ventana oculta para imprimir
+    const ventanaImpresion = window.open('', '', 'height=600,width=400');
+    
+    if (ventanaImpresion) {
+      ventanaImpresion.document.write(`
+        <html>
+          <head>
+            <title>Comprobante de Cita</title>
+            <style>
+              /* Estilos optimizados para impresoras / ticketeras */
+              body { 
+                font-family: 'Courier New', Courier, monospace; 
+                color: #000; 
+                padding: 10px;
+                font-size: 14px;
+              }
+              .ticket-header { text-align: center; margin-bottom: 15px; }
+              .ticket-header h3 { margin: 5px 0; font-size: 18px; }
+              .ticket-header p { margin: 0; font-size: 12px; }
+              .check-icon { display: none; } /* Ocultamos el icono verde de check en el papel */
+              
+              .ticket-divider { 
+                border-top: 1px dashed #000; 
+                margin: 15px 0; 
+              }
+              
+              .ticket-row { 
+                display: flex; 
+                justify-content: space-between; 
+                margin-bottom: 8px; 
+              }
+              .text-right { 
+                text-align: right; 
+                font-weight: bold; 
+                max-width: 60%;
+              }
+              
+              .ticket-total { 
+                font-size: 16px; 
+                font-weight: bold; 
+                margin-top: 10px; 
+              }
+            </style>
+          </head>
+          <body>
+            ${contenidoTicket}
+            
+            <div style="text-align: center; margin-top: 30px; font-size: 12px;">
+              <p>Gracias por su preferencia</p>
+              <p>*** DENSALUD GRACIAS ***</p>
+            </div>
+          </body>
+        </html>
+      `);
+      
+      ventanaImpresion.document.close();
+      ventanaImpresion.focus();
+      
+      // Lanzamos la impresión y cerramos la ventana temporal
+      setTimeout(() => {
+        ventanaImpresion.print();
+        ventanaImpresion.close();
+      }, 250);
+    }
+  } 
 
   // EDITAR CITA
   editarCita(cita: any): void {

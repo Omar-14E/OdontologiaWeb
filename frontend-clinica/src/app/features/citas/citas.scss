@@ -397,3 +397,543 @@ body {
     border-color: #69b9aa;
   }
 }
+
+/* ================================= */
+/* MODAL DE PAGO (OVERLAY)           */
+/* ================================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.6); 
+  backdrop-filter: blur(4px); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* SOLUCIÓN 1: Z-index altísimo para tapar el Navbar */
+  padding: 20px; /* Margen de seguridad para que no choque con los bordes de la pantalla */
+}
+
+.pasarela-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px !important; /* Suficiente ancho para el POS y las instrucciones */
+  max-height: 90vh; /* SOLUCIÓN 2: El modal nunca será más alto que el 90% de la pantalla */
+  overflow-y: auto; /* SOLUCIÓN 2: Agrega un scroll interno (barrita) solo si el contenido es muy alto */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.3s ease-out;
+
+  /* Estilizamos la barrita de scroll para que se vea moderna y no rompa el diseño */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f8fafc;
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    transition: color 0.2s;
+    
+    &:hover { color: #ef4444; }
+  }
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* Elementos Internos del Modal */
+.text-center { text-align: center; }
+
+.resumen-pago {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #334155;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  strong { color: #0f172a; font-size: 1.2rem; }
+}
+
+.metodos-grid { display: flex; flex-direction: column; gap: 12px; }
+
+.btn-metodo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: white;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  .metodo-icon { color: #64748b; transition: color 0.2s; }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.yape-btn:hover { border-color: #742384; color: #742384; background: #faf5fb; .metodo-icon { color: #742384; } }
+.tarjeta-btn:hover { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; .metodo-icon { color: #3b82f6; } }
+.efectivo-btn:hover { border-color: #10b981; color: #10b981; background: #ecfdf5; .metodo-icon { color: #10b981; } }
+
+.qr-box {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  border: 2px solid #742384;
+  width: 180px;
+  margin: 0 auto;
+}
+
+/* Terminal POS Virtual */
+.pos-terminal {
+  background: #1e293b;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.pos-screen {
+  background: #a3e635;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  color: #064e3b;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  text-align: right;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.pos-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+  
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #334155;
+    color: white;
+    border: none;
+    padding: 15px 0;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.1s;
+    
+    &:active { background: #475569; transform: scale(0.95); }
+  }
+  
+  .btn-cancel { background: #ef4444; color: white; }
+  .btn-borrar { background: #eab308; color: white; }
+}
+
+.btn-ok {
+  width: 100%;
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  
+  &:disabled { background: #166534; opacity: 0.5; cursor: not-allowed; }
+  &:not(:disabled):active { transform: scale(0.98); }
+}
+
+/* Spinner */
+.loading-state { display: flex; flex-direction: column; align-items: center; padding: 40px 0; }
+.spinner { width: 50px; height: 50px; border: 5px solid #f1f5f9; border-top-color: #69b9aa; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.input-monto-editable {
+  width: 90px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #0f172a;
+  background-color: transparent;
+  border: 1px dashed #cbd5e1; /* Borde punteado para indicar que es editable */
+  border-radius: 6px;
+  padding: 4px 8px;
+  text-align: right;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &:focus {
+    border-color: #69b9aa;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(105, 185, 170, 0.2);
+  }
+  
+  /* Ocultar las flechitas por defecto del input number en navegadores webkit */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
+}
+
+/* ================================= */
+/* ESTILOS DEL COMPROBANTE (TICKET)  */
+/* ================================= */
+
+.comprobante-ticket {
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px 0;
+  font-family: 'Courier New', Courier, monospace; /* Tipografía de ticket */
+  color: #334155;
+  text-align: left;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  position: relative;
+  
+  /* Efecto de cortes a los costados del ticket */
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    top: 90px;
+    width: 20px;
+    height: 20px;
+    background: #f8fafc; /* Color del fondo del modal */
+    border-radius: 50%;
+    border: 1px dashed #cbd5e1;
+  }
+  &::before { left: -11px; border-right-color: transparent; border-top-color: transparent; transform: rotate(45deg); }
+  &::after { right: -11px; border-left-color: transparent; border-bottom-color: transparent; transform: rotate(45deg); }
+
+  .ticket-header {
+    text-align: center;
+    margin-bottom: 15px;
+
+    .check-icon {
+      width: 48px; height: 48px;
+      background: #dcfce7;
+      color: #16a34a;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 10px auto;
+    }
+    h3 { color: #16a34a; margin: 0 0 5px 0; font-family: 'Inter', sans-serif; font-weight: bold; font-size: 1.2rem; }
+    p { color: #64748b; margin: 0; font-size: 0.85rem; }
+  }
+
+  .ticket-divider {
+    border-top: 1px dashed #cbd5e1;
+    margin: 15px 0;
+  }
+
+  .ticket-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    line-height: 1.2;
+
+    .text-right { 
+      text-align: right; 
+      max-width: 65%; 
+      font-weight: bold; 
+      color: #0f172a;
+    }
+  }
+
+  .ticket-total {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #0f172a;
+    margin-top: 10px;
+  }
+}
+
+/* ================================= */
+/* SIMULADORES REALISTAS (TARJETA Y EFECTIVO) */
+/* ================================= */
+
+.pasarela-modal {
+  max-width: 750px !important; /* Más ancho para que quepa el diseño dual */
+}
+
+.vista-simulador {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 15px;
+  margin-top: 10px;
+}
+
+.fade-in { animation: fadeIn 0.3s ease; }
+
+.simulador-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 15px; /* Reducido de 25px */
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 10px; /* Reducido de 15px */
+
+  .simulador-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    color: #0f172a;
+    font-size: 1.1rem;
+
+    .icon-circle {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 0.9rem; font-weight: bold;
+    }
+    .bg-blue { background: #3b82f6; }
+    .bg-green { background: #10b981; }
+  }
+
+  .btn-volver-link {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover { color: #3b82f6; }
+  }
+}
+
+/* === LAYOUT POS TARJETA (Compacto) === */
+.pos-layout {
+  display: flex; gap: 20px; align-items: stretch;
+  @media (max-width: 600px) { flex-direction: column; }
+}
+
+.secure-pos-device {
+  background: #1e2532; border-radius: 20px;
+  padding: 15px 20px 15px 20px; /* Padding ajustado */
+  width: 280px; /* Más angosto */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.1);
+  color: white; flex-shrink: 0;
+
+  .pos-top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.6rem; color: #94a3b8; font-weight: bold; margin-bottom: 10px; /* Margen reducido */
+    .pos-lights { display: flex; gap: 5px; span { width: 6px; height: 3px; border-radius: 2px; background: #334155; } }
+  }
+
+  .pos-screen-realistic {
+    background: #022c22; border: 3px solid #334155; border-radius: 10px;
+    padding: 10px;
+    height: 100px; /* Pantalla mucho más baja */
+    display: flex; flex-direction: column; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+
+    .pos-status-bar { display: flex; justify-content: space-between; color: #10b981; font-size: 0.65rem; font-family: monospace; font-weight: bold; margin-bottom: auto; }
+
+    .pos-screen-content {
+      text-align: center; color: #34d399; font-family: 'Courier New', Courier, monospace; margin: auto 0;
+      .pos-label { font-size: 0.75rem; font-weight: bold; opacity: 0.9; margin-bottom: 2px; }
+      .pos-amount { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; } /* Fuente más chica */
+      .pos-pin-stars { font-size: 1.3rem; letter-spacing: 5px; height: 20px; margin-bottom: 5px; }
+      .pos-instruction { font-size: 0.7rem; font-weight: bold; }
+      .blinking { animation: blink 1.5s infinite; }
+    }
+  }
+
+  .pos-reader-icons {
+    display: flex; justify-content: space-around;
+    margin: 10px 0; /* Margen reducido */
+    color: #64748b; font-size: 0.6rem; font-weight: bold;
+    .icon-box { display: flex; flex-direction: column; align-items: center; gap: 3px; svg { width: 18px; height: 18px; color: #94a3b8; } }
+  }
+
+  .pos-physical-keypad {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; /* Botones más juntos */
+    margin-bottom: 12px; /* Margen reducido */
+    button {
+      background: #2b3544; color: white; border: none;
+      padding: 10px 0; /* Relleno del botón mucho más corto */
+      border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #151b26; transition: transform 0.1s, box-shadow 0.1s;
+      &:active { transform: translateY(4px); box-shadow: 0 0 0 #151b26; }
+    }
+    .btn-rojo { background: #e11d48; box-shadow: 0 4px 0 #9f1239; font-size: 0.85rem; }
+    .btn-amarillo { background: #d97706; box-shadow: 0 4px 0 #b45309; font-size: 0.85rem; }
+  }
+
+  .btn-verde-entrar {
+    width: 100%; background: #10b981; color: white; border: none;
+    padding: 12px; /* Botón entrar más delgado */
+    border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 0 #059669;
+    &:not(:disabled):active { transform: translateY(4px); box-shadow: 0 0 0 #059669; }
+    &:disabled { background: #064e3b; box-shadow: 0 4px 0 #022c22; color: #94a3b8; cursor: not-allowed; }
+  }
+}
+
+.pos-actions-panel {
+  flex-grow: 1; display: flex; flex-direction: column;
+  gap: 10px; /* Separación reducida */
+
+  .panel-card {
+    border-radius: 12px;
+    padding: 15px; /* Reducido de 20px */
+    h4 { margin: 0 0 8px 0; font-size: 0.95rem; font-weight: bold; }
+    p { font-size: 0.8rem; margin: 0 0 10px 0; color: #475569; line-height: 1.3; }
+  }
+
+  .blue-tint { background: #eff6ff; border: 1px solid #dbeafe; h4 { color: #1e3a8a; } }
+  .green-tint { background: #f0fdf4; border: 1px solid #d1fae5; }
+
+  .btn-action-simulate {
+    width: 100%; display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid #e2e8f0;
+    padding: 12px; /* Reducido */
+    border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    &:hover:not(:disabled) { border-color: #cbd5e1; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .badge-simular { background: #f8fafc; border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 0.65rem; font-weight: bold; color: #64748b; border-radius: 4px; }
+  }
+}
+
+/* === LAYOUT EFECTIVO === */
+.cash-layout {
+  display: flex; gap: 30px;
+  @media (max-width: 600px) { flex-direction: column; }
+}
+
+.cash-calc-col, .cash-bills-col { flex: 1; }
+
+.calc-title { font-size: 1.05rem; font-weight: bold; color: #1e293b; margin: 0 0 20px 0; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+
+.calc-group {
+  margin-bottom: 20px;
+  label { display: block; font-size: 0.75rem; font-weight: bold; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  
+  .calc-input {
+    display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px 20px; font-size: 1.5rem; font-family: monospace; font-weight: bold; color: #0f172a;
+    .currency { margin-right: 10px; color: #64748b; }
+    input { border: none; background: transparent; font-size: 1.5rem; font-family: monospace; font-weight: bold; color: #0f172a; width: 100%; outline: none; }
+  }
+  .read-only { background: #f1f5f9; }
+  .editable { background: white; transition: border 0.2s; &:focus-within { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.1); } }
+  .has-value { border-color: #10b981; }
+}
+
+.box-vuelto {
+  background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 15px 20px;
+  label { color: #047857; }
+  .vuelto-amount { font-size: 1.8rem; font-weight: bold; font-family: monospace; color: #065f46; .currency { color: #047857; margin-right: 10px; } }
+}
+
+.bills-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;
+  .btn-billete {
+    background: white; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; font-weight: bold; color: #1e293b; font-size: 1rem; cursor: pointer; transition: all 0.2s;
+    &:hover { border-color: #cbd5e1; background: #f8fafc; }
+  }
+  .exacto { border: 1px dashed #10b981; color: #047857; background: #ecfdf5; &:hover { background: #d1fae5; border-style: solid; } }
+}
+
+.btn-registrar-caja {
+  width: 100%; background: #69b9aa; color: white; border: none; padding: 18px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s;
+  &:hover:not(:disabled) { background: #5aa396; }
+  &:disabled { background: #94a3b8; opacity: 0.6; cursor: not-allowed; }
+}
+
+.yape-body {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 5px 0 10px 0; /* Padding reducido */
+}
+
+.yape-ticket-card {
+  background: white; border-radius: 16px; width: 100%; max-width: 320px; /* Un poco más angosto */
+  box-shadow: 0 10px 25px rgba(116, 35, 132, 0.15);
+  overflow: hidden; border: 1px solid #f3e8f5; margin-bottom: 15px; /* Margen reducido */
+}
+
+.yape-ticket-header {
+  background: #742384; color: white;
+  padding: 15px 20px; /* Padding reducido a la mitad */
+  text-align: center; position: relative;
+  
+  &::after {
+    content: ''; position: absolute; bottom: -10px; left: 0; right: 0; height: 20px;
+    background: white; border-radius: 20px 20px 0 0;
+  }
+  
+  span { font-size: 0.75rem; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+  h2 { margin: 2px 0 0 0; font-size: 2rem; /* Fuente más pequeña */ font-weight: 800; color: #00e5c0; letter-spacing: -1px; }
+}
+
+.yape-qr-section {
+  padding: 10px 20px 15px 20px; /* Padding reducido */
+  display: flex; flex-direction: column; align-items: center;
+
+  .instruction { color: #64748b; font-size: 0.85rem; margin: 0 0 12px 0; font-weight: 600; display: flex; align-items: center; }
+
+  .qr-box-premium {
+    background: white; padding: 10px; border-radius: 12px;
+    border: 2px dashed #cbd5e1;
+    width: 150px; height: 150px; /* Tamaño del QR Drásticamente reducido */
+    display: flex; align-items: center; justify-content: center; margin-bottom: 15px; transition: all 0.3s;
+    &:hover { border-color: #742384; border-style: solid; transform: scale(1.02); }
+    img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
+  }
+
+  .titular-info {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    background: #f8fafc; padding: 8px 15px; border-radius: 10px; width: 100%;
+    small { color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; font-weight: bold; }
+    strong { color: #1e293b; font-size: 0.95rem; }
+  }
+}
+
+.yape-actions-row {
+  width: 100%; max-width: 320px;
+  .btn-yape-confirm {
+    width: 100%; background: #742384; color: white; border: none;
+    padding: 14px; /* Botón menos gordo */
+    border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(116, 35, 132, 0.25);
+    &:hover { background: #5c1b69; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(116, 35, 132, 0.35); }
+  }
+}

@@ -41,4 +41,10 @@ public class Cita {
 
     @Column(name = "observaciones", columnDefinition = "TEXT") 
     private String observaciones;
+
+    @Column(name = "metodo_pago")
+    private String metodoPago; 
+
+    @Column(name = "estado_pago")
+    private String estadoPago;
 }
