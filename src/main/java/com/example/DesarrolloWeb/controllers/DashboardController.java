@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -32,32 +36,79 @@ public class DashboardController {
         long totalPacientes = pacienteRepository.count();
         long totalOdontologos = odontologoRepository.count();
         long totalCitas = citaRepository.count();
-
         long citasDelDia = citaRepository.contarCitasDelDia(LocalDate.now());
 
         DashboardDTO dashboard = new DashboardDTO(totalPacientes, totalOdontologos, totalCitas, citasDelDia);
-
         return ResponseEntity.ok(dashboard);
+    }
+
+    @GetMapping("/citas-hoy")
+    public ResponseEntity<List<Map<String, Object>>> getCitasHoy() {
+        LocalDateTime inicioHoy = LocalDate.now().atStartOfDay();
+        LocalDateTime finHoy = LocalDate.now().atTime(23, 59, 59);
+
+        List<Cita> citasBD = citaRepository.findByFechaHoraBetween(inicioHoy, finHoy);
+        List<Map<String, Object>> respuestaAngular = new ArrayList<>();
+
+        DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("hh:mm");
+        DateTimeFormatter formatterMeridiano = DateTimeFormatter.ofPattern("a");
+
+        for (Cita cita : citasBD) {
+            Map<String, Object> map = new HashMap<>();
+            
+            map.put("horaFormateada", cita.getFechaHora().format(formatterHora));
+            map.put("meridiano", cita.getFechaHora().format(formatterMeridiano));
+            
+            Map<String, String> pacienteMap = new HashMap<>();
+            pacienteMap.put("nombre", cita.getPaciente().getNombre());
+            pacienteMap.put("apellido", cita.getPaciente().getApellido());
+            map.put("paciente", pacienteMap);
+            
+            Map<String, String> odontologoMap = new HashMap<>();
+            odontologoMap.put("nombre", cita.getOdontologo().getNombre());
+            map.put("odontologo", odontologoMap);
+            
+            map.put("especialidad", "Odontología");
+            map.put("estado", cita.getEstado().toString());
+            
+            respuestaAngular.add(map);
+        }
+
+        return ResponseEntity.ok(respuestaAngular);
+    }
+
+    @GetMapping("/tratamientos")
+    public ResponseEntity<List<Map<String, Object>>> getTratamientos(@RequestParam(defaultValue = "mes") String filtro) {
+        List<Map<String, Object>> tratamientos = new ArrayList<>();
+        
+        Map<String, Object> t1 = new HashMap<>();
+        t1.put("nombre", "Ortodoncia");
+        t1.put("porcentaje", 85);
+        
+        Map<String, Object> t2 = new HashMap<>();
+        t2.put("nombre", "Limpieza / Profilaxis");
+        t2.put("porcentaje", 60);
+
+        tratamientos.add(t1);
+        tratamientos.add(t2);
+
+        return ResponseEntity.ok(tratamientos);
     }
 
     @GetMapping("/odontologo/{id}")
     public ResponseEntity<?> obtenerDashboardOdontologo(@PathVariable Long id) {
-        // 1. Definimos los rangos de tiempo (Ej: Desde hoy hasta dentro de 7 días para "la semana")
         LocalDateTime inicioSemana = LocalDate.now().atStartOfDay();
         LocalDateTime finSemana = LocalDate.now().plusDays(7).atTime(23, 59, 59);
 
         LocalDateTime inicioMes = LocalDate.now().atStartOfDay();
         LocalDateTime finMes = LocalDate.now().plusDays(30).atTime(23, 59, 59);
 
-        // 2. Usamos los nuevos métodos del repositorio
         long citasEstaSemana = citaRepository.countByOdontologoIdAndFechaHoraBetween(id, inicioSemana, finSemana);
         long citasEsteMes = citaRepository.countByOdontologoIdAndFechaHoraBetween(id, inicioMes, finMes);
 
-        // Opcional: También puedes devolver la lista de citas exactas que le tocan hoy
         LocalDateTime finHoy = LocalDate.now().atTime(23, 59, 59);
         List<Cita> listaCitasHoy = citaRepository.findByOdontologoIdAndFechaHoraBetween(id, inicioSemana, finHoy);
 
-        // 3. Puedes crear un nuevo DTO (DashboardOdontologoDTO) o devolver un Map rápido
         return ResponseEntity.ok(java.util.Map.of(
                 "citasEstaSemana", citasEstaSemana,
                 "citasEsteMes", citasEsteMes,

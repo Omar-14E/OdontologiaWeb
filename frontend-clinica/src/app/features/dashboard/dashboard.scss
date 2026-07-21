@@ -1,36 +1,41 @@
-/* Paleta de Colores Material Design 3 (Turquesa Clínico) */
 :host {
-  /* Superficies */
-  --md-bg-color: #f8fafc;
+  --md-bg-color: #f4f7fb;
   --md-surface: #ffffff;
   --md-surface-variant: #f1f5f9;
-  
-  /* Colores Primarios */
   --md-primary: #0d9488;
   --md-on-primary: #ffffff;
   --md-primary-container: #ccfbf1;
   --md-on-primary-container: #115e59;
-  
-  /* Textos y Bordes */
   --md-text-main: #0f172a;
   --md-text-muted: #64748b;
   --md-outline: #e2e8f0;
 
-  /* Sombras MD3 (Elevaciones suaves) */
-  --md-elevation-1: 0px 4px 8px 3px rgba(0, 0, 0, 0.02), 0px 1px 3px rgba(0, 0, 0, 0.04);
-  --md-elevation-2: 0px 6px 12px 4px rgba(0, 0, 0, 0.03), 0px 2px 4px rgba(0, 0, 0, 0.05);
+  --md-elevation-1: 0px 4px 12px rgba(0, 0, 0, 0.03);
+  --md-elevation-2: 0px 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .dashboard-wrapper {
-  padding: 2.5rem;
+  padding: 2rem;
   font-family: 'Inter', system-ui, sans-serif;
   background-color: var(--md-bg-color);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; 
 }
 
-/* --- CABECERA --- */
+.base-panel {
+  background: var(--md-surface);
+  border-radius: 16px;
+  border: 1px solid var(--md-outline);
+  box-shadow: var(--md-elevation-1);
+  padding: 1.5rem;
+}
+
+/* ==========================================
+   CABECERA
+   ========================================== */
 .dash-header {
-  margin-bottom: 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -51,149 +56,281 @@
   }
 }
 
-/* --- GRID DE MÉTRICAS --- */
-.metrics-grid {
+/* ==========================================
+   1. ACCESOS RÁPIDOS (TOP)
+   ========================================== */
+.quick-actions-card {
+  @extend .base-panel;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  .card-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--md-text-main);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+}
+
+/* Estilos de botones */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+
+  &-primary {
+    background-color: var(--md-primary);
+    color: var(--md-on-primary);
+    &:hover { background-color: #0f766e; }
+  }
+
+  &-outline {
+    background-color: var(--md-surface-variant);
+    color: var(--md-text-main);
+    &:hover { background-color: var(--md-outline); }
+  }
+}
+
+/* ==========================================
+   2. MÉTRICAS (GRID DE 4 COLUMNAS)
+   ========================================== */
+.metrics-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+
+  @media (max-width: 1200px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
 
 .metric-card {
-  background: var(--md-surface);
-  border-radius: 24px;
-  padding: 1.75rem;
+  @extend .base-panel;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1.5rem;
-  box-shadow: var(--md-elevation-1);
-  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1);
-  border: 1px solid rgba(0,0,0,0.01);
+  padding: 1.5rem;
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--md-elevation-2);
-  }
-
-  /* Los datos y textos de las tarjetas quedan agrupados */
-  .card-data {
+  .card-content {
     display: flex;
     flex-direction: column;
 
     .label {
       color: var(--md-text-muted);
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-size: 0.75rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
     }
 
     .value {
       color: var(--md-text-main);
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 800;
-      margin-top: 0.2rem;
-      line-height: 1;
+      line-height: 1.1;
+      margin-top: 0.25rem;
     }
   }
 
-  /* Variantes de la tarjeta principal (ej. Destacada) */
-  &.highlight {
-    background: var(--md-primary-container);
-    color: var(--md-on-primary-container);
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    .card-icon {
-      background: var(--md-primary);
-      color: var(--md-on-primary);
-    }
+    svg { width: 24px; height: 24px; }
 
-    /* Sobreescribimos sutilmente los colores de los textos para la destacada */
-    .card-data {
-      .label {
-        color: var(--md-on-primary-container);
-        opacity: 0.8;
-      }
-      .value {
-        color: var(--md-on-primary-container);
-      }
-    }
+    &.date-icon { background: #ecfdf5; color: #10b981; }
+    &.patient-icon { background: #eff6ff; color: #3b82f6; }
+    &.doctor-icon { background: #f5f3ff; color: #8b5cf6; }
+    &.tooth-icon { background: #fffbeb; color: #f59e0b; }
   }
 }
 
-.card-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+/* ==========================================
+   3. BOTTOM LAYOUT (GRÁFICO + CITAS)
+   ========================================== */
+.bottom-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
+  margin-bottom: 1.5rem;
 
-  svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  /* Concatenamos clases de íconos específicos a su contenedor */
-  &.patient-icon { background: #eff6ff; color: #3b82f6; }
-  &.doctor-icon { background: #f3e8ff; color: #a855f7; }
-  &.date-icon { background: #fff7ed; color: #f97316; }
-}
-
-/* --- SECCIÓN ACCESOS RÁPIDOS --- */
-.quick-actions-section {
-  background: var(--md-surface);
-  padding: 2rem;
-  border-radius: 24px;
-  box-shadow: var(--md-elevation-1);
-
-  .section-title {
-    margin-top: 0;
-    color: var(--md-text-main);
-    font-size: 1.25rem;
+  .panel-title {
+    margin: 0;
+    font-size: 1.2rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
-  }
-}
-
-.action-buttons {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-/* Botones estilo MD3 con concatenación de clases */
-.btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 100px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  border: none;
-
-  /* SCSS mágico: '&-primary' compila como '.btn-primary' */
-  &-primary {
-    background-color: var(--md-primary);
-    color: var(--md-on-primary);
-    box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
-
-    &:hover {
-      background-color: #0f766e;
-      box-shadow: 0 4px 8px rgba(13, 148, 136, 0.3);
-    }
-  }
-
-  /* '&-outline' compila como '.btn-outline' */
-  &-outline {
-    background-color: var(--md-surface-variant);
     color: var(--md-text-main);
+  }
 
-    &:hover {
-      background-color: var(--md-outline);
+  .panel-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--md-text-muted);
+    margin-top: 0.2rem;
+  }
+}
+
+/* LADO IZQUIERDO: Gráfico Dinámico */
+.chart-panel {
+  display: flex;
+  flex-direction: column;
+
+  .custom-select {
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--md-outline);
+    color: var(--md-text-muted);
+    background: transparent;
+    font-size: 0.9rem;
+    outline: none;
+  }
+
+  .mock-chart-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--md-outline);
+    padding-bottom: 2rem;
+    margin-top: 1rem;
+    position: relative;
+
+    .chart-grid {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      width: 100%;
+      height: 250px;
+
+      .bar {
+        width: 12%;
+        background-color: var(--md-primary);
+        border-radius: 6px 6px 0 0;
+        position: relative;
+        transition: height 0.5s ease-out;
+
+        span {
+          position: absolute;
+          bottom: -25px;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: 0.75rem;
+          color: var(--md-text-muted);
+          white-space: nowrap;
+        }
+      }
     }
+  }
+}
+
+/* LADO DERECHO: Próximas Citas */
+.appointments-panel {
+  display: flex;
+  flex-direction: column;
+
+  .view-all-link {
+    color: var(--md-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+
+  .appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 5px;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  }
+
+  .appointment-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--md-outline);
+    background: #fafbfc;
+
+    .time-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--md-outline);
+      background: #ffffff;
+      border-radius: 8px;
+      margin-right: 1rem;
+
+      strong { font-size: 0.9rem; color: var(--md-text-main); }
+      span { font-size: 0.65rem; color: var(--md-text-muted); font-weight: 600; }
+    }
+
+    .apt-info {
+      flex-grow: 1;
+      h4 { margin: 0 0 0.2rem 0; font-size: 0.9rem; color: var(--md-text-main); }
+      p { margin: 0; font-size: 0.75rem; color: var(--md-text-muted); }
+    }
+
+    .status-badge {
+      font-size: 0.7rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 700;
+      
+      &.bg-success { background: #d1fae5; color: #059669; }
+      &.bg-warning { background: #fef3c7; color: #d97706; }
+      &.bg-info { background: #e0f2fe; color: #0284c7; }
+      &.bg-secondary { background: #f1f5f9; color: #64748b; }
+    }
+  }
+
+  .add-appointment-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 12px;
+    background: var(--md-surface-variant);
+    color: var(--md-text-main);
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: auto;
+
+    &:hover { background: var(--md-outline); }
   }
 }
