@@ -50,7 +50,7 @@ export class AdminTurnosComponent implements OnInit {
 
   ngOnInit(): void {
     this.adminService.getOdontologos().subscribe({
-      next: (data) => this.odontologos.set(data),
+      next: (data) => this.odontologos.set(data.filter((o: any) => o.activo)),
       error: (err) => console.error('Error cargando odontólogos', err)
     });
   }

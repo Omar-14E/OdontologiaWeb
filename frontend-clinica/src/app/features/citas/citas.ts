@@ -105,8 +105,8 @@ export class CitasComponent implements OnInit {
   }
 
   cargarCatalogos(): void {
-    this.adminService.getPacientes().subscribe((data) => this.pacientes.set(data));
-    this.adminService.getOdontologos().subscribe((data) => this.odontologos.set(data));
+    this.adminService.getPacientes().subscribe((data) => this.pacientes.set(data.filter((p: any) => p.activo)));
+    this.adminService.getOdontologos().subscribe((data) => this.odontologos.set(data.filter((o: any) => o.activo)));
   }
 
   cargarCitas(): void {

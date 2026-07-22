@@ -4,6 +4,8 @@ import com.example.DesarrolloWeb.enums.EstadoCita;
 import com.example.DesarrolloWeb.models.Cita;
 import com.example.DesarrolloWeb.models.TurnoOdontologo;
 import com.example.DesarrolloWeb.repository.CitaRepository;
+import com.example.DesarrolloWeb.repository.OdontologoRepository;
+import com.example.DesarrolloWeb.repository.PacienteRepository;
 import com.example.DesarrolloWeb.repository.TurnoOdontologoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,12 @@ public class CitaService {
 
     @Autowired
     private TurnoOdontologoRepository turnoRepository;
+
+    @Autowired
+    private OdontologoRepository odontologoRepository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
 
     // CREAR CITA
     @Transactional
@@ -101,6 +109,19 @@ public class CitaService {
 
         if (cita.getOdontologo() == null || cita.getOdontologo().getId() == null) {
             throw new RuntimeException("Error: La cita debe tener un odontólogo asignado.");
+        }
+        if (cita.getPaciente() == null || cita.getPaciente().getId() == null) {
+            throw new RuntimeException("Error: La cita debe tener un paciente asignado.");
+        }
+
+        var odontologoOpt = odontologoRepository.findById(cita.getOdontologo().getId());
+        if (odontologoOpt.isEmpty() || !odontologoOpt.get().isActivo()) {
+            throw new RuntimeException("Error: El odontólogo seleccionado no está activo.");
+        }
+
+        var pacienteOpt = pacienteRepository.findById(cita.getPaciente().getId());
+        if (pacienteOpt.isEmpty() || !pacienteOpt.get().isActivo()) {
+            throw new RuntimeException("Error: El paciente seleccionado no está activo.");
         }
 
         Long idDoctor = cita.getOdontologo().getId();
