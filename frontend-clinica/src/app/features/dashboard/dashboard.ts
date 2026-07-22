@@ -24,10 +24,30 @@ export class DashboardComponent implements OnInit {
   resumenTratamientos = signal<any[]>([]);
 
   username: string | null = localStorage.getItem('username');
+  fechaActual: string = '';
+
+  // Paleta de colores para las barras del gráfico
+  private barColors = [
+    '#0d9488', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899'
+  ];
+
+  private barGradients = [
+    'linear-gradient(180deg, #14b8a6 0%, #0d9488 100%)',
+    'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
+    'linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%)',
+    'linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%)',
+    'linear-gradient(180deg, #f87171 0%, #ef4444 100%)',
+    'linear-gradient(180deg, #22d3ee 0%, #06b6d4 100%)',
+    'linear-gradient(180deg, #f472b6 0%, #ec4899 100%)'
+  ];
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.fechaActual = new Date().toLocaleDateString('es-ES', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
     if (this.authService.getToken()) {
       this.cargarMetricas();
       this.cargarCitas();
@@ -60,6 +80,14 @@ export class DashboardComponent implements OnInit {
     this.cargarGrafico(event.target.value);
   }
 
+  getBarColor(index: number): string {
+    return this.barColors[index % this.barColors.length];
+  }
+
+  getBarGradient(index: number): string {
+    return this.barGradients[index % this.barGradients.length];
+  }
+
   obtenerClaseEstado(estado: string): string {
     if (!estado) return 'bg-secondary';
     switch (estado.toLowerCase()) {
@@ -75,17 +103,5 @@ export class DashboardComponent implements OnInit {
       default:
         return 'bg-secondary';
     }
-  }
-
-  loginDePrueba() {
-    const credencialesAdmin = { username: 'admin', password: 'admin1234' };
-    
-    this.authService.login(credencialesAdmin).subscribe({
-      next: (res: any) => {
-        alert('Login simulado con éxito. Ya tenemos Token JWT.');
-        window.location.reload();
-      },
-      error: (err: any ) => alert('Error: ¿Está encendido Spring Boot en el puerto 8080?')
-    });
   }
 }

@@ -9,11 +9,20 @@
   --danger: #ef4444;
 }
 
+/* =========================================
+   ANIMACIONES
+   ========================================= */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .dashboard-wrapper {
   padding: 2.5rem;
   font-family: 'Inter', -apple-system, sans-serif;
   background-color: var(--bg-color);
   min-height: 100vh;
+  animation: fadeInUp 0.4s ease both;
 }
 
 .dash-header {
@@ -43,7 +52,7 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
   margin-bottom: 1.5rem;
 }
 
@@ -55,12 +64,25 @@
   display: flex;
   align-items: center;
   gap: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInUp 0.5s ease both;
+
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+  &:nth-child(4) { animation-delay: 0.2s; }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
 
   /* Estados de la tarjeta anidados */
-  &.total .stat-icon { background: #f1f5f9; color: #475569; }
-  &.pending .stat-icon { background: #fffbeb; color: #d97706; }
-  &.success .stat-icon { background: #f0fdf4; color: #16a34a; }
-  &.danger .stat-icon { background: #fef2f2; color: #dc2626; }
+  &.total .stat-icon { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); color: #475569; }
+  &.pending .stat-icon { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); color: #d97706; }
+  &.success .stat-icon { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); color: #16a34a; }
+  &.danger .stat-icon { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); color: #dc2626; }
 }
 
 .stat-icon {
@@ -232,9 +254,15 @@
   }
 
   /* Resaltado de filas en la tabla (Hover) */
+  tbody tr:not(.no-hover) {
+    transition: all 0.2s ease;
+  }
   tbody tr:not(.no-hover):hover td {
-    background-color: #f8fafc;
+    background-color: #f0fdfa;
     cursor: default;
+  }
+  tbody tr:not(.no-hover):hover td:first-child {
+    box-shadow: inset 3px 0 0 0 var(--primary);
   }
 }
 

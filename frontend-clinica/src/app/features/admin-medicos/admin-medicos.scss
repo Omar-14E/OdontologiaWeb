@@ -16,6 +16,11 @@
   --success-hover: #059669;
 }
 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* =========================================
    LAYOUT PRINCIPAL
    ========================================= */
@@ -24,6 +29,7 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg-color);
   min-height: 100vh;
+  animation: fadeInUp 0.4s ease both;
 }
 
 .dash-header {
@@ -324,8 +330,14 @@
     transition: background-color 0.2s ease;
   }
 
+  tbody tr:not(.no-hover) {
+    transition: all 0.2s ease;
+  }
   tbody tr:not(.no-hover):hover td { 
-    background-color: #f8fafc; 
+    background-color: #f0fdfa; 
+  }
+  tbody tr:not(.no-hover):hover td:first-child {
+    box-shadow: inset 3px 0 0 0 var(--primary);
   }
 }
 

@@ -79,18 +79,45 @@ public class DashboardController {
 
     @GetMapping("/tratamientos")
     public ResponseEntity<List<Map<String, Object>>> getTratamientos(@RequestParam(defaultValue = "mes") String filtro) {
-        List<Map<String, Object>> tratamientos = new ArrayList<>();
-        
-        Map<String, Object> t1 = new HashMap<>();
-        t1.put("nombre", "Ortodoncia");
-        t1.put("porcentaje", 85);
-        
-        Map<String, Object> t2 = new HashMap<>();
-        t2.put("nombre", "Limpieza / Profilaxis");
-        t2.put("porcentaje", 60);
+        LocalDate hoy = LocalDate.now();
+        LocalDateTime inicio;
+        LocalDateTime fin;
 
-        tratamientos.add(t1);
-        tratamientos.add(t2);
+        if ("anterior".equals(filtro)) {
+            LocalDate primerDiaMesAnterior = hoy.minusMonths(1).withDayOfMonth(1);
+            LocalDate ultimoDiaMesAnterior = hoy.withDayOfMonth(1).minusDays(1);
+            inicio = primerDiaMesAnterior.atStartOfDay();
+            fin = ultimoDiaMesAnterior.atTime(23, 59, 59);
+        } else {
+            inicio = hoy.withDayOfMonth(1).atStartOfDay();
+            fin = hoy.atTime(23, 59, 59);
+        }
+
+        List<Cita> citasDelPeriodo = citaRepository.findByFechaHoraBetween(inicio, fin);
+
+        // Agrupar citas por especialidad del odontólogo
+        Map<String, Long> conteo = new HashMap<>();
+        for (Cita cita : citasDelPeriodo) {
+            String especialidad = cita.getOdontologo().getEspecialidad() != null
+                    ? cita.getOdontologo().getEspecialidad().name()
+                    : "GENERAL";
+            conteo.put(especialidad, conteo.getOrDefault(especialidad, 0L) + 1);
+        }
+
+        // Calcular el máximo para los porcentajes relativos
+        long maxCitas = conteo.values().stream().mapToLong(Long::longValue).max().orElse(1);
+
+        List<Map<String, Object>> tratamientos = new ArrayList<>();
+        for (Map.Entry<String, Long> entry : conteo.entrySet()) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("nombre", entry.getKey());
+            item.put("cantidad", entry.getValue());
+            item.put("porcentaje", (int) ((entry.getValue() * 100) / maxCitas));
+            tratamientos.add(item);
+        }
+
+        // Ordenar de mayor a menor
+        tratamientos.sort((a, b) -> ((Integer) b.get("porcentaje")).compareTo((Integer) a.get("porcentaje")));
 
         return ResponseEntity.ok(tratamientos);
     }
