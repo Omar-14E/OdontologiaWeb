@@ -74,11 +74,11 @@ public class OdontologoService {
         return odontologoRepository.save(existente);
     }
 
-    public void eliminarOdontolodo(Long id) {
-        if (!odontologoRepository.existsById(id)) {
-            throw new RuntimeException("Odontólogo no encontrado para eliminar");
-        }
-        odontologoRepository.deleteById(id);
+    public Odontologo cambiarEstado(Long id) {
+        Odontologo existente = odontologoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Odontólogo no encontrado"));
+        existente.setActivo(!existente.isActivo());
+        return odontologoRepository.save(existente);
     }
 
     public List<Odontologo> obtenerTodos() {

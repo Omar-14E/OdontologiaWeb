@@ -35,6 +35,9 @@ public class Paciente {
     @Pattern(regexp = "^9[0-9]{8}$", message = "El teléfono debe tener 9 dígitos y empezar con el número 9")
     private String telefono;
 
+    @Column(nullable = false)
+    private boolean activo = true;
+
     @OneToOne
     private Usuario usuario;
 

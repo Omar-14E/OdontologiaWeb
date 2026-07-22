@@ -10,6 +10,10 @@
   --highlight-bg: #f0fdfa;
   --danger: #ef4444;
   --danger-hover: #dc2626;
+  --warning: #f59e0b;
+  --warning-hover: #d97706;
+  --success: #10b981;
+  --success-hover: #059669;
 }
 
 /* =========================================
@@ -240,15 +244,27 @@
   }
 }
 
-.btn-danger-outline { 
-  background-color: #fef2f2; 
-  color: var(--danger); 
-  border: 1px solid #fecaca; 
+.btn-warning-outline {
+  background-color: #fffbeb;
+  color: var(--warning);
+  border: 1px solid #fde68a;
 
-  &:hover { 
-    background-color: var(--danger); 
-    color: white; 
-    border-color: var(--danger); 
+  &:hover {
+    background-color: var(--warning);
+    color: white;
+    border-color: var(--warning);
+  }
+}
+
+.btn-success-outline {
+  background-color: #ecfdf5;
+  color: var(--success);
+  border: 1px solid #a7f3d0;
+
+  &:hover {
+    background-color: var(--success);
+    color: white;
+    border-color: var(--success);
   }
 }
 
@@ -523,4 +539,76 @@
       font-size: 1rem;
     }
   }
+}
+
+/* =========================================
+   BADGES DE ESTADO (Activo / Inactivo)
+   ========================================= */
+.badge-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.badge-activo {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+
+  .estado-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #10b981;
+    display: inline-block;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+}
+
+.badge-inactivo {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+
+  .estado-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #94a3b8;
+    display: inline-block;
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* =========================================
+   FILAS INACTIVAS
+   ========================================= */
+.row-inactivo td {
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.row-inactivo:hover td {
+  opacity: 0.85;
+}
+
+.avatar-inactivo {
+  background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%) !important;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.2) !important;
+}
+
+/* =========================================
+   FILTRO DE ESTADO (select más compacto)
+   ========================================= */
+.select-estado {
+  min-width: 180px;
 }

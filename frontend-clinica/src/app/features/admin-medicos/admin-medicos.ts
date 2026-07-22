@@ -22,16 +22,27 @@ export class AdminMedicosComponent implements OnInit {
     'ODONTOPEDIATRIA',
   ];
 
-  // 🌟 NUEVO: Signals para el filtro de Especialidad 🌟
+  // Signals para filtros
   filtroEspecialidad = signal<string>('');
+  filtroEstado = signal<string>('');
 
-  // 🌟 NUEVO: Computed para filtrar la lista en tiempo real 🌟
+  // Computed para filtrar la lista en tiempo real
   odontologosFiltrados = computed(() => {
     const esp = this.filtroEspecialidad();
-    const lista = this.odontologos();
+    const estado = this.filtroEstado();
+    let lista = this.odontologos();
 
-    if (!esp) return lista;
-    return lista.filter(medico => medico.especialidad === esp);
+    if (esp) {
+      lista = lista.filter(medico => medico.especialidad === esp);
+    }
+
+    if (estado === 'activo') {
+      lista = lista.filter(medico => medico.activo === true);
+    } else if (estado === 'inactivo') {
+      lista = lista.filter(medico => medico.activo === false);
+    }
+
+    return lista;
   });
 
   medicoForm: FormGroup;
@@ -65,13 +76,18 @@ export class AdminMedicosComponent implements OnInit {
     });
   }
 
-  // 🌟 NUEVO: Métodos para manejar el filtro 🌟
+  // Métodos para manejar filtros
   onFiltrarEspecialidad(event: any): void {
     this.filtroEspecialidad.set(event.target.value);
   }
 
+  onFiltrarEstado(event: any): void {
+    this.filtroEstado.set(event.target.value);
+  }
+
   limpiarFiltros(): void {
     this.filtroEspecialidad.set('');
+    this.filtroEstado.set('');
   }
 
   abrirFormulario(medico?: any): void {
@@ -126,33 +142,41 @@ export class AdminMedicosComponent implements OnInit {
     }
   }
 
-  eliminarMedico(id: number): void {
+  cambiarEstado(medico: any): void {
+    const estaActivo = medico.activo;
+    const accion = estaActivo ? 'desactivar' : 'activar';
+    const nombreCompleto = `Dr/a. ${medico.nombre} ${medico.apellido}`;
+
     Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Se eliminará este profesional del sistema. Esta acción no se puede deshacer.',
-      icon: 'warning',
+      title: `¿${estaActivo ? 'Desactivar' : 'Activar'} profesional?`,
+      text: estaActivo
+        ? `${nombreCompleto} será marcado como inactivo y no aparecerá disponible en el sistema.`
+        : `${nombreCompleto} será reactivado y volverá a estar disponible en el sistema.`,
+      icon: estaActivo ? 'warning' : 'question',
       showCancelButton: true,
-      confirmButtonColor: '#ef4444',
+      confirmButtonColor: estaActivo ? '#f59e0b' : '#10b981',
       cancelButtonColor: '#64748b',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: estaActivo ? 'Sí, desactivar' : 'Sí, activar',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.adminService.eliminarOdontologo(id).subscribe({
+        this.adminService.cambiarEstadoOdontologo(medico.id).subscribe({
           next: () => {
             Swal.fire({
-              title: '¡Eliminado!',
-              text: 'El registro del médico ha sido borrado exitosamente.',
+              title: estaActivo ? '¡Desactivado!' : '¡Activado!',
+              text: estaActivo
+                ? `${nombreCompleto} ha sido marcado como inactivo.`
+                : `${nombreCompleto} ha sido reactivado exitosamente.`,
               icon: 'success',
               confirmButtonColor: '#69b9aa',
             });
             this.cargarOdontologos();
           },
           error: (err) => {
-            console.error('Error al eliminar:', err);
+            console.error('Error al cambiar estado:', err);
             Swal.fire({
-              title: 'No se puede eliminar',
-              text: 'Es posible que este médico tenga citas o turnos asignados actualmente.',
+              title: 'Error',
+              text: `No se pudo ${accion} al profesional. Intente de nuevo.`,
               icon: 'error',
               confirmButtonColor: '#ef4444',
             });
@@ -162,3 +186,4 @@ export class AdminMedicosComponent implements OnInit {
     });
   }
 }
+

@@ -9,6 +9,10 @@
   --highlight-bg: #f0fdfa;
   --danger: #ef4444;
   --danger-hover: #dc2626;
+  --warning: #f59e0b;
+  --warning-hover: #d97706;
+  --success: #10b981;
+  --success-hover: #059669;
 }
 
 /* =========================================
@@ -228,17 +232,31 @@
   }
 }
 
-.btn-danger-outline {
-  background-color: transparent; 
-  color: var(--danger); 
-  border: 1px solid #fecaca; 
-  padding: 0.5rem 1rem; 
+.btn-warning-outline {
+  background-color: #fffbeb;
+  color: var(--warning);
+  border: 1px solid #fde68a;
+  padding: 0.5rem 1rem;
   font-size: 0.85rem;
 
   &:hover {
-    background-color: var(--danger);
+    background-color: var(--warning);
     color: white;
-    border-color: var(--danger);
+    border-color: var(--warning);
+  }
+}
+
+.btn-success-outline {
+  background-color: #ecfdf5;
+  color: var(--success);
+  border: 1px solid #a7f3d0;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+
+  &:hover {
+    background-color: var(--success);
+    color: white;
+    border-color: var(--success);
   }
 }
 
@@ -547,4 +565,94 @@
     background-color: #fee2e2;
     color: var(--danger);
   }
+}
+
+/* =========================================
+   BADGES DE ESTADO (Activo / Inactivo)
+   ========================================= */
+.badge-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.badge-activo {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+
+  .estado-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #10b981;
+    display: inline-block;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+}
+
+.badge-inactivo {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+
+  .estado-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #94a3b8;
+    display: inline-block;
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* =========================================
+   FILAS INACTIVAS
+   ========================================= */
+.row-inactivo td {
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.row-inactivo:hover td {
+  opacity: 0.85;
+}
+
+.avatar-inactivo {
+  background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%) !important;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.2) !important;
+}
+
+/* =========================================
+   FILTRO DE ESTADO Y LAYOUT DE BÚSQUEDA
+   ========================================= */
+.filter-grid-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+  .search-group {
+    flex: 1;
+  }
+}
+
+.select-estado {
+  min-width: 180px;
+  height: 48px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230f172a'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
 }

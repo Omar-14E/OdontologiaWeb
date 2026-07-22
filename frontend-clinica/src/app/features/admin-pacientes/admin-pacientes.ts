@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core'; // 👈 Se añadió 'computed'
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../core/services/admin.service';
@@ -16,21 +16,31 @@ export class AdminPacientesComponent implements OnInit {
   
   pacientes = signal<any[]>([]);
   
-  // 🌟 NUEVO: Signals para la Búsqueda / Filtro 🌟
+  // Signals para filtros
   filtroTexto = signal<string>('');
+  filtroEstado = signal<string>('');
 
-  // 🌟 NUEVO: Filtro reactivo para Nombre, Apellido o DNI 🌟
+  // Filtro reactivo para Nombre, Apellido, DNI y Estado
   pacientesFiltrados = computed(() => {
     const texto = this.filtroTexto().toLowerCase().trim();
-    const lista = this.pacientes();
+    const estado = this.filtroEstado();
+    let lista = this.pacientes();
 
-    if (!texto) return lista;
+    if (texto) {
+      lista = lista.filter(p => 
+        (p.nombre && p.nombre.toLowerCase().includes(texto)) ||
+        (p.apellido && p.apellido.toLowerCase().includes(texto)) ||
+        (p.dni && p.dni.includes(texto))
+      );
+    }
 
-    return lista.filter(p => 
-      (p.nombre && p.nombre.toLowerCase().includes(texto)) ||
-      (p.apellido && p.apellido.toLowerCase().includes(texto)) ||
-      (p.dni && p.dni.includes(texto))
-    );
+    if (estado === 'activo') {
+      lista = lista.filter(p => p.activo === true);
+    } else if (estado === 'inactivo') {
+      lista = lista.filter(p => p.activo === false);
+    }
+
+    return lista;
   });
 
   pacienteForm: FormGroup;
@@ -61,13 +71,18 @@ export class AdminPacientesComponent implements OnInit {
     });
   }
 
-  // 🌟 NUEVOS MÉTODOS: Para capturar lo que el usuario escribe en el buscador 🌟
+  // Métodos para manejar filtros
   onBuscarTexto(event: any): void {
     this.filtroTexto.set(event.target.value);
   }
 
+  onFiltrarEstado(event: any): void {
+    this.filtroEstado.set(event.target.value);
+  }
+
   limpiarFiltros(): void {
     this.filtroTexto.set('');
+    this.filtroEstado.set('');
   }
 
   abrirFormulario(paciente?: any): void {
@@ -88,7 +103,6 @@ export class AdminPacientesComponent implements OnInit {
     this.pacienteForm.reset();
   }
 
-  // 🌟 MÉTODO MODIFICADO CON ALERTAS Y MANEJO DE ERRORES 🌟
   guardarPaciente(): void {
     if (this.pacienteForm.invalid) {
       Swal.fire(
@@ -144,31 +158,44 @@ export class AdminPacientesComponent implements OnInit {
     }
   }
 
-  // 🌟 ELIMINACIÓN MEJORADA CON SWEETALERT EN LUGAR DE CONFIRM NATIVO 🌟
-  eliminarPaciente(id: number): void {
+  cambiarEstado(paciente: any): void {
+    const estaActivo = paciente.activo;
+    const accion = estaActivo ? 'desactivar' : 'activar';
+    const nombreCompleto = `${paciente.nombre} ${paciente.apellido}`;
+
     Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Se eliminará permanentemente a este paciente del sistema.',
-      icon: 'warning',
+      title: `¿${estaActivo ? 'Desactivar' : 'Activar'} paciente?`,
+      text: estaActivo
+        ? `${nombreCompleto} será marcado como inactivo. No podrá agendar nuevas citas ni registrar atenciones, pero conservará su historial clínico.`
+        : `${nombreCompleto} será reactivado. Podrá volver a agendar citas y registrar atenciones.`,
+      icon: estaActivo ? 'warning' : 'question',
       showCancelButton: true,
-      confirmButtonColor: '#ef4444',
+      confirmButtonColor: estaActivo ? '#f59e0b' : '#10b981',
       cancelButtonColor: '#64748b',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: estaActivo ? 'Sí, desactivar' : 'Sí, activar',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.adminService.eliminarPaciente(id).subscribe({
+        this.adminService.cambiarEstadoPaciente(paciente.id).subscribe({
           next: () => {
-            Swal.fire('¡Eliminado!', 'El paciente ha sido borrado.', 'success');
+            Swal.fire({
+              title: estaActivo ? '¡Desactivado!' : '¡Activado!',
+              text: estaActivo
+                ? `${nombreCompleto} ha sido marcado como inactivo. Su historial clínico se conserva intacto.`
+                : `${nombreCompleto} ha sido reactivado exitosamente.`,
+              icon: 'success',
+              confirmButtonColor: '#69b9aa',
+            });
             this.cargarPacientes();
           },
           error: (err) => {
-            Swal.fire(
-              'Error',
-              'No se pudo eliminar al paciente (es posible que tenga citas registradas).',
-              'error',
-            );
-            console.error(err);
+            console.error('Error al cambiar estado:', err);
+            Swal.fire({
+              title: 'Error',
+              text: `No se pudo ${accion} al paciente. Intente de nuevo.`,
+              icon: 'error',
+              confirmButtonColor: '#ef4444',
+            });
           },
         });
       }

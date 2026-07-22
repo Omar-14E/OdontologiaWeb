@@ -25,8 +25,8 @@ export class AdminService {
     return this.http.put<any>(`${this.apiUrlOdontologos}/actualizar/${id}`, odontologo);
   }
 
-  eliminarOdontologo(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrlOdontologos}/eliminar/${id}`);
+  cambiarEstadoOdontologo(id: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrlOdontologos}/cambiar-estado/${id}`, {});
   }
 
   getPacientes(): Observable<any[]> {
@@ -41,8 +41,8 @@ export class AdminService {
     return this.http.put<any>(`${this.apiUrlPacientes}/actualizar/${id}`, paciente);
   }
 
-  eliminarPaciente(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrlPacientes}/eliminar/${id}`);
+  cambiarEstadoPaciente(id: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrlPacientes}/cambiar-estado/${id}`, {});
   }
 
   getTurnosVigentes(odontologoId: number): Observable<any[]> {

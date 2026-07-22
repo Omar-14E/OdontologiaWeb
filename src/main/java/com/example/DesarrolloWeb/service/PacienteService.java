@@ -86,12 +86,12 @@ public class PacienteService {
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
     }
 
-    // Eliminar paciente
-    public void eliminarPaciente(Long id) {
-        if (!pacienteRepository.existsById(id)) {
-            throw new RuntimeException("Paciente no encontrado para eliminar");
-        }
-        pacienteRepository.deleteById(id);
+    // Cambiar estado activo/inactivo del paciente
+    public Paciente cambiarEstado(Long id) {
+        Paciente existente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        existente.setActivo(!existente.isActivo());
+        return pacienteRepository.save(existente);
     }
 
 }    // Obtener pacientes asignados al odontólogo logueado

@@ -37,10 +37,9 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteService.editarPaciente(id, datoNuevo));
     }
 
-    @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        pacienteService.eliminarPaciente(id);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/cambiar-estado/{id}")
+    public ResponseEntity<Paciente> cambiarEstado(@PathVariable Long id) {
+        return ResponseEntity.ok(pacienteService.cambiarEstado(id));
     }
 
 }

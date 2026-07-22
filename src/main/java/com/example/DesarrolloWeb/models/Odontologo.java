@@ -37,6 +37,9 @@ public class Odontologo {
     @Enumerated(EnumType.STRING)
     private Especialidad especialidad;
 
+    @Column(nullable = false)
+    private boolean activo = true;
+
     @OneToOne
     private Usuario usuario;
 
