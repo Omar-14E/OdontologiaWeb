@@ -20,7 +20,6 @@ public class Cita {
     private Long id;
 
     @NotNull(message = "La fecha y hora de la cita son obligatorias")
-    //@FutureOrPresent(message = "No puedes programar una cita en el pasado")
     private LocalDateTime fechaHora;
 
     @NotNull(message = "El estado de la cita es obligatorio")
@@ -37,7 +36,6 @@ public class Cita {
     @JoinColumn(name = "odontologo_id")
     private Odontologo odontologo;
 
-    // Agrega esto dentro de tu clase Cita:
 
     @Column(name = "observaciones", columnDefinition = "TEXT") 
     private String observaciones;

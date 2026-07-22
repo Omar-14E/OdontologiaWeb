@@ -9,7 +9,6 @@ import { OdontoAgendaComponent } from './features/odonto-agenda/odonto-agenda';
 import { OdontoPacientesComponent } from './features/odonto-pacientes/odonto-pacientes';
 import { OdontoPerfilComponent } from './features/odonto-perfil/odonto-perfil';
 
-// Importamos los nuevos componentes del administrador
 import { AdminMedicosComponent } from './features/admin-medicos/admin-medicos';
 import { AdminPacientesComponent } from './features/admin-pacientes/admin-pacientes';
 import { AdminTurnosComponent } from './features/admin-turnos/admin-turnos';
@@ -18,14 +17,12 @@ import { OdontoHorarioComponent } from './features/odonto-horario/odonto-horario
 
 export const routes: Routes = [
   
-  // --- RUTA PÚBLICA / INVERSA ---
   {
     path: 'login',
     component: LoginComponent,
-    canActivate: [noAuthGuard] // 👈 Si ya hay sesión activa, bloquea el acceso al login y lo redirige a su panel
+    canActivate: [noAuthGuard] 
   },
 
-  // --- RUTAS PROTEGIDAS (Requieren Token) ---
   { 
     path: 'dashboard', 
     component: DashboardComponent,
@@ -66,7 +63,6 @@ export const routes: Routes = [
   },
   
   
-  // --- Nuevas rutas del Administrador (Protegidas) ---
   {
     path: 'admin-medicos',
     component: AdminMedicosComponent,
@@ -88,7 +84,6 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
-  // Las redirecciones por defecto y el comodín siempre deben ir al final
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

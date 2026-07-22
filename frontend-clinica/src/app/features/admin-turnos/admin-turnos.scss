@@ -1,6 +1,3 @@
-/* =========================================
-   VARIABLES GLOBALES Y BASE
-   ========================================= */
 :host {
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
@@ -21,9 +18,6 @@
   min-height: 100vh;
 }
 
-/* =========================================
-   CABECERAS
-   ========================================= */
 .dash-header {
   display: flex;
   justify-content: space-between;

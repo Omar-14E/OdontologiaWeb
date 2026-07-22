@@ -1,6 +1,3 @@
-// ==========================================
-// VARIABLES DE ÁMBITO LOCAL Y HOST
-// ==========================================
 :host {
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
@@ -11,9 +8,6 @@
   --primary-hover: #0f766e;
 }
 
-// ==========================================
-// ENVOLTORIO GENERAL DE LA PÁGINA
-// ==========================================
 .perfil-wrapper {
   padding: 2.5rem;
   background-color: var(--bg-color);
@@ -22,9 +16,6 @@
   box-sizing: border-box;
 }
 
-// ==========================================
-// CABECERA PRINCIPAL (HEADER)
-// ==========================================
 .perfil-header-section {
   display: flex;
   justify-content: space-between;
@@ -58,9 +49,6 @@
   }
 }
 
-// ==========================================
-// CONTENEDOR DE TARJETA (PROFILE CARD)
-// ==========================================
 .perfil-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -69,7 +57,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* Fila Superior del Perfil (Avatar y Badge General) */
 .perfil-top-row {
   display: flex;
   justify-content: space-between;
@@ -87,8 +74,8 @@
   .avatar-circle {
     width: 68px;
     height: 68px;
-    background: #e0f2fe; /* Celeste sutil */
-    color: #0369a1;    /* Azul clínico contrastante */
+    background: #e0f2fe; 
+    color: #0369a1;    
     font-size: 1.5rem;
     font-weight: 700;
     border-radius: 50%;
@@ -106,9 +93,6 @@
   }
 }
 
-// ==========================================
-// DISTRIBUCIÓN GRID EN DOS COLUMNAS
-// ==========================================
 .perfil-grid-content {
   display: grid;
   grid-template-columns: 1.6fr 1fr;

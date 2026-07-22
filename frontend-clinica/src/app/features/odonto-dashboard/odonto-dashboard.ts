@@ -23,7 +23,6 @@ export class OdontoDashboardComponent implements OnInit {
 
   agendaHoy = signal<any[]>([]);
 
-  // Horario dinámico real
   horarioReal = signal<any>({
     tieneTurno: false,
     entrada: '',
@@ -41,7 +40,7 @@ export class OdontoDashboardComponent implements OnInit {
     if (this.authService.getToken()) {
       this.cargarMetricasOdontologo();
       this.cargarAgendaDetalle();
-      this.cargarHorarioRealHoy(); // 👈 Invocación limpia
+      this.cargarHorarioRealHoy(); 
     }
   }
 

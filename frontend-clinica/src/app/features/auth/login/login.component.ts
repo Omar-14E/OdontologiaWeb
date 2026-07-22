@@ -39,8 +39,6 @@ export class LoginComponent{
             next: (res) => {
                     console.log('Login exitoso, datos guardados por el servicio:', res);
                     
-                    // Redirección inteligente basada en el rol que devuelve tu backend
-                    // Nota: Asegúrate de comparar las cadenas exactamente como las envíe tu API (ej: 'ADMIN', 'DOCTOR')
                     const rolUsuario = res.rol; 
 
                     if (rolUsuario === 'ADMIN') {

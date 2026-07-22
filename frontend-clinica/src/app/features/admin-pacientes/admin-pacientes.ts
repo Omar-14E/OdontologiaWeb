@@ -16,11 +16,9 @@ export class AdminPacientesComponent implements OnInit {
   
   pacientes = signal<any[]>([]);
   
-  // Signals para filtros
   filtroTexto = signal<string>('');
   filtroEstado = signal<string>('');
 
-  // Filtro reactivo para Nombre, Apellido, DNI y Estado
   pacientesFiltrados = computed(() => {
     const texto = this.filtroTexto().toLowerCase().trim();
     const estado = this.filtroEstado();
@@ -71,7 +69,6 @@ export class AdminPacientesComponent implements OnInit {
     });
   }
 
-  // Métodos para manejar filtros
   onBuscarTexto(event: any): void {
     this.filtroTexto.set(event.target.value);
   }

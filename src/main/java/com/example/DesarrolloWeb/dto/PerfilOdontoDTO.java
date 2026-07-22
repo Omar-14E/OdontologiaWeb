@@ -1,5 +1,5 @@
 package com.example.DesarrolloWeb.dto;
-import com.example.DesarrolloWeb.enums.Especialidad; // 1. Importa tu enum aquí
+import com.example.DesarrolloWeb.enums.Especialidad; 
 
 public class PerfilOdontoDTO {
     private String nombre;
@@ -18,7 +18,6 @@ public class PerfilOdontoDTO {
         this.gmail = gmail;
     }
 
-    // Getters y Setters
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 

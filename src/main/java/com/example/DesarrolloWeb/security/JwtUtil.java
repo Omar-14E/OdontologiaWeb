@@ -13,11 +13,10 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class JwtUtil {
 
-    // 👇 Usamos una clave secreta estática (fija). Debe tener al menos 32 caracteres.
     private final String SECRET = "EstaEsUnaClaveSecretaMuySeguraParaOdontologiaWeb123456";
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
-    private final long expirationTime = 86400000; // 24 horas en milisegundos
+    private final long expirationTime = 86400000; 
 
     public String generarToken(String username, String rol) {
         return Jwts.builder()

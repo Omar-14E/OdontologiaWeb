@@ -13,7 +13,6 @@ import { AuthService } from '../auth/services/auth.service';
 })
 export class DashboardComponent implements OnInit {
   
-  // Señal original de métricas
   metricas = signal<any>({
     totalPacientes: 0,
     totalOdontologos: 0,
@@ -21,7 +20,6 @@ export class DashboardComponent implements OnInit {
     citasDelDia: 0
   });
 
-  // Señales nuevas esperando arreglos desde la BD
   proximasCitas = signal<any[]>([]);
   resumenTratamientos = signal<any[]>([]);
 
@@ -33,7 +31,7 @@ export class DashboardComponent implements OnInit {
     if (this.authService.getToken()) {
       this.cargarMetricas();
       this.cargarCitas();
-      this.cargarGrafico('mes'); // Carga inicial por defecto
+      this.cargarGrafico('mes'); 
     }
   }
 
@@ -44,7 +42,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // Nuevo método para citas
   cargarCitas() {
     this.http.get<any[]>('http://localhost:8080/api/dashboard/citas-hoy').subscribe({
       next: (data) => this.proximasCitas.set(data),
@@ -52,7 +49,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // Nuevo método para el gráfico
   cargarGrafico(filtro: string) {
     this.http.get<any[]>(`http://localhost:8080/api/dashboard/tratamientos?filtro=${filtro}`).subscribe({
       next: (data) => this.resumenTratamientos.set(data),
@@ -60,12 +56,10 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // Método requerido por el <select> del HTML
   filtrarTratamientos(event: any) {
     this.cargarGrafico(event.target.value);
   }
 
-  // Método requerido por los badges del HTML
   obtenerClaseEstado(estado: string): string {
     if (!estado) return 'bg-secondary';
     switch (estado.toLowerCase()) {
@@ -88,10 +82,10 @@ export class DashboardComponent implements OnInit {
     
     this.authService.login(credencialesAdmin).subscribe({
       next: (res: any) => {
-        alert('✅ Login simulado con éxito. Ya tenemos Token JWT.');
+        alert('Login simulado con éxito. Ya tenemos Token JWT.');
         window.location.reload();
       },
-      error: (err: any ) => alert('❌ Error: ¿Está encendido Spring Boot en el puerto 8080?')
+      error: (err: any ) => alert('Error: ¿Está encendido Spring Boot en el puerto 8080?')
     });
   }
 }

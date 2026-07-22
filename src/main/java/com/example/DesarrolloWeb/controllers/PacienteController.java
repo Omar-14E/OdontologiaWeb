@@ -25,8 +25,6 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteService.agregarPaciente(paciente));
     }
 
-    // 👇 Métodos corregidos usando los nombres exactos de tu PacienteService 👇
-
     @GetMapping("/{id}")
     public ResponseEntity<Paciente> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(pacienteService.obtenerPacientePorId(id));

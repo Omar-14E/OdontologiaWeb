@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../auth/services/auth.service'; // <--- IMPORTACIÓN AGREGADA
+import { AuthService } from '../auth/services/auth.service'; 
 
 @Component({
   selector: 'app-odonto-pacientes',
@@ -13,22 +13,18 @@ import { AuthService } from '../auth/services/auth.service'; // <--- IMPORTACIÓ
 })
 export class OdontoPacientesComponent implements OnInit {
 
-  // Almacena la lista de todos los pacientes que ya atendió el odontólogo
   pacientes = signal<any[]>([]);
 
-  // Almacena el paciente que se está consultando actualmente para la vista de detalle
   pacienteSeleccionado = signal<any | null>(null);
 
-  // Almacena la lista de consultas (DTO) del paciente seleccionado
   historialConsultas = signal<any[]>([]);
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService // <--- INYECCIÓN DEL SERVICIO AGREGADA
+    private authService: AuthService 
   ) {}
 
   ngOnInit(): void {
-    // Validamos que existan las credenciales antes de hacer la carga inicial
     const token = this.authService.getToken() || localStorage.getItem('token');
     const username = localStorage.getItem('username');
 
@@ -39,7 +35,6 @@ export class OdontoPacientesComponent implements OnInit {
     }
   }
 
-  // Helper optimizado para configurar los Headers con tu servicio de autenticación
   private getAuthHeaders() {
     const token = this.authService.getToken() || localStorage.getItem('token');
     return {
@@ -49,7 +44,6 @@ export class OdontoPacientesComponent implements OnInit {
     };
   }
 
-  // Carga inicial de pacientes desde el backend
   cargarMisPacientes() {
     this.http.get<any[]>('http://localhost:8080/api/mi-perfil/pacientes', this.getAuthHeaders()).subscribe({
       next: (data) => {
@@ -62,7 +56,6 @@ export class OdontoPacientesComponent implements OnInit {
     });
   }
 
-  // Se ejecuta al hacer clic en la tarjeta de un paciente
   verHistorialPaciente(paciente: any) {
     this.pacienteSeleccionado.set(paciente);
     
@@ -77,7 +70,6 @@ export class OdontoPacientesComponent implements OnInit {
     });
   }
 
-  // Limpia el estado para regresar a la cuadrícula general de pacientes
   volverALaLista() {
     this.pacienteSeleccionado.set(null);
     this.historialConsultas.set([]);

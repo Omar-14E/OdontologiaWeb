@@ -36,9 +36,6 @@ public class DataSeeder {
 
             System.out.println("🌱 Cargando datos de prueba masivos (Fechas en el futuro, usernames configurados y contraseñas encriptadas)...");
 
-            // ==========================================
-            // 1. CREAR USUARIOS
-            // ==========================================
             Usuario admin = new Usuario();
             admin.setUsername("admin");
             admin.setGmail("admin@clinica.com");
@@ -175,35 +172,6 @@ public class DataSeeder {
 
             citaRepository.saveAll(List.of(cita1, cita2, cita3));
 
-            // ==========================================
-            // 6. CREAR ODONTOGRAMAS
-            // ==========================================
-            Odontograma c_diente11 = new Odontograma();
-            c_diente11.setNumeroDiente(11);
-            c_diente11.setEstado("CARIES");
-            c_diente11.setPaciente(pac1);
-
-            Odontograma c_diente48 = new Odontograma();
-            c_diente48.setNumeroDiente(48);
-            c_diente48.setEstado("EXTRACCION");
-            c_diente48.setPaciente(pac1);
-
-            Odontograma m_diente14 = new Odontograma();
-            m_diente14.setNumeroDiente(14);
-            m_diente14.setEstado("AMALGAMA");
-            m_diente14.setPaciente(pac2);
-
-            Odontograma m_diente22 = new Odontograma();
-            m_diente22.setNumeroDiente(22);
-            m_diente22.setEstado("SANO");
-            m_diente22.setPaciente(pac2);
-
-            Odontograma l_diente36 = new Odontograma();
-            l_diente36.setNumeroDiente(36);
-            l_diente36.setEstado("ENDODONCIA");
-            l_diente36.setPaciente(pac3);
-
-            odontogramaRepository.saveAll(List.of(c_diente11, c_diente48, m_diente14, m_diente22, l_diente36));
 
             System.out.println("¡Datos masivos cargados con éxito! Todo funcionando correctamente.");
         };

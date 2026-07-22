@@ -18,7 +18,6 @@ public class PacienteService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    // Inyectamos las herramientas para crear el usuario correctamente
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -29,35 +28,28 @@ public class PacienteService {
     @Transactional
     public Paciente agregarPaciente(Paciente nuevoPaciente) {
         
-        // 🌟 CAMBIO AQUÍ: Usamos existsByDni que acabamos de crear en el Repositorio
         if (pacienteRepository.existsByDni(nuevoPaciente.getDni())) {
             throw new RuntimeException("El DNI " + nuevoPaciente.getDni() + " ya se encuentra registrado en el sistema.");
         }
 
-        // 2. Extraer y procesar el Usuario (si el frontend envía datos de login)
         if (nuevoPaciente.getUsuario() != null) {
             Usuario usuario = nuevoPaciente.getUsuario();
             
-            // Validar que el username no exista ya
             if (usuarioRepository.findByUsername(usuario.getUsername()).isPresent()) {
                 throw new RuntimeException("Error: El nombre de usuario ya está en uso");
             }
             
-            // Encriptar contraseña y asignar rol por defecto
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
             usuario.setRol(Rol.PACIENTE);
             
-            // Guardar el usuario primero en la BD
             usuario = usuarioRepository.save(usuario);
             
-            // Vincular el usuario recién creado al paciente
             nuevoPaciente.setUsuario(usuario);
         }
 
         return pacienteRepository.save(nuevoPaciente);
     }
 
-    // editar datos del paciente
     public Paciente editarPaciente(Long id, Paciente datosActualizados) {
         Paciente pacienteExistente = pacienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado en el sistema"));

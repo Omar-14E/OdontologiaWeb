@@ -1,13 +1,10 @@
-// ==========================================
-// CONFIGURACIÓN GLOBAL / HOST
-// ==========================================
 :host {
   display: block;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #334155;
-  background-color: #f4f6f9; /* Fondo gris claro idéntico al del dashboard */
+  background-color: #f4f6f9; 
   min-height: 100vh;
-  padding: 3rem 2rem; /* Añade espacio arriba y abajo para que no quede pegado */
+  padding: 3rem 2rem; 
   box-sizing: border-box;
 
   @media (max-width: 640px) {
@@ -15,25 +12,19 @@
   }
 }
 
-// ==========================================
-// CONTENEDOR PRINCIPAL
-// ==========================================
 .horario-container {
   max-width: 1280px;
   margin: 0 auto;
   background-color: #ffffff;
-  border-radius: 16px; /* Bordes redondeados idénticos a tus componentes */
+  border-radius: 16px; 
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-  padding: 2.5rem; /* Margen interno para centrar el contenido */
+  padding: 2.5rem; 
 
   @media (max-width: 640px) {
     padding: 1.5rem;
   }
 }
 
-// ==========================================
-// BARRA SUPERIOR Y HEADER
-// ==========================================
 .horario-top-bar {
   display: flex;
   justify-content: space-between;

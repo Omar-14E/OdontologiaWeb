@@ -13,7 +13,6 @@ import java.util.Optional;
 public interface OdontologoRepository extends JpaRepository<Odontologo, Long> {
     List<Odontologo> findByEspecialidad(Especialidad especialidad);
 
-    // CONSULTA JPQL: Buscar por especialidad
     @Query("SELECT o FROM Odontologo o WHERE o.especialidad = :especialidad")
     List<Odontologo> buscarPorEspecialidadJpql(@Param("especialidad") Especialidad especialidad);
 

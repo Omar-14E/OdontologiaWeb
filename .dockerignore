@@ -1,0 +1,6 @@
+target
+frontend-clinica
+.git
+.idea
+.vscode
+*.log

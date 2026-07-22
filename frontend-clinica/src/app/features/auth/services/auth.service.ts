@@ -6,7 +6,6 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth/login';
   
-  // Mantiene el estado reactivo de si hay un usuario logueado
   private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(private http: HttpClient) {}
@@ -14,7 +13,6 @@ export class AuthService {
   login(credenciales: { username: string, password: string }): Observable<any> {
     return this.http.post<any>(this.apiUrl, credenciales).pipe(
       tap(res => {
-        // Tu backend devuelve: token, rol, username
         localStorage.setItem('token', res.token);
         localStorage.setItem('rol', res.rol);
         localStorage.setItem('username', res.username);

@@ -11,7 +11,6 @@ import { AuthService } from '../auth/services/auth.service';
 })
 export class NavbarComponent implements OnInit {
 
-  // Signals reactivas para el estado de la UI
   usuarioRol = signal<string | null>(null);
   usuarioNombre = signal<string | null>(null);
   menuAbierto = signal<boolean>(false);
@@ -19,12 +18,10 @@ export class NavbarComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    // Recuperamos el rol y el nombre guardados en el login
     this.usuarioRol.set(this.authService.getRol());
     this.usuarioNombre.set(localStorage.getItem('username'));
   }
 
-  // Alterna la visibilidad del menú desplegable (los 3 puntitos / perfil)
   toggleMenu() {
     this.menuAbierto.update(estado => !estado);
   }

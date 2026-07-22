@@ -22,11 +22,9 @@ export class AdminMedicosComponent implements OnInit {
     'ODONTOPEDIATRIA',
   ];
 
-  // Signals para filtros
   filtroEspecialidad = signal<string>('');
   filtroEstado = signal<string>('');
 
-  // Computed para filtrar la lista en tiempo real
   odontologosFiltrados = computed(() => {
     const esp = this.filtroEspecialidad();
     const estado = this.filtroEstado();
@@ -76,7 +74,6 @@ export class AdminMedicosComponent implements OnInit {
     });
   }
 
-  // Métodos para manejar filtros
   onFiltrarEspecialidad(event: any): void {
     this.filtroEspecialidad.set(event.target.value);
   }

@@ -76,11 +76,9 @@ export class OdontoPerfilComponent implements OnInit {
       }
     }).then((result) => {
       if (result.isConfirmed && result.value) {
-        // Objeto preparado para ser procesado por tu endpoint PUT
         const payload = {
           telefono: this.perfil().telefono,
           password: result.value.newPass
-          // Nota: Asegúrate de adaptar tu endpoint en Spring Boot si deseas validar la clave anterior de forma explícita.
         };
 
         this.http.put('http://localhost:8080/api/mi-perfil/actualizar', payload).subscribe({

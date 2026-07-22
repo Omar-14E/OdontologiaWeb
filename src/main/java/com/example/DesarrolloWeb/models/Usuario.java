@@ -26,7 +26,7 @@ public class Usuario {
     @Column(nullable = false)
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres para ser segura")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // <- Esta es la magia para la seguridad
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) 
     private String password;
 
     @NotBlank(message = "El correo electrónico es obligatorio")
@@ -36,5 +36,5 @@ public class Usuario {
     @NotNull(message = "Debe asignar un rol al usuario")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Rol rol; // aca va paciente, odontologo o administrador que ya esta predeterminado en enum Rol
+    private Rol rol; 
 }

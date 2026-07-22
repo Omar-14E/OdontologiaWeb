@@ -25,12 +25,10 @@ export class AdminTurnosComponent implements OnInit {
 
   constructor(private adminService: AdminService, private fb: FormBuilder) {
     this.turnoForm = this.fb.group({
-      // Horarios base
       horaInicio: ['', Validators.required],
       tipoTurno: [8, Validators.required], // 8 horas por defecto
       horaFin: [{ value: '', disabled: true }, Validators.required], // Deshabilitado para que el usuario no lo edite
       
-      // Para modo Masivo (Rango de fechas)
       fechaInicio: [''],
       fechaFin: [''],
       dias: this.fb.group({
@@ -40,14 +38,12 @@ export class AdminTurnosComponent implements OnInit {
         4: [true], // Jueves
         5: [true], // Viernes
         6: [true], // Sábado
-        0: [false] // Domingo (Por defecto apagado)
+        0: [false] // Domingo
       }),
 
-      // Para modo Edición Individual
       fecha: ['']
     });
 
-    // Suscribirse a los cambios para calcular automáticamente
     this.turnoForm.get('horaInicio')?.valueChanges.subscribe(() => this.calcularHoraFin());
     this.turnoForm.get('tipoTurno')?.valueChanges.subscribe(() => this.calcularHoraFin());
   }
@@ -59,7 +55,6 @@ export class AdminTurnosComponent implements OnInit {
     });
   }
 
-  // --- NUEVO MÉTODO PARA CALCULAR LA HORA ---
   calcularHoraFin(): void {
     const horaInicio = this.turnoForm.get('horaInicio')?.value;
     const horasTurno = Number(this.turnoForm.get('tipoTurno')?.value);
@@ -71,7 +66,6 @@ export class AdminTurnosComponent implements OnInit {
       horas += horasTurno;
       const horasFinales = (horas % 24).toString().padStart(2, '0');
       
-      // Actualizamos el valor del campo deshabilitado
       this.turnoForm.get('horaFin')?.setValue(`${horasFinales}:${minutosStr}`);
     } else {
       this.turnoForm.get('horaFin')?.setValue('');
@@ -97,7 +91,7 @@ export class AdminTurnosComponent implements OnInit {
     this.modoEdicion = false;
     this.turnoSeleccionadoId = null;
     this.turnoForm.reset({
-      tipoTurno: 8, // Reiniciar al valor por defecto
+      tipoTurno: 8, 
       dias: { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 0: false }
     });
   }
@@ -107,18 +101,16 @@ export class AdminTurnosComponent implements OnInit {
     this.modoEdicion = true;
     this.turnoSeleccionadoId = turno.id;
     
-    // Calculamos si era turno de 4 u 8 horas basándonos en la hora inicio y fin
     const [hIni] = turno.horaInicio.split(':');
     const [hFin] = turno.horaFin.split(':');
     let duracion = parseInt(hFin, 10) - parseInt(hIni, 10);
-    if (duracion < 0) duracion += 24; // Por si pasa de la medianoche
+    if (duracion < 0) duracion += 24; 
 
     this.turnoForm.patchValue({
       fecha: turno.fecha,
       horaInicio: turno.horaInicio,
       tipoTurno: duracion
     });
-    // El valueChanges de arriba detectará el patchValue y calculará la horaFin automáticamente
   }
 
   cerrarFormulario(): void {
@@ -129,7 +121,6 @@ export class AdminTurnosComponent implements OnInit {
   guardarTurno(): void {
     if (!this.odontologoSeleccionadoId) return;
     
-    // IMPORTANTE: getRawValue() incluye campos "disabled" como horaFin
     const val = this.turnoForm.getRawValue(); 
 
     if (this.modoEdicion && this.turnoSeleccionadoId) {

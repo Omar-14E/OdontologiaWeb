@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms'; 
 import { AuthService } from '../auth/services/auth.service';
-import Swal from 'sweetalert2'; // 👈 IMPORTACIÓN DE SWEETALERT2 AGREGADA
+import Swal from 'sweetalert2'; 
 
 @Component({
   selector: 'app-odonto-agenda',
@@ -63,14 +63,12 @@ export class OdontoAgendaComponent implements OnInit {
     this.cargarAgendaMedica(); 
   }
 
-  // 🌟 MÉTODO OPTIMIZADO CON SWEETALERT2 ESTÉTICO 🌟
   guardarObservacion() {
     const cita = this.citaSeleccionada();
     if (!cita) return;
 
     this.http.put<any>(`http://localhost:8080/api/citas/actualizar/${cita.id}`, cita).subscribe({
       next: (res) => {
-        // Modal de éxito personalizado con la misma estética del consultorio médico
         Swal.fire({
           title: '¡Guardado Exitoso!',
           text: `La cita ha sido actualizada al estado [${cita.estado}] y se registraron las observaciones clínicas correctamente.`,
@@ -86,10 +84,8 @@ export class OdontoAgendaComponent implements OnInit {
       error: (err) => {
         console.error('Error al guardar la observación:', err);
         
-        // Captura el mensaje dinámico enviado por el Backend o usa uno por defecto
         const mensajeError = err.error || 'Hubo un error al guardar los datos en el servidor.';
 
-        // Modal de error personalizado
         Swal.fire({
           title: 'No se pudo guardar',
           text: mensajeError,

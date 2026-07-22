@@ -108,13 +108,10 @@ public class CitaService {
         LocalDate fechaSolicitada = fechaHoraSolicitada.toLocalDate();
         LocalTime horaSolicitada = fechaHoraSolicitada.toLocalTime();
 
-        // 1. VALIDACIÓN: Buscar turnos del día de la cita Y del día anterior (por
-        // turnos nocturnos)
         List<TurnoOdontologo> turnos = turnoRepository.findByOdontologoIdAndFecha(idDoctor, fechaSolicitada);
         List<TurnoOdontologo> turnosAyer = turnoRepository.findByOdontologoIdAndFecha(idDoctor,
                 fechaSolicitada.minusDays(1));
 
-        // Unimos ambas listas para analizarlas juntas
         turnos.addAll(turnosAyer);
 
         if (turnos.isEmpty()) {
@@ -129,7 +126,6 @@ public class CitaService {
             LocalDate fechaTurno = turno.getFecha();
 
             if (inicio.isBefore(fin)) {
-                // CASO A: TURNO NORMAL DE DÍA (Ej: 08:00 a 14:00)
                 if (fechaTurno.equals(fechaSolicitada) &&
                         !horaSolicitada.isBefore(inicio) &&
                         !horaSolicitada.isAfter(fin)) {
@@ -137,15 +133,12 @@ public class CitaService {
                     break;
                 }
             } else {
-                // CASO B: TURNO NOCTURNO QUE CRUZA LA MEDIANOCHE (Ej: 21:00 a 01:00)
                 if (fechaTurno.equals(fechaSolicitada)) {
-                    // Parte de la noche (Ej: la cita es a las 22:00 del mismo día)
                     if (!horaSolicitada.isBefore(inicio)) {
                         horaValida = true;
                         break;
                     }
                 } else if (fechaTurno.equals(fechaSolicitada.minusDays(1))) {
-                    // Parte de la madrugada (Ej: la cita es a las 00:00 del día siguiente al turno)
                     if (!horaSolicitada.isAfter(fin)) {
                         horaValida = true;
                         break;
@@ -159,7 +152,6 @@ public class CitaService {
                     "La hora seleccionada (" + horaSolicitada + ") está fuera del horario de atención del doctor.");
         }
 
-        // 2. EVITAR CRUCES: El doctor no puede tener dos citas al mismo tiempo
         boolean doctorOcupado = citaRepository.existsByOdontologoIdAndFechaHoraAndEstado(
                 idDoctor,
                 fechaHoraSolicitada,
@@ -222,12 +214,10 @@ public class CitaService {
             LocalTime horaActual = turno.getHoraInicio();
             LocalTime horaFin = turno.getHoraFin();
 
-            // 🌟 NUEVO: Calculamos los minutos totales para soportar turnos nocturnos
             long minutosTotales;
             if (horaActual.isBefore(horaFin)) {
                 minutosTotales = java.time.Duration.between(horaActual, horaFin).toMinutes();
             } else {
-                // El turno cruza la medianoche (Ej: de 21:00 a 01:00)
                 minutosTotales = (24 * 60) - (horaActual.getHour() * 60 + horaActual.getMinute()) +
                         (horaFin.getHour() * 60 + horaFin.getMinute());
             }
@@ -239,12 +229,8 @@ public class CitaService {
                 boolean estaOcupada = horasOcupadas.contains(horaActual);
                 boolean esHoy = fecha.isEqual(LocalDate.now());
 
-                // Si la hora generada es de madrugada (ej. 00:00 < 21:00), ya pertenece al día
-                // siguiente
                 boolean esMadrugadaDelDiaSiguiente = horaActual.isBefore(turno.getHoraInicio());
 
-                // Solo ocultamos la hora si ya pasó HOY. Si es la madrugada de mañana, siempre
-                // se muestra.
                 boolean yaPaso = false;
                 if (esHoy && !esMadrugadaDelDiaSiguiente) {
                     yaPaso = horaActual.isBefore(LocalTime.now());

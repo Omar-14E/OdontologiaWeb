@@ -48,7 +48,6 @@ export class CitasComponent implements OnInit {
 
     this.citaForm.get('especialidad')?.valueChanges.subscribe((especialidadSeleccionada) => {
       if (especialidadSeleccionada) {
-        // --- NUEVA LÓGICA DE PRECIO AUTOMÁTICO ---
         switch (especialidadSeleccionada) {
           case 'ORTODONCIA':
             this.precioBase.set(100.0);
@@ -72,7 +71,7 @@ export class CitasComponent implements OnInit {
             break;
           default:
             this.precioBase.set(50.0);
-            this.montoCita.set(50.0); // GENERAL, etc.
+            this.montoCita.set(50.0); 
         }
 
         const filtrados = this.odontologos().filter(
@@ -170,7 +169,6 @@ export class CitasComponent implements OnInit {
           return false;
         }
 
-        // 👇 NUEVAS VALIDACIONES DE LONGITUD MÍNIMA 👇
         if (nombre.length < 3) {
           Swal.showValidationMessage('El nombre debe tener al menos 3 caracteres');
           return false;
@@ -179,7 +177,6 @@ export class CitasComponent implements OnInit {
           Swal.showValidationMessage('El apellido debe tener al menos 3 caracteres');
           return false;
         }
-        // ---------------------------------------------
 
         if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
           Swal.showValidationMessage('El nombre solo puede contener letras');
@@ -253,25 +250,17 @@ export class CitasComponent implements OnInit {
     this.citaForm.patchValue({ hora: horaSeleccionada });
   }
 
-  // ==========================================
-  // VARIABLES PARA LA PASARELA DE PAGO
-  // ==========================================
   mostrarPasarela = signal<boolean>(false);
   metodoSeleccionado = signal<'YAPE' | 'TARJETA' | 'EFECTIVO' | null>(null);
   procesandoPago = signal<boolean>(false);
   pagoExitoso = signal<boolean>(false);
   pinIngresado = signal<string>('');
   
-  // VARIABLES DE PRECIO Y COMPROBANTE
   precioBase = signal<number>(50.00); 
   montoCita = signal<number>(50.00); 
   datosComprobante = signal<any>(null);
   errorMonto = computed(() => this.montoCita() > (this.precioBase() + 100));
 
-  // ==========================================
-  // NUEVAS VARIABLES PARA LOS SIMULADORES (EFECTIVO Y POS)
-  // ==========================================
-  // Para Efectivo
   montoRecibido = signal<number | null>(null);
   vuelto = computed(() => {
     const recibido = this.montoRecibido() || 0;
@@ -279,11 +268,9 @@ export class CitasComponent implements OnInit {
     return recibido >= total ? Number((recibido - total).toFixed(2)) : 0;
   });
 
-  // Para Tarjeta (POS)
   posEstado = signal<'ESPERANDO_TARJETA' | 'PIDIENDO_PIN'>('ESPERANDO_TARJETA');
 
 
-  // Permite modificar el monto manualmente desde la interfaz (Para YAPE)
   actualizarMonto(event: Event): void {
     const valorIngresado = (event.target as HTMLInputElement).value;
     if (valorIngresado && !isNaN(Number(valorIngresado))) {
@@ -291,11 +278,6 @@ export class CitasComponent implements OnInit {
     }
   }
 
-  // ==========================================
-  // LÓGICA DE LA CITA Y PASARELA
-  // ==========================================
-
-  // 1. Botón del formulario: Abre la pasarela o actualiza directo si es edición
   guardarCita(): void {
     if (this.citaForm.invalid) {
       Swal.fire('Faltan Datos', 'Por favor selecciona la fecha y una hora disponible.', 'warning');
@@ -303,15 +285,12 @@ export class CitasComponent implements OnInit {
     }
 
     if (this.idCitaEdicion) {
-      // Si estamos editando, saltamos el pago y guardamos directo
       this.ejecutarGuardadoBackend('N/A', 'N/A');
     } else {
-      // Si es una cita nueva, mostramos la pasarela de pago
       this.mostrarPasarela.set(true);
     }
   }
 
-  // 2. Funciones del PIN Pad de Tarjeta
   seleccionarMetodo(metodo: 'YAPE' | 'TARJETA' | 'EFECTIVO' | null): void {
     this.metodoSeleccionado.set(metodo);
   }
@@ -319,7 +298,7 @@ export class CitasComponent implements OnInit {
   agregarPin(numero: string): void {
     if (this.pinIngresado().length < 4) {
       this.pinIngresado.set(this.pinIngresado() + numero);
-      this.reproducirBeep(); // Llamamos al sonido
+      this.reproducirBeep(); 
     }
   }
 
@@ -327,22 +306,17 @@ export class CitasComponent implements OnInit {
     this.pinIngresado.set(this.pinIngresado().slice(0, -1));
   }
 
-  // 3. Simulación y guardado final
-  // 3. Simulación de pago
   simularProcesoPago(): void {
     this.procesandoPago.set(true);
     
-    // Simulamos la validación del pago (2 segundos)
     setTimeout(() => {
       const metodo = this.metodoSeleccionado();
       const estadoPago = metodo === 'EFECTIVO' ? 'PENDIENTE' : 'PAGADO';
       
-      // Llamamos al backend para que guarde la cita REAL
       this.ejecutarGuardadoBackend(metodo || 'EFECTIVO', estadoPago);
     }, 2000);
   }
 
-  // 4. Conexión con el Backend
   ejecutarGuardadoBackend(metodoPago: string, estadoPago: string): void {
     const val = this.citaForm.value;
 
@@ -379,14 +353,11 @@ export class CitasComponent implements OnInit {
     } else {
       this.adminService.crearCita(datosCita).subscribe({
         next: () => {
-          // 1. Generamos el comprobante con los datos del formulario
           this.generarComprobante(metodoPago, val);
           
-          // 2. Detenemos la carga y mostramos el ticket (YA NO SE CIERRA AUTOMÁTICAMENTE)
           this.procesandoPago.set(false);
           this.pagoExitoso.set(true);
           
-          // 3. Limpiamos el formulario por detrás para que la tabla se actualice
           this.resetearFormulario();
         },
         error: (err) => {
@@ -398,17 +369,13 @@ export class CitasComponent implements OnInit {
     }
   }
 
-  // NUEVA FUNCIÓN: Genera el Ticket
   generarComprobante(metodoPago: string, formValues: any): void {
-    // Buscamos los datos completos del paciente y doctor
     const pacienteObj = this.pacientes().find(p => p.id == formValues.pacienteId);
     const doctorObj = this.odontologosFiltrados().find(d => d.id == formValues.odontologoId);
 
     const now = new Date();
-    // Generamos un número aleatorio de 6 dígitos
     const numTransaccion = 'TXN-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
 
-    // Seteamos todos los datos para mostrarlos en el HTML
     this.datosComprobante.set({
       transaccion: numTransaccion,
       fechaTransaccion: now.toLocaleDateString('es-PE'),
@@ -428,11 +395,10 @@ export class CitasComponent implements OnInit {
     this.metodoSeleccionado.set(null);
     this.pagoExitoso.set(false);
     this.pinIngresado.set('');
-    this.montoRecibido.set(null); // Resetear
-    this.posEstado.set('ESPERANDO_TARJETA'); // Resetear
+    this.montoRecibido.set(null); 
+    this.posEstado.set('ESPERANDO_TARJETA'); 
   }
 
-  // --- MÉTODOS SIMULADOR EFECTIVO ---
   seleccionarBillete(monto: number | 'EXACTO'): void {
     this.reproducirBeep();
     if (monto === 'EXACTO') {
@@ -447,21 +413,17 @@ export class CitasComponent implements OnInit {
     this.montoRecibido.set(val);
   }
 
-  // --- MÉTODOS SIMULADOR TARJETA (POS) ---
   simularAproximar(): void {
     this.reproducirBeep();
-    // Contactless no pide PIN, pasa directo a procesar
     this.simularProcesoPago();
   }
 
   simularInsertar(): void {
     this.reproducirBeep();
-    // Insertar chip pide PIN
     this.posEstado.set('PIDIENDO_PIN');
     this.pinIngresado.set('');
   }
 
-  // --- SONIDO ---
   reproducirBeep(): void {
     const audio = new Audio('assets/beep.mp3'); 
     audio.volume = 0.3;
@@ -469,13 +431,11 @@ export class CitasComponent implements OnInit {
   }
 
   
-  // NUEVA FUNCIÓN: Imprimir el Ticket
   imprimirComprobante(): void {
     const contenidoTicket = document.getElementById('ticket-imprimir')?.innerHTML;
     
     if (!contenidoTicket) return;
 
-    // Abrimos una ventana oculta para imprimir
     const ventanaImpresion = window.open('', '', 'height=600,width=400');
     
     if (ventanaImpresion) {
@@ -533,7 +493,6 @@ export class CitasComponent implements OnInit {
       ventanaImpresion.document.close();
       ventanaImpresion.focus();
       
-      // Lanzamos la impresión y cerramos la ventana temporal
       setTimeout(() => {
         ventanaImpresion.print();
         ventanaImpresion.close();
@@ -541,7 +500,6 @@ export class CitasComponent implements OnInit {
     }
   } 
 
-  // EDITAR CITA
   editarCita(cita: any): void {
     this.idCitaEdicion = cita.id;
 
@@ -562,7 +520,6 @@ export class CitasComponent implements OnInit {
     });
   }
 
-  // ELIMINAR CITA
   eliminarCita(id: number): void {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -589,7 +546,6 @@ export class CitasComponent implements OnInit {
     });
   }
 
-  // MÉTODOS AUXILIARES
   resetearFormulario() {
     this.cargarCitas();
     this.idCitaEdicion = null;
@@ -638,7 +594,6 @@ export class CitasComponent implements OnInit {
     return hoy.toISOString().split('T')[0];
   }
 
-  // FILTRO DE SEMANA ACTUAL
   obtenerLimitesSemana(): { inicio: Date; fin: Date } {
     const hoy = new Date();
     const diaSemana = hoy.getDay();
